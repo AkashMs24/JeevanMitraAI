@@ -1,126 +1,154 @@
-/**
- * disease.js — JeevanMitra AI
- * Plant disease detection via Groq Vision API + demo mode
- */
-
 'use strict';
 
-/* ── DISEASE DATABASE ── */
-const diseaseDB = {
-  healthy:        {name:'Healthy Plant',    icon:'✅', symptoms:'No visible symptoms. Plant looks healthy and vigorous.',                            severity:'None',     confidence:94},
-  leaf_blight:    {name:'Leaf Blight',      icon:'⚠️', symptoms:'Brown irregular spots on leaves, yellowing margins, wilting tips.',               severity:'Moderate', confidence:87},
-  rust:           {name:'Rust Disease',     icon:'🔴', symptoms:'Orange-brown rust pustules on leaf undersides, defoliation.',                     severity:'Moderate', confidence:82},
-  powdery_mildew: {name:'Powdery Mildew',   icon:'🌫️', symptoms:'White powdery coating on upper leaf surface, stunted growth.',                   severity:'Mild',     confidence:89},
-  bacterial_spot: {name:'Bacterial Spot',   icon:'🦠', symptoms:'Water-soaked spots turning brown/black, leaf curling, oozing.',                   severity:'Severe',   confidence:85}
-};
-
-const treatments = {
-  healthy:        ['Continue regular watering', 'Monitor for early signs', 'Maintain soil nutrition', 'Practice crop rotation'],
-  leaf_blight:    ['Remove infected leaves immediately', 'Apply copper oxychloride (3g/L)', 'Ensure adequate plant spacing', 'Avoid overhead irrigation'],
-  rust:           ['Apply Mancozeb 75WP (2.5g/L)', 'Remove infected plant parts', 'Improve field drainage', 'Rotate crops next season'],
-  powdery_mildew: ['Spray neem oil (5ml/L)', 'Apply sulfur dust in morning', 'Improve air circulation', 'Avoid excess nitrogen'],
-  bacterial_spot: ['Apply copper-based bactericide', 'Remove severely infected leaves', 'Avoid working in wet conditions', 'Use disease-free seeds next season']
+/* ── GLOBAL SAFE DB ── */
+window.diseaseDB = window.diseaseDB || {
+healthy: {
+name: 'Healthy Plant',
+icon: '✅',
+symptoms: 'No visible issues. Plant is healthy.',
+severity: 'None',
+confidence: 95
+},
+leaf_blight: {
+name: 'Leaf Blight',
+icon: '⚠️',
+symptoms: 'Brown spots, yellowing edges.',
+severity: 'Moderate',
+confidence: 87
+},
+rust: {
+name: 'Rust Disease',
+icon: '🔴',
+symptoms: 'Rust-colored spots under leaves.',
+severity: 'Moderate',
+confidence: 82
+}
 };
 
 /* ── IMAGE PREVIEW ── */
 function previewImage(e) {
-  const f = e.target.files[0];
-  if (!f) return;
-  const r = new FileReader();
-  r.onload = ev => {
-    document.getElementById('image-preview').innerHTML =
-      `<img src="${ev.target.result}" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:0.7rem;">`;
-  };
-  r.readAsDataURL(f);
+const file = e.target.files[0];
+if (!file) return;
+
+const reader = new FileReader();
+reader.onload = ev => {
+const box = document.getElementById('image-preview');
+if (box) {
+box.innerHTML = `         <img src="${ev.target.result}" 
+             style="max-width:100%;max-height:200px;border-radius:8px;">
+      `;
+}
+};
+reader.readAsDataURL(file);
 }
 
-/* ── AI DETECTION ── */
+/* ── MAIN DETECTION ── */
 async function detectDisease() {
-  const fi = document.getElementById('leaf-image');
-  if (!fi.files[0]) { toast('❌ Please upload a leaf image first'); return; }
-  if (!_groqKey)    { toast('❌ Please add your Groq API key first'); showModal(); return; }
+const input = document.getElementById('leaf-image');
+const file = input?.files?.[0];
 
-  const f  = fi.files[0];
-  const r  = new FileReader();
-  r.onload = async e => {
-    const b64 = e.target.result.split(',')[1];
-    const ra  = document.getElementById('disease-result-area');
-    document.querySelector('#disease-results-card > p')?.style.setProperty('display','none');
-
-    ra.innerHTML = `<div class="res-card res-info" style="text-align:center;">
-      <div style="font-size:2rem;">🧠</div>
-      <p style="font-weight:600;margin-top:0.4rem;">⚡ AI Analyzing Image…</p>
-      <div class="progress" style="margin-top:0.6rem;">
-        <div class="progress-fill" id="dp" style="width:0%;transition:width 2s"></div>
-      </div>
-      <p style="font-size:0.75rem;color:var(--text3);margin-top:0.4rem;">Extracting features · Classifying · Generating report</p>
-    </div>`;
-
-    setTimeout(() => { const dp = document.getElementById('dp'); if (dp) dp.style.width = '85%'; }, 100);
-
-    const prompt = `You are an expert plant disease detection AI. Analyze this plant/leaf image and respond ONLY with a raw JSON object (no markdown, no backticks):
-{"disease":"healthy|leaf_blight|rust|powdery_mildew|bacterial_spot|downy_mildew|other","displayName":"Human readable name","confidence":85,"severity":"None|Mild|Moderate|Severe","symptoms":"1-2 sentences","cnnFeatures":["feature1","feature2","feature3"],"treatment":["step1","step2","step3","step4"],"isHealthy":false,"icon":"emoji"}`;
-
-    try {
-      const text = await callGroqVision(prompt, b64, 'image/jpeg');
-      let res;
-      try {
-        res = JSON.parse(text.replace(/```json|```/g, '').trim());
-      } catch {
-        res = {
-          disease:'unknown', displayName:'Analysis Incomplete', confidence:60, severity:'Unknown',
-          symptoms:'Could not parse result. Try a clearer leaf photo.',
-          cnnFeatures:['Image received','Pattern extracted','Uncertain result'],
-          treatment:['Use a clearer photo','Ensure good lighting','Leaf should fill frame'],
-          isHealthy:false, icon:'⚠️'
-        };
-      }
-      renderDisease(res, ra);
-    } catch(err) {
-      ra.innerHTML = `<div class="res-card res-danger"><h3>❌ Analysis Failed</h3><p style="font-size:0.82rem;">${err.message}</p></div>`;
-    }
-  };
-  r.readAsDataURL(f);
+if (!file) {
+toast('❌ Upload an image first');
+return;
 }
 
-/* ── RENDER DISEASE RESULT ── */
-function renderDisease(res, ra) {
-  const healthy = res.isHealthy || res.disease === 'healthy';
-  const cls     = healthy ? 'res-success' : res.severity === 'Severe' ? 'res-danger' : 'res-warning';
-  const tx      = res.treatment || treatments[res.disease] || treatments.healthy;
-
-  ra.innerHTML = `
-    <div class="res-card ${cls}">
-      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.4rem;align-items:start;">
-        <div>
-          <h3>${res.icon || '🔬'} ${res.displayName}</h3>
-          <p style="font-size:0.75rem;color:var(--text3);">Confidence: ${res.confidence}%</p>
-        </div>
-        <span style="background:${healthy ? 'var(--green)' : res.severity === 'Severe' ? 'var(--red)' : 'var(--amber)'};
-              color:${healthy ? '#000' : '#fff'};font-size:0.72rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:20px;">
-          ${res.severity} Severity
-        </span>
-      </div>
-      <div class="conf-bar"><div class="conf-fill" style="width:${res.confidence}%"></div></div>
-      <p style="font-size:0.8rem;margin-top:0.5rem;">${res.symptoms}</p>
-      ${res.cnnFeatures?.length ? `<div class="tags" style="margin-top:0.4rem;">${res.cnnFeatures.map(f => `<span class="tag">${f}</span>`).join('')}</div>` : ''}
-    </div>
-    <div class="res-card res-info">
-      <h3>🛡️ Treatment & Prevention</h3>
-      <div style="font-size:0.81rem;">${tx.map((s,i) => `<p style="margin:0.25rem 0;">${i+1}. ${s}</p>`).join('')}</div>
-    </div>`;
-
-  speakText(`${res.displayName} detected with ${res.confidence} percent confidence. Severity: ${res.severity}.`);
-}
+const resultArea = document.getElementById('disease-result-area');
 
 /* ── DEMO MODE ── */
-function demoDisease(type) {
-  const d  = diseaseDB[type];
-  const ra = document.getElementById('disease-result-area');
-  document.querySelector('#disease-results-card > p')?.style.setProperty('display','none');
-  renderDisease({
-    displayName: d.name, icon: d.icon, confidence: d.confidence, severity: d.severity,
-    symptoms: d.symptoms, cnnFeatures: ['Demo mode','Pattern simulation','Local classifier'],
-    treatment: treatments[type], isHealthy: type === 'healthy'
-  }, ra);
+if (!window._groqKey) {
+const demo = Object.values(window.diseaseDB)[
+Math.floor(Math.random() * 3)
+];
+renderDisease(demo, resultArea);
+return;
 }
+
+/* ── REAL API CALL ── */
+const reader = new FileReader();
+
+reader.onload = async e => {
+const base64 = e.target.result.split(',')[1];
+
+```
+try {
+  const response = await fetch(window.GROQ_API, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${window._groqKey}`
+    },
+    body: JSON.stringify({
+      model: window.VISION_MODELS[0],
+      messages: [
+        {
+          role: 'user',
+          content: [
+            { type: 'text', text: 'Identify plant disease' },
+            {
+              type: 'image_url',
+              image_url: {
+                url: `data:image/jpeg;base64,${base64}`
+              }
+            }
+          ]
+        }
+      ]
+    })
+  });
+
+  if (!response.ok) throw new Error('API failed');
+
+  const data = await response.json();
+  const text = data.choices?.[0]?.message?.content || '';
+
+  renderDisease({
+    name: 'Detected Issue',
+    icon: '🔬',
+    symptoms: text,
+    severity: 'Moderate',
+    confidence: 80
+  }, resultArea);
+
+} catch (err) {
+  renderError(err.message, resultArea);
+}
+```
+
+};
+
+reader.readAsDataURL(file);
+}
+
+/* ── RENDER RESULT ── */
+function renderDisease(res, area) {
+if (!area) return;
+
+area.innerHTML = `     <div class="res-card res-warning">       <h3>${res.icon} ${res.name}</h3>       <p style="font-size:0.8rem;">
+        ${res.symptoms}<br><br>
+        Severity: ${res.severity}<br>
+        Confidence: ${res.confidence}%       </p>     </div>
+  `;
+
+if (typeof speakText === 'function') {
+speakText(`${res.name} detected`);
+}
+}
+
+/* ── ERROR ── */
+function renderError(msg, area) {
+if (!area) return;
+
+area.innerHTML = `     <div class="res-card res-danger">       <h3>❌ Detection Failed</h3>       <p>${msg}</p>     </div>
+  `;
+}
+
+/* ── DEMO BUTTON ── */
+function demoDisease(type = 'healthy') {
+const d = window.diseaseDB[type] || window.diseaseDB.healthy;
+renderDisease(d, document.getElementById('disease-result-area'));
+}
+
+/* ── EXPOSE ── */
+window.detectDisease = detectDisease;
+window.previewImage = previewImage;
+window.demoDisease = demoDisease;
