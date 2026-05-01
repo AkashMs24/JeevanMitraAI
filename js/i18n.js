@@ -1,42 +1,108 @@
-/**
- * i18n.js — JeevanMitra AI
- * Internationalisation: English, Kannada, Hindi, Malayalam, Tamil, Telugu
- */
-
 'use strict';
 
-const i18n = {
-  en:{tab_crop:'Crop Advisor',tab_yield:'Yield Forecast',tab_disease:'Disease Detect',tab_market:'Market Prices',tab_calendar:'Crop Calendar',soil_data:'Soil & Environment',auto_weather:'Auto Weather',nitrogen:'Nitrogen (N)',phosphorus:'Phosphorus (P)',potassium:'Potassium (K)',temperature:'Temperature (°C)',humidity:'Humidity (%)',ph:'Soil pH',rainfall:'Rainfall (mm)',soil_type:'Soil Type',get_recommendations:'Get Recommendations',recommendations:'Recommendations',enter_data_prompt:'Enter soil data and click Recommend',yield_input:'Yield Prediction Input',select_crop:'Select Crop',predict_yield:'Predict Yield',yield_results:'Yield Results',enter_yield_prompt:'Set parameters above',upload_leaf:'Upload Leaf Image',click_upload:'Click to upload leaf image',detect_disease:'Detect Disease (AI)',quick_demo:'Quick Demo',diagnosis:'Diagnosis Results',upload_prompt:'Upload a leaf image and click detect',market_prices:'Market Prices',last_updated:'Updated',crop_col:'Crop',price_col:'Price (₹/qtl)',market_col:'Market',trend_col:'Trend',price_chart:'Price Chart',chat_welcome:"Hello! I'm JeevanMitra AI. Ask about crops, diseases, yield or prices! 🌿",qa_crop:'🌱 Best crop?',qa_yield:'📊 Yield',qa_disease:'🔍 Disease',qa_price:'💰 Prices',voice_listening:'🎤 Listening…',voice_not_supported:'❌ Voice not supported in this browser',weather_filled:'🌤️ Weather data filled!',lang_changed:'Language: English',top_crops:'🏆 Top 5 Recommended Crops',expected_yield:'Expected Yield',optimization_tips:'💡 Optimization Tips',why_recommendation:'🧠 Why this recommendation?'},
-  kn:{tab_crop:'ಬೆಳೆ ಸಲಹೆ',tab_yield:'ಇಳುವರಿ ಊಹೆ',tab_disease:'ರೋಗ ಪತ್ತೆ',tab_market:'ಮಾರುಕಟ್ಟೆ ಬೆಲೆ',tab_calendar:'ಕೃಷಿ ಕ್ಯಾಲೆಂಡರ್',soil_data:'ಮಣ್ಣು & ಪರಿಸರ',auto_weather:'ಹವಾಮಾನ ತುಂಬಿ',nitrogen:'ನೈಟ್ರೋಜನ್ (N)',phosphorus:'ರಂಜಕ (P)',potassium:'ಪೊಟ್ಯಾಸಿಯಮ್ (K)',temperature:'ತಾಪಮಾನ (°C)',humidity:'ಆರ್ದ್ರತೆ (%)',ph:'ಮಣ್ಣಿನ pH',rainfall:'ಮಳೆ (mm)',soil_type:'ಮಣ್ಣಿನ ಪ್ರಕಾರ',get_recommendations:'ಶಿಫಾರಸು ಪಡೆಯಿರಿ',recommendations:'ಶಿಫಾರಸುಗಳು',enter_data_prompt:'ಡೇಟಾ ನಮೂದಿಸಿ ಕ್ಲಿಕ್ ಮಾಡಿ',yield_input:'ಇಳುವರಿ ಊಹೆ ಇನ್‌ಪುಟ್',select_crop:'ಬೆಳೆ ಆಯ್ಕೆ ಮಾಡಿ',predict_yield:'ಇಳುವರಿ ಊಹಿಸಿ',yield_results:'ಇಳುವರಿ ಫಲಿತಾಂಶ',enter_yield_prompt:'ಮೇಲಿನ ನಿಯತಾಂಕಗಳನ್ನು ಹೊಂದಿಸಿ',upload_leaf:'ಎಲೆ ಚಿತ್ರ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ',click_upload:'ಕ್ಲಿಕ್ ಮಾಡಿ ಅಪ್‌ಲೋಡ್',detect_disease:'ರೋಗ ಪತ್ತೆ (AI)',quick_demo:'ತ್ವರಿತ ಡೆಮೊ',diagnosis:'ರೋಗನಿರ್ಣಯ',upload_prompt:'ಎಲೆ ಚಿತ್ರ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ',market_prices:'ಮಾರುಕಟ್ಟೆ ಬೆಲೆಗಳು',last_updated:'ನವೀಕರಿಸಲಾಗಿದೆ',crop_col:'ಬೆಳೆ',price_col:'ಬೆಲೆ (₹/ಕ್ವಿಂಟಾಲ್)',market_col:'ಮಾರುಕಟ್ಟೆ',trend_col:'ಪ್ರವೃತ್ತಿ',price_chart:'ಬೆಲೆ ಚಾರ್ಟ್',chat_welcome:'ನಮಸ್ಕಾರ! ನಾನು ಜೀವನಮಿತ್ರ AI. ಬೆಳೆ, ರೋಗ, ಇಳುವರಿ ಬಗ್ಗೆ ಕೇಳಿ! 🌿',qa_crop:'🌱 ಅತ್ಯುತ್ತಮ ಬೆಳೆ?',qa_yield:'📊 ಇಳುವರಿ',qa_disease:'🔍 ರೋಗ',qa_price:'💰 ಬೆಲೆ',voice_listening:'🎤 ಆಲಿಸುತ್ತಿದೆ…',voice_not_supported:'❌ ಧ್ವನಿ ಬೆಂಬಲಿಲ್ಲ',weather_filled:'🌤️ ಹವಾಮಾನ ಡೇಟಾ ತುಂಬಲಾಗಿದೆ!',lang_changed:'ಭಾಷೆ: ಕನ್ನಡ',top_crops:'🏆 ಟಾಪ್ 5 ಬೆಳೆಗಳು',expected_yield:'ನಿರೀಕ್ಷಿತ ಇಳುವರಿ',optimization_tips:'💡 ಸುಧಾರಣೆ ಸಲಹೆ',why_recommendation:'🧠 ಈ ಶಿಫಾರಸು ಏಕೆ?'},
-  hi:{tab_crop:'फसल सलाह',tab_yield:'उपज अनुमान',tab_disease:'रोग पहचान',tab_market:'बाजार मूल्य',tab_calendar:'फसल कैलेंडर',soil_data:'मिट्टी व पर्यावरण',auto_weather:'मौसम भरें',nitrogen:'नाइट्रोजन (N)',phosphorus:'फास्फोरस (P)',potassium:'पोटाश (K)',temperature:'तापमान (°C)',humidity:'आर्द्रता (%)',ph:'मिट्टी pH',rainfall:'वर्षा (mm)',soil_type:'मिट्टी प्रकार',get_recommendations:'सिफारिशें पाएं',recommendations:'सिफारिशें',enter_data_prompt:'मिट्टी का डेटा दर्ज करें',yield_input:'उपज इनपुट',select_crop:'फसल चुनें',predict_yield:'उपज अनुमान',yield_results:'उपज परिणाम',enter_yield_prompt:'ऊपर के मानदंड सेट करें',upload_leaf:'पत्ते की छवि अपलोड करें',click_upload:'अपलोड के लिए क्लिक करें',detect_disease:'रोग पहचानें (AI)',quick_demo:'त्वरित डेमो',diagnosis:'निदान',upload_prompt:'पत्ते की छवि अपलोड करें',market_prices:'बाजार मूल्य',last_updated:'अपडेट',crop_col:'फसल',price_col:'मूल्य (₹/क्विंटल)',market_col:'बाजार',trend_col:'रुझान',price_chart:'मूल्य चार्ट',chat_welcome:'नमस्ते! मैं जीवनमित्र AI हूं। फसल, रोग, उपज के बारे में पूछें! 🌿',qa_crop:'🌱 सबसे अच्छी फसल?',qa_yield:'📊 उपज',qa_disease:'🔍 रोग',qa_price:'💰 भाव',voice_listening:'🎤 सुन रहा हूं…',voice_not_supported:'❌ वॉइस उपलब्ध नहीं',weather_filled:'🌤️ मौसम डेटा भरा!',lang_changed:'भाषा: हिंदी',top_crops:'🏆 शीर्ष 5 फसलें',expected_yield:'अनुमानित उपज',optimization_tips:'💡 सुधार सुझाव',why_recommendation:'🧠 यह सिफारिश क्यों?'},
-  ml:{tab_crop:'വിള ഉപദേശം',tab_yield:'വിളവ് പ്രവചനം',tab_disease:'രോഗ കണ്ടെത്തൽ',tab_market:'വിപണി വില',tab_calendar:'കൃഷി കലണ്ടർ',soil_data:'മണ്ണ് & പരിസ്ഥിതി',auto_weather:'കാലാവസ്ഥ ഭരിക്കുക',nitrogen:'നൈട്രജൻ (N)',phosphorus:'ഫോസ്ഫറസ് (P)',potassium:'പൊട്ടാഷ് (K)',temperature:'താപനില (°C)',humidity:'ആർദ്രത (%)',ph:'മണ്ണ് pH',rainfall:'മഴ (mm)',soil_type:'മണ്ണ് തരം',get_recommendations:'ശുപാർശ ലഭിക്കൂ',recommendations:'ശുപാർശകൾ',enter_data_prompt:'ഡേറ്റ ഇടൂ ക്ലിക്ക് ചെയ്യൂ',yield_input:'വിളവ് ഇൻപുട്ട്',select_crop:'വിള തിരഞ്ഞെടുക്കൂ',predict_yield:'വിളവ് പ്രവചിക്കൂ',yield_results:'വിളവ് ഫലം',enter_yield_prompt:'മുകളിലുള്ള പരിധി സജ്ജമാക്കൂ',upload_leaf:'ഇല ചിത്രം അപ്ലോഡ്',click_upload:'ക്ലിക്ക് ചെയ്ത് അപ്ലോഡ് ചെയ്യൂ',detect_disease:'രോഗം കണ്ടെത്തൂ (AI)',quick_demo:'ഡെമോ',diagnosis:'രോഗനിർണ്ണയം',upload_prompt:'ഇല ചിത്രം അപ്ലോഡ് ചെയ്യൂ',market_prices:'വിപണി വിലകൾ',last_updated:'അപ്‌ഡേറ്റ്',crop_col:'വിള',price_col:'വില (₹/ക്വിന്റൽ)',market_col:'വിപണി',trend_col:'ട്രെൻഡ്',price_chart:'വില ചാർട്ട്',chat_welcome:'നമസ്കാരം! ഞാൻ ജീവൻമിത്ര AI. 🌿',qa_crop:'🌱 ഏത് വിള?',qa_yield:'📊 വിളവ്',qa_disease:'🔍 രോഗം',qa_price:'💰 വില',voice_listening:'🎤 ശ്രദ്ധിക്കുന്നു…',voice_not_supported:'❌ ശബ്ദ ഇൻപുട്ട് ലഭ്യമല്ല',weather_filled:'🌤️ കാലാവസ്ഥ ഡേറ്റ ഭരിച്ചു!',lang_changed:'ഭാഷ: മലയാളം',top_crops:'🏆 ടോപ്പ് 5 വിളകൾ',expected_yield:'പ്രതീക്ഷിത വിളവ്',optimization_tips:'💡 മെച്ചപ്പെടുത്തൽ',why_recommendation:'🧠 ഈ ശുപാർശ എന്തുകൊണ്ട്?'},
-  ta:{tab_crop:'பயிர் ஆலோசனை',tab_yield:'விளைச்சல் கணிப்பு',tab_disease:'நோய் கண்டறிதல்',tab_market:'சந்தை விலை',tab_calendar:'பயிர் காலண்டர்',soil_data:'மண் & சுற்றுச்சூழல்',auto_weather:'வானிலை நிரப்பு',nitrogen:'நைட்ரஜன் (N)',phosphorus:'பாஸ்பரஸ் (P)',potassium:'பொட்டாசியம் (K)',temperature:'வெப்பம் (°C)',humidity:'ஈரம் (%)',ph:'மண் pH',rainfall:'மழை (mm)',soil_type:'மண் வகை',get_recommendations:'பரிந்துரை பெறு',recommendations:'பரிந்துரைகள்',enter_data_prompt:'தரவை உள்ளிட்டு கிளிக் செய்யவும்',yield_input:'விளைச்சல் உள்ளீடு',select_crop:'பயிர் தேர்ந்தெடு',predict_yield:'விளைச்சல் கணி',yield_results:'விளைச்சல் முடிவு',enter_yield_prompt:'மேலே அளவுருக்களை அமைக்கவும்',upload_leaf:'இலை படம் பதிவேற்று',click_upload:'பதிவேற்ற கிளிக்',detect_disease:'நோயை கண்டறி (AI)',quick_demo:'விரைவு டெமோ',diagnosis:'நோயறிதல்',upload_prompt:'இலை படம் பதிவேற்றவும்',market_prices:'சந்தை விலைகள்',last_updated:'புதுப்பிக்கப்பட்டது',crop_col:'பயிர்',price_col:'விலை (₹/குவிண்டால்)',market_col:'சந்தை',trend_col:'போக்கு',price_chart:'விலை விளக்கம்',chat_welcome:'வணக்கம்! நான் ஜீவன்மித்ரா AI. 🌿',qa_crop:'🌱 சிறந்த பயிர்?',qa_yield:'📊 விளைச்சல்',qa_disease:'🔍 நோய்',qa_price:'💰 விலை',voice_listening:'🎤 கேட்கிறேன்…',voice_not_supported:'❌ குரல் ஆதரவு இல்லை',weather_filled:'🌤️ வானிலை நிரப்பப்பட்டது!',lang_changed:'மொழி: தமிழ்',top_crops:'🏆 முதல் 5 பயிர்கள்',expected_yield:'விளைச்சல் மதிப்பீடு',optimization_tips:'💡 மேம்படுத்தல்',why_recommendation:'🧠 ஏன் இந்த பரிந்துரை?'},
-  te:{tab_crop:'పంట సలహా',tab_yield:'దిగుబడి అంచనా',tab_disease:'వ్యాధి గుర్తింపు',tab_market:'మార్కెట్ ధరలు',tab_calendar:'పంట క్యాలెండర్',soil_data:'నేల & పర్యావరణం',auto_weather:'వాతావరణం నింపు',nitrogen:'నత్రజని (N)',phosphorus:'భాస్వరం (P)',potassium:'పొటాషియం (K)',temperature:'ఉష్ణోగ్రత (°C)',humidity:'తేమ (%)',ph:'నేల pH',rainfall:'వర్షపాతం (mm)',soil_type:'నేల రకం',get_recommendations:'సిఫార్సులు పొందండి',recommendations:'సిఫార్సులు',enter_data_prompt:'నేల డేటా నమోదు చేసి క్లిక్ చేయండి',yield_input:'దిగుబడి ఇన్‌పుట్',select_crop:'పంట ఎంచుకోండి',predict_yield:'దిగుబడి అంచనా',yield_results:'దిగుబడి ఫలితాలు',enter_yield_prompt:'పై పారామీటర్లు సెట్ చేయండి',upload_leaf:'ఆకు చిత్రం అప్‌లోడ్',click_upload:'అప్‌లోడ్ చేయడానికి క్లిక్',detect_disease:'వ్యాధి గుర్తించండి (AI)',quick_demo:'డెమో',diagnosis:'రోగనిర్ణయం',upload_prompt:'ఆకు చిత్రం అప్‌లోడ్ చేయండి',market_prices:'మార్కెట్ ధరలు',last_updated:'నవీకరించబడింది',crop_col:'పంట',price_col:'ధర (₹/క్వింటాల్)',market_col:'మార్కెట్',trend_col:'ట్రెండ్',price_chart:'ధర చార్ట్',chat_welcome:'నమస్కారం! నేను జీవన్‌మిత్ర AI. 🌿',qa_crop:'🌱 ఉత్తమ పంట?',qa_yield:'📊 దిగుబడి',qa_disease:'🔍 వ్యాధి',qa_price:'💰 ధరలు',voice_listening:'🎤 వింటున్నాను…',voice_not_supported:'❌ వాయిస్ మద్దతు లేదు',weather_filled:'🌤️ వాతావరణ డేటా నింపబడింది!',lang_changed:'భాష: తెలుగు',top_crops:'🏆 అగ్ర 5 పంటలు',expected_yield:'అంచనా దిగుబడి',optimization_tips:'💡 మెరుగుదల చిట్కాలు',why_recommendation:'🧠 ఈ సిఫార్సు ఎందుకు?'}
+/* ── LANGUAGE DATA ── */
+window.i18n = {
+en: {
+get_recommendations: "Get Recommendations",
+top_crops: "Top 5 Recommended Crops",
+optimization_tips: "Optimization Tips",
+why_recommendation: "Why this recommendation?",
+chat_welcome: "Hello! I'm JeevanMitra AI 🌿",
+lang_changed: "Language changed to English"
+},
+hi: {
+get_recommendations: "सिफारिश प्राप्त करें",
+top_crops: "शीर्ष 5 फसलें",
+optimization_tips: "सुधार सुझाव",
+why_recommendation: "यह सिफारिश क्यों?",
+chat_welcome: "नमस्ते! मैं जीवनमित्र AI हूँ 🌿",
+lang_changed: "भाषा बदल दी गई है"
+},
+kn: {
+get_recommendations: "ಶಿಫಾರಸು ಪಡೆಯಿರಿ",
+top_crops: "ಟಾಪ್ 5 ಬೆಳೆಗಳು",
+optimization_tips: "ಸುಧಾರಣೆ ಸಲಹೆಗಳು",
+why_recommendation: "ಈ ಶಿಫಾರಸು ಯಾಕೆ?",
+chat_welcome: "ನಮಸ್ಕಾರ! ನಾನು ಜೀವನಮಿತ್ರ AI 🌿",
+lang_changed: "ಭಾಷೆ ಬದಲಾಯಿಸಲಾಗಿದೆ"
+}
 };
 
-/** Get translation for key in current language */
-function t(k) {
-  return i18n[window.currentLanguage]?.[k] || i18n.en[k] || k;
+/* ── CROP NAMES (FOR MARKET + CROP MODULE) ── */
+window.cropNames = {
+en: {
+rice: "Rice",
+wheat: "Wheat",
+maize: "Maize",
+cotton: "Cotton",
+sugarcane: "Sugarcane",
+millet: "Millet",
+banana: "Banana",
+potato: "Potato",
+tomato: "Tomato",
+onion: "Onion"
+},
+hi: {
+rice: "चावल",
+wheat: "गेहूं",
+maize: "मक्का",
+cotton: "कपास"
+},
+kn: {
+rice: "ಅಕ್ಕಿ",
+wheat: "ಗೋಧಿ",
+maize: "ಮೆಕ್ಕೆಜೋಳ",
+cotton: "ಹತ್ತಿ"
+}
+};
+
+/* ── TRANSLATION FUNCTION ── */
+function t(key) {
+const lang = window.currentLanguage || 'en';
+return window.i18n[lang]?.[key] || window.i18n.en[key] || key;
 }
 
-/** Apply all data-i18n attributes on page */
+/* ── APPLY TEXT TO UI ── */
 function applyTranslations() {
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const k = el.getAttribute('data-i18n');
-    el.textContent = t(k);
-  });
+document.querySelectorAll('[data-i18n]').forEach(el => {
+const key = el.getAttribute('data-i18n');
+el.textContent = t(key);
+});
 }
 
-/** Switch language globally */
+/* ── LANGUAGE SWITCH ── */
 function setLanguage(lang) {
-  window.currentLanguage = lang;
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector(`.lang-btn[data-lang="${lang}"]`)?.classList.add('active');
-  applyTranslations();
-  loadMarketPrices();
-  const wEl = document.getElementById('welcome-message');
-  if (wEl) wEl.textContent = t('chat_welcome');
-  predictYield();
-  livePreviewCrop();
-  toast(t('lang_changed'));
+window.currentLanguage = lang;
+
+document.querySelectorAll('.lang-btn').forEach(btn =>
+btn.classList.remove('active')
+);
+
+document.querySelector(`.lang-btn[data-lang="${lang}"]`)
+?.classList.add('active');
+
+applyTranslations();
+
+// Refresh dependent modules
+if (typeof loadMarketPrices === 'function') loadMarketPrices();
+if (typeof predictYield === 'function') predictYield();
+if (typeof livePreviewCrop === 'function') livePreviewCrop();
+
+if (typeof toast === 'function') {
+toast(t('lang_changed'));
 }
+}
+
+/* ── HELPER (FIXES OLD lcn ERROR) ── */
+function lcn(key) {
+const lang = window.currentLanguage || 'en';
+return window.cropNames?.[lang]?.[key]
+|| window.cropNames?.en?.[key]
+|| key;
+}
+
+/* ── EXPOSE GLOBALS ── */
+window.t = t;
+window.setLanguage = setLanguage;
+window.applyTranslations = applyTranslations;
+window.lcn = lcn;
