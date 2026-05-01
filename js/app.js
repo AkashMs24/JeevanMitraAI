@@ -91,18 +91,73 @@ async function callGroqVision(prompt, b64, mime = 'image/jpeg') {
 }
 
 // ═══════════════════════════════════════════════════════
-// SPEECH SYNTHESIS
+// SPEECH SYNTHESIS — Universal speak function
 // ═══════════════════════════════════════════════════════
 function speakText(text) {
   if (!('speechSynthesis' in window)) return;
+  
+  // Cancel any ongoing speech
   speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text.replace(/<[^>]+>/g, ''));
-  u.lang = { en: 'en-IN', kn: 'kn-IN', hi: 'hi-IN', ml: 'ml-IN', ta: 'ta-IN', te: 'te-IN' }[currentLanguage] || 'en-IN';
+  
+  // Clean HTML tags from text
+  const cleanText = text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  
+  const u = new SpeechSynthesisUtterance(cleanText);
+  const langMap = { en: 'en-IN', kn: 'kn-IN', hi: 'hi-IN', ml: 'ml-IN', ta: 'ta-IN', te: 'te-IN' };
+  u.lang = langMap[currentLanguage] || 'en-IN';
   u.rate = 0.85;
+  u.pitch = 1.0;
+  u.volume = 1.0;
+  
+  // Get available voices
   const voices = speechSynthesis.getVoices();
-  const best = voices.find(v => v.lang === u.lang) || voices.find(v => v.lang.startsWith(currentLanguage)) || null;
-  if (best) u.voice = best;
+  
+  // Try to find matching voice
+  let bestVoice = null;
+  
+  // First: exact match
+  bestVoice = voices.find(v => v.lang === u.lang);
+  
+  // Second: starts with language code
+  if (!bestVoice) {
+    const langPrefix = u.lang.split('-')[0];
+    bestVoice = voices.find(v => v.lang.startsWith(langPrefix));
+  }
+  
+  // Third: any Indian English voice
+  if (!bestVoice) {
+    bestVoice = voices.find(v => v.lang === 'en-IN');
+  }
+  
+  if (bestVoice) u.voice = bestVoice;
+  
+  // Speak it
   speechSynthesis.speak(u);
+  
+  // Log for debugging
+  console.log('🔊 Speaking:', cleanText.substring(0, 50) + '...', 'Lang:', u.lang, 'Voice:', bestVoice?.name || 'default');
+}
+
+// ═══════════════════════════════════════════════════════
+// SPEAK BUTTON — Add voice button to all result cards
+// ═══════════════════════════════════════════════════════
+function addSpeakButtons() {
+  // Add speak buttons to all result cards
+  document.querySelectorAll('.res-card').forEach(card => {
+    // Don't add if already exists
+    if (card.querySelector('.speak-btn')) return;
+    
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-sm btn-outline speak-btn';
+    btn.innerHTML = '🔊 ' + t('listen') || 'Listen';
+    btn.style.cssText = 'margin-top:0.5rem;';
+    btn.onclick = function(e) {
+      e.stopPropagation();
+      const text = card.innerText || card.textContent;
+      speakText(text);
+    };
+    card.appendChild(btn);
+  });
 }
 
 // ═══════════════════════════════════════════════════════
@@ -138,8 +193,21 @@ document.addEventListener('DOMContentLoaded', () => {
   // Preload voices for speech synthesis
   if ('speechSynthesis' in window) {
     speechSynthesis.getVoices();
-    speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+    speechSynthesis.onvoiceschanged = () => {
+      speechSynthesis.getVoices();
+      console.log('🎤 Voices loaded:', speechSynthesis.getVoices().length);
+    };
   }
+  
+  // Watch for result changes and add speak buttons
+  const observer = new MutationObserver(() => {
+    addSpeakButtons();
+  });
+  
+  ['crop-result-area', 'yield-result-area', 'disease-result-area'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el, { childList: true, subtree: true });
+  });
   
   console.log('🌿 JeevanMitra AI v2.0 — OmniDimension Voice Agent Integrated');
 });
@@ -158,3 +226,4 @@ window.addEventListener('resize', () => {
 // ═══════════════════════════════════════════════════════
 window.saveKey = saveKey;
 window.closeModal = closeModal;
+window.speakText = speakText;
