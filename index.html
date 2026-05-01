@@ -1,682 +1,307 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>🌿 JeevanMitra AI — Smart Farming Companion with Omni Voice & Groq</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: #f4fbf7;
-      color: #1a2e2a;
-      padding: 0;
-      margin: 0;
-    }
-
-    :root {
-      --green: #1f8a4c;
-      --green-light: #e1f5ea;
-      --dark: #1c2e2a;
-      --text2: #3b5e4c;
-      --text3: #6b8f7c;
-      --border: #cce3d6;
-      --card: #ffffff;
-      --bg2: #f0f6f2;
-    }
-
-    /* Header */
-    .header {
-      background: white;
-      border-bottom: 1px solid var(--border);
-      padding: 0.6rem 1.2rem;
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      backdrop-filter: blur(2px);
-      background: rgba(255,255,255,0.96);
-    }
-    .header-inner {
-      max-width: 1600px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .brand-icon { font-size: 2rem; }
-    .brand h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.3px; }
-    .brand h1 span { color: var(--green); }
-    .brand-sub { font-size: 0.7rem; color: var(--text3); font-weight: 500; }
-    .lang-bar {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .lang-btn {
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 40px;
-      padding: 4px 12px;
-      font-size: 0.7rem;
-      font-weight: 500;
-      cursor: pointer;
-      color: var(--text2);
-      transition: 0.1s;
-    }
-    .lang-btn.active {
-      background: var(--green);
-      border-color: var(--green);
-      color: white;
-    }
-    /* API status */
-    .api-bar {
-      background: #fef5e7;
-      border-bottom: 1px solid #fadc9e;
-      padding: 6px 20px;
-      font-size: 0.75rem;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      font-weight: 500;
-      color: #a1662f;
-    }
-    .api-bar.disconnected { background: #fff2e6; }
-    .api-dot { width: 10px; height: 10px; border-radius: 50%; background: #e67e22; display: inline-block; }
-    /* main layout */
-    .main {
-      max-width: 1600px;
-      margin: 0 auto;
-      padding: 1rem 1.2rem;
-      display: flex;
-      gap: 1.5rem;
-      align-items: flex-start;
-    }
-    .content { flex: 1; min-width: 0; }
-    /* tabs */
-    .tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 1.2rem;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 6px;
-    }
-    .tab-btn {
-      background: none;
-      border: none;
-      padding: 8px 14px;
-      font-weight: 600;
-      font-size: 0.85rem;
-      border-radius: 40px;
-      cursor: pointer;
-      color: var(--text2);
-      transition: all 0.2s;
-    }
-    .tab-btn.active {
-      background: var(--green);
-      color: white;
-    }
-    .tab-content { display: none; animation: fade 0.2s; }
-    .tab-content.active { display: block; }
-    @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
-    /* cards */
-    .card {
-      background: var(--card);
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      padding: 1.2rem 1.2rem;
-      margin-bottom: 0.8rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-    }
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    .form-group label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.8rem;
-      font-weight: 500;
-      margin-bottom: 5px;
-    }
-    input[type="range"] {
-      width: 100%;
-      accent-color: var(--green);
-    }
-    select, .btn {
-      padding: 8px 12px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: white;
-      font-weight: 500;
-    }
-    .btn-green {
-      background: var(--green);
-      border: none;
-      color: white;
-      font-weight: 600;
-    }
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--green);
-      color: var(--green);
-    }
-    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 0.5rem; }
-    .btn-sm { font-size: 0.7rem; padding: 5px 10px; }
-    .btn-block { width: 100%; }
-    .upload-zone {
-      border: 2px dashed var(--border);
-      border-radius: 20px;
-      padding: 1rem;
-      text-align: center;
-      cursor: pointer;
-      background: var(--bg2);
-    }
-    .price-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.8rem;
-    }
-    .price-table th, .price-table td {
-      padding: 10px 6px;
-      border-bottom: 1px solid var(--border);
-      text-align: left;
-    }
-    /* Chat panel */
-    .chat-panel {
-      width: 330px;
-      background: white;
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
-      display: flex;
-      flex-direction: column;
-      height: calc(100vh - 110px);
-      position: sticky;
-      top: 85px;
-      overflow: hidden;
-    }
-    .chat-header {
-      background: var(--green);
-      color: white;
-      padding: 0.9rem 1rem;
-      font-weight: 700;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 0.8rem;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      background: #fefef9;
-    }
-    .chat-msg {
-      display: flex;
-      gap: 8px;
-      align-items: flex-start;
-    }
-    .chat-msg.user { flex-direction: row-reverse; }
-    .chat-bubble {
-      background: #e2f1e7;
-      padding: 8px 12px;
-      border-radius: 18px;
-      font-size: 0.8rem;
-      max-width: 85%;
-      line-height: 1.4;
-    }
-    .chat-msg.user .chat-bubble {
-      background: var(--green);
-      color: white;
-    }
-    .chat-quick-btns {
-      display: flex;
-      gap: 6px;
-      padding: 8px 10px;
-      border-top: 1px solid var(--border);
-      flex-wrap: wrap;
-    }
-    .chat-quick-btns button {
-      background: none;
-      border: 1px solid var(--green);
-      border-radius: 40px;
-      font-size: 0.7rem;
-      padding: 4px 10px;
-      color: var(--green);
-      cursor: pointer;
-    }
-    .chat-input-row {
-      display: flex;
-      gap: 6px;
-      padding: 10px;
-      border-top: 1px solid var(--border);
-    }
-    .chat-input-row input {
-      flex: 1;
-      border: 1px solid #ccc;
-      border-radius: 30px;
-      padding: 8px 12px;
-      font-size: 0.8rem;
-    }
-    .chat-input-row button {
-      background: var(--green);
-      border: none;
-      border-radius: 30px;
-      width: 36px;
-      color: white;
-      cursor: pointer;
-    }
-    .chat-fab {
-      display: none;
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--green);
-      width: 54px;
-      height: 54px;
-      border-radius: 30px;
-      border: none;
-      font-size: 1.7rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      cursor: pointer;
-      z-index: 99;
-    }
-    @media (max-width: 780px) {
-      .main { flex-direction: column; }
-      .chat-panel { width: 100%; position: static; height: 460px; margin-top: 1rem; }
-      .chat-fab { display: flex; align-items: center; justify-content: center; }
-    }
-    .toast {
-      position: fixed;
-      bottom: 28px;
-      left: 20px;
-      background: #1e2a24;
-      color: white;
-      padding: 8px 18px;
-      border-radius: 40px;
-      font-size: 0.75rem;
-      opacity: 0;
-      transition: 0.2s;
-      pointer-events: none;
-      z-index: 999;
-    }
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.4);
-      backdrop-filter: blur(4px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      visibility: hidden;
-      opacity: 0;
-      transition: 0.2s;
-    }
-    .modal-overlay.active {
-      visibility: visible;
-      opacity: 1;
-    }
-    .modal-box {
-      background: white;
-      max-width: 400px;
-      width: 90%;
-      border-radius: 28px;
-      padding: 1.6rem;
-    }
-    .modal-input {
-      width: 100%;
-      padding: 10px;
-      margin: 12px 0;
-      border-radius: 40px;
-      border: 1px solid #ccc;
-    }
-    .typing-dots {
-      display: flex;
-      gap: 4px;
-      padding: 6px 0;
-    }
-    .typing-dot {
-      width: 6px;
-      height: 6px;
-      background: #6b8f7c;
-      border-radius: 50%;
-      animation: pulse 1.2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 0.4; transform: scale(0.8);}
-      50% { opacity: 1; transform: scale(1);}
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌿 JeevanMitra AI — Smart Farming Companion</title>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<!-- HEADER with Omni voice context -->
+<!-- HEADER -->
 <header class="header">
   <div class="header-inner">
     <div class="brand">
       <span class="brand-icon">🌿</span>
       <div>
         <h1>Jeevan<span>Mitra</span> AI</h1>
-        <div class="brand-sub">Smart Farming Companion · Omni Voice + Groq AI</div>
+        <div class="brand-sub">Smart Farming Companion</div>
       </div>
     </div>
     <div class="lang-bar">
-      <button class="lang-btn active" data-lang="en">English</button>
-      <button class="lang-btn" data-lang="hi">हिंदी</button>
-      <button class="lang-btn" data-lang="kn">ಕನ್ನಡ</button>
+      <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">English</button>
+      <button class="lang-btn" data-lang="kn" onclick="setLanguage('kn')">ಕನ್ನಡ</button>
+      <button class="lang-btn" data-lang="hi" onclick="setLanguage('hi')">हिंदी</button>
+      <button class="lang-btn" data-lang="ml" onclick="setLanguage('ml')">മലയാളം</button>
+      <button class="lang-btn" data-lang="ta" onclick="setLanguage('ta')">தமிழ்</button>
+      <button class="lang-btn" data-lang="te" onclick="setLanguage('te')">తెలుగు</button>
     </div>
   </div>
 </header>
 
-<!-- API KEY STATUS BAR -->
-<div class="api-bar disconnected" id="apiBar" onclick="openKeyModal()">
+<!-- API STATUS BAR -->
+<div class="api-bar disconnected" id="apiBar" onclick="showModal()">
   <span class="api-dot"></span>
-  <span id="apiBarText">🔑 Click to enter FREE Groq API key — voice + chat ready</span>
+  <span id="apiBarText">🔑 Click to enter your FREE Groq API key — no server needed</span>
 </div>
 
-<div class="main">
+<!-- MAIN LAYOUT -->
+<div class="main" id="mainContainer">
   <div class="content">
-    <!-- TABS (Crop advisor, disease detect simplified but full) -->
+
+    <!-- TABS -->
     <div class="tabs">
-      <button class="tab-btn active" data-tab="crop">🌾 Crop Advisor</button>
-      <button class="tab-btn" data-tab="disease">🔬 Disease Detect</button>
-      <button class="tab-btn" data-tab="market">💰 Market Prices</button>
-      <button class="tab-btn" data-tab="calendar">📅 Crop Calendar</button>
+      <button class="tab-btn active" data-tab="crop" onclick="switchTab('crop')">🌱 <span data-i18n="tab_crop">Crop Advisor</span></button>
+      <button class="tab-btn" data-tab="yield" onclick="switchTab('yield')">📊 <span data-i18n="tab_yield">Yield Forecast</span></button>
+      <button class="tab-btn" data-tab="disease" onclick="switchTab('disease')">🔬 <span data-i18n="tab_disease">Disease Detect</span></button>
+      <button class="tab-btn" data-tab="market" onclick="switchTab('market')">💰 <span data-i18n="tab_market">Market Prices</span></button>
+      <button class="tab-btn" data-tab="calendar" onclick="switchTab('calendar')">📅 <span data-i18n="tab_calendar">Crop Calendar</span></button>
     </div>
 
-    <!-- Crop Advisor Tab -->
+    <!-- ══ CROP ADVISOR ══ -->
     <div class="tab-content active" id="tab-crop">
-      <div class="card">
-        <h2>🧪 Smart Crop Recommendation</h2>
-        <div class="grid-2">
-          <div>
-            <div class="form-group"><label>Nitrogen (N) <span id="n-val">50</span></label><input type="range" id="n" min="0" max="140" value="50"></div>
-            <div class="form-group"><label>Phosphorus (P) <span id="p-val">50</span></label><input type="range" id="p" min="5" max="145" value="50"></div>
-            <div class="form-group"><label>Potassium (K) <span id="k-val">50</span></label><input type="range" id="k" min="5" max="205" value="50"></div>
-            <div class="form-group"><label>Temp (°C) <span id="temp-val">25</span></label><input type="range" id="temp" min="8" max="45" value="25"></div>
-            <div class="form-group"><label>Humidity (%) <span id="hum-val">65</span></label><input type="range" id="hum" min="20" max="95" value="65"></div>
-            <button class="btn btn-green btn-block" id="cropRecBtn">🔮 Recommend Crop</button>
+      <div class="grid-2">
+        <div class="card">
+          <h2>🧪 <span data-i18n="soil_data">Soil & Environment Data</span></h2>
+          <div class="form-group">
+            <label><span data-i18n="nitrogen">Nitrogen (N)</span> <span class="range-val" id="n-value">50</span></label>
+            <input type="range" id="n" min="0" max="140" value="50" oninput="updateSlider('n');livePreviewCrop()">
           </div>
-          <div id="cropRecommendResult"><p style="color:var(--text3);">Click recommend to see suggestions</p></div>
+          <div class="form-group">
+            <label><span data-i18n="phosphorus">Phosphorus (P)</span> <span class="range-val" id="p-value">50</span></label>
+            <input type="range" id="p" min="5" max="145" value="50" oninput="updateSlider('p');livePreviewCrop()">
+          </div>
+          <div class="form-group">
+            <label><span data-i18n="potassium">Potassium (K)</span> <span class="range-val" id="k-value">50</span></label>
+            <input type="range" id="k" min="5" max="205" value="50" oninput="updateSlider('k');livePreviewCrop()">
+          </div>
+          <div class="form-group">
+            <label><span data-i18n="temperature">Temperature (°C)</span> <span class="range-val" id="temp-value">25</span></label>
+            <input type="range" id="temp" min="8" max="45" value="25" oninput="updateSlider('temp');livePreviewCrop()">
+          </div>
+          <div class="form-group">
+            <label><span data-i18n="humidity">Humidity (%)</span> <span class="range-val" id="hum-value">65</span></label>
+            <input type="range" id="hum" min="14" max="100" value="65" oninput="updateSlider('hum');livePreviewCrop()">
+          </div>
+          <div class="form-group">
+            <label><span data-i18n="ph">Soil pH</span> <span class="range-val" id="ph-value">6.5</span></label>
+            <input type="range" id="ph" min="3.5" max="9.5" value="6.5" step="0.1" oninput="updateSlider('ph');livePreviewCrop()">
+          </div>
+          <div class="form-group">
+            <label><span data-i18n="rainfall">Rainfall (mm)</span> <span class="range-val" id="rain-value">150</span></label>
+            <input type="range" id="rain" min="20" max="350" value="150" oninput="updateSlider('rain');livePreviewCrop()">
+          </div>
+          <div class="form-group">
+            <label data-i18n="soil_type">Soil Type</label>
+            <select id="soil-type" onchange="livePreviewCrop()">
+              <option value="any">Any / Unknown</option>
+              <option value="alluvial">Alluvial</option>
+              <option value="black">Black / Clay</option>
+              <option value="red">Red / Laterite</option>
+              <option value="sandy">Sandy / Loamy</option>
+              <option value="hilly">Hilly / Forest</option>
+            </select>
+          </div>
+          <div id="live-preview" style="margin-bottom:0.7rem;"></div>
+          <div class="btn-row">
+            <button class="btn btn-green btn-block" id="recommendBtn" onclick="recommendCrop()">🔮 <span data-i18n="get_recommendations">Get Recommendations</span></button>
+            <button class="btn btn-outline btn-sm" onclick="fillWeather()">🌤️ <span data-i18n="auto_weather">Auto Weather</span></button>
+            <button class="btn btn-outline btn-sm" onclick="resetSliders()">↺ Reset</button>
+            <button class="btn btn-outline btn-sm" onclick="randomFarm()">🎲</button>
+          </div>
+        </div>
+        <div class="card" id="crop-results-card">
+          <h2>🎯 <span data-i18n="recommendations">Recommendations</span></h2>
+          <p style="color:var(--text3);font-size:0.82rem;" data-i18n="enter_data_prompt">Enter soil data and click "Get Recommendations"</p>
+          <div id="crop-result-area"></div>
         </div>
       </div>
     </div>
 
-    <!-- Disease Detect Tab -->
+    <!-- ══ YIELD FORECAST ══ -->
+    <div class="tab-content" id="tab-yield">
+      <div class="grid-2">
+        <div class="card">
+          <h2>📊 <span data-i18n="yield_input">Yield Prediction Input</span></h2>
+          <div class="form-group">
+            <label data-i18n="select_crop">Select Crop</label>
+            <select id="yield-crop" onchange="predictYield()">
+              <option value="rice">🌾 Rice</option><option value="wheat">🌿 Wheat</option>
+              <option value="maize">🌽 Maize</option><option value="cotton">🪴 Cotton</option>
+              <option value="sugarcane">🌱 Sugarcane</option><option value="millet">🌾 Millet</option>
+              <option value="banana">🍌 Banana</option><option value="potato">🥔 Potato</option>
+              <option value="groundnut">🥜 Groundnut</option><option value="tomato">🍅 Tomato</option>
+              <option value="onion">🧅 Onion</option><option value="soybean">🫘 Soybean</option>
+              <option value="chickpea">🫛 Chickpea</option><option value="jowar">🌾 Jowar</option>
+              <option value="mustard">🌻 Mustard</option><option value="turmeric">🟡 Turmeric</option>
+              <option value="ginger">🫚 Ginger</option><option value="coconut">🥥 Coconut</option>
+              <option value="mango">🥭 Mango</option><option value="papaya">🍈 Papaya</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label><span data-i18n="nitrogen">Nitrogen (N)</span> <span class="range-val" id="yn-value">60</span></label>
+            <input type="range" id="yn" min="0" max="140" value="60" oninput="updateSlider('yn');predictYield()">
+          </div>
+          <div class="form-group">
+            <label><span data-i18n="phosphorus">Phosphorus (P)</span> <span class="range-val" id="yp-value">50</span></label>
+            <input type="range" id="yp" min="5" max="145" value="50" oninput="updateSlider('yp');predictYield()">
+          </div>
+          <div class="form-group">
+            <label><span data-i18n="potassium">Potassium (K)</span> <span class="range-val" id="yk-value">60</span></label>
+            <input type="range" id="yk" min="5" max="205" value="60" oninput="updateSlider('yk');predictYield()">
+          </div>
+          <div class="form-group">
+            <label>Area (hectares) <span class="range-val" id="ya-value">1.0</span></label>
+            <input type="range" id="ya" min="0.1" max="20" value="1.0" step="0.1" oninput="updateSlider('ya');predictYield()">
+          </div>
+          <div class="form-group">
+            <label>Irrigation Level</label>
+            <select id="irrigation" onchange="predictYield()">
+              <option value="1.0">💧 Rain-fed Only</option>
+              <option value="1.15" selected>🚿 Partial Irrigation</option>
+              <option value="1.3">🌊 Full Irrigation</option>
+            </select>
+          </div>
+        </div>
+        <div class="card">
+          <h2>🌱 <span data-i18n="yield_results">Yield Results</span></h2>
+          <p style="color:var(--text3);font-size:0.82rem;" data-i18n="enter_yield_prompt">Set parameters above</p>
+          <div id="yield-result-area"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ DISEASE DETECTION ══ -->
     <div class="tab-content" id="tab-disease">
       <div class="grid-2">
         <div class="card">
-          <h2>🔬 Upload Leaf / Voice Demo</h2>
-          <div class="upload-zone" onclick="document.getElementById('leafImg').click()">
-            <div>🍃 Click to upload image</div>
-            <input type="file" id="leafImg" accept="image/*" style="display:none">
-            <div id="imgPreview"></div>
+          <h2>🔬 <span data-i18n="upload_leaf">Upload Leaf Image</span></h2>
+          <div class="upload-zone" onclick="document.getElementById('leaf-image').click()">
+            <div class="icon">🍃</div>
+            <p style="font-weight:600;font-size:0.88rem;" data-i18n="click_upload">Click to upload leaf image</p>
+            <p style="font-size:0.75rem;color:var(--text3);margin-top:0.3rem;">JPG, PNG · Max 10MB</p>
+            <div id="image-preview"></div>
           </div>
-          <button class="btn btn-green btn-block" id="diseaseDetectBtn">🧠 Detect Disease (Groq Vision)</button>
-          <div class="btn-row" style="margin-top:12px;">
-            <button class="btn btn-sm btn-outline" onclick="demoDiseaseMsg('healthy')">✅ Healthy</button>
-            <button class="btn btn-sm btn-outline" onclick="demoDiseaseMsg('blight')">⚠️ Blight</button>
-            <button class="btn btn-sm btn-outline" onclick="demoDiseaseMsg('rust')">🔴 Rust</button>
+          <input type="file" id="leaf-image" accept="image/*" style="display:none" onchange="previewImage(event)">
+          <button class="btn btn-green btn-block" style="margin-top:0.8rem;" onclick="detectDisease()">🧠 <span data-i18n="detect_disease">Detect Disease (AI)</span></button>
+          <p style="font-size:0.75rem;color:var(--text3);margin-top:0.9rem;font-weight:600;" data-i18n="quick_demo">Quick Demo:</p>
+          <div class="btn-row" style="margin-top:0.35rem;">
+            <button class="btn btn-sm btn-outline" onclick="demoDisease('healthy')">✅ Healthy</button>
+            <button class="btn btn-sm btn-outline" onclick="demoDisease('leaf_blight')">⚠️ Blight</button>
+            <button class="btn btn-sm btn-outline" onclick="demoDisease('rust')">🔴 Rust</button>
+            <button class="btn btn-sm btn-outline" onclick="demoDisease('powdery_mildew')">🌫️ Mildew</button>
+            <button class="btn btn-sm btn-outline" onclick="demoDisease('bacterial_spot')">🦠 Bacteria</button>
           </div>
         </div>
-        <div class="card" id="diseaseResultArea">
-          <h2>📋 Diagnosis</h2>
-          <p style="color:var(--text3);">Result will appear here</p>
+        <div class="card" id="disease-results-card">
+          <h2>📋 <span data-i18n="diagnosis">Diagnosis Results</span></h2>
+          <p style="color:var(--text3);font-size:0.82rem;" data-i18n="upload_prompt">Upload a leaf image and click detect</p>
+          <div id="disease-result-area"></div>
         </div>
       </div>
     </div>
 
-    <!-- Market Prices Tab (mock data + Groq insight) -->
+    <!-- ══ MARKET PRICES ══ -->
     <div class="tab-content" id="tab-market">
       <div class="card">
-        <h2>💰 Market Prices (India)</h2>
-        <button class="btn btn-sm btn-outline" id="refreshMarket">🔄 Refresh</button>
-        <div style="overflow-x:auto; margin-top:12px;"><table class="price-table" id="marketTable"><thead><tr><th>Crop</th><th>Price (₹/qtl)</th><th>Trend</th></tr></thead><tbody><tr><td colspan="3">Loading...</td></tr></tbody></table></div>
-        <div id="marketInsight" style="margin-top:12px; font-size:0.8rem; background:#f1f9f0; padding:8px; border-radius:16px;"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.8rem;">
+          <h2 style="margin:0;">💰 <span data-i18n="market_prices">Market Prices</span> <span style="font-size:0.72rem;color:var(--text3);font-weight:400;" id="market-date"></span></h2>
+          <div class="btn-row">
+            <button class="btn btn-sm btn-outline" onclick="loadMarketPrices()">🔄 Refresh</button>
+            <button class="btn btn-sm btn-outline" onclick="sortMarketBy('price')">⬇️ By Price</button>
+            <button class="btn btn-sm btn-outline" onclick="sortMarketBy('trend')">📈 By Trend</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="price-table">
+            <thead><tr>
+              <th data-i18n="crop_col">Crop</th>
+              <th data-i18n="price_col">Price (₹/qtl)</th>
+              <th data-i18n="market_col">Market</th>
+              <th data-i18n="trend_col">Trend</th>
+              <th>7-Day</th>
+              <th>Season</th>
+            </tr></thead>
+            <tbody id="price-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card" style="margin-top:0.8rem;">
+        <h2>📊 <span data-i18n="price_chart">Price Chart</span></h2>
+        <canvas id="price-chart"></canvas>
       </div>
     </div>
 
-    <!-- Crop Calendar Tab -->
+    <!-- ══ CROP CALENDAR ══ -->
     <div class="tab-content" id="tab-calendar">
       <div class="card">
-        <h2>📆 Sowing Calendar (Karnataka)</h2>
-        <div id="calendarContent"><p>🌾 Rice: June-July | 🧄 Wheat: Oct-Nov | 🌽 Maize: May-June</p><p>🌱 Groundnut: May-June | 🫘 Pulses: June</p></div>
+        <h2>📅 Crop Calendar — Sowing & Harvest Guide</h2>
+        <div class="form-group" style="max-width:300px;">
+          <label>Select Region</label>
+          <select id="cal-region" onchange="renderCalendar()">
+            <option value="kn">Karnataka</option>
+            <option value="ap">Andhra Pradesh / Telangana</option>
+            <option value="mh">Maharashtra</option>
+            <option value="tn">Tamil Nadu</option>
+            <option value="kl">Kerala</option>
+            <option value="pu">Punjab / Haryana</option>
+            <option value="up">Uttar Pradesh</option>
+            <option value="wb">West Bengal</option>
+          </select>
+        </div>
+        <div id="calendar-area"></div>
       </div>
     </div>
-  </div><!-- content end -->
 
-  <!-- CHAT PANEL with OmniVoice & Groq -->
+  </div><!-- /content -->
+
+  <!-- ══ CHAT PANEL ══ -->
   <div class="chat-panel" id="chatPanel">
-    <div class="chat-header">
-      <span>🤖 JeevanMitra AI · Groq + Omni Voice</span>
-      <button class="chat-close-btn" onclick="toggleChatCollapse()" style="background:none; border:none; color:white; font-size:1rem;">✕</button>
+    <div class="chat-head">
+      <h3><span class="chat-dot"></span> JeevanMitra Assistant</h3>
+      <button class="chat-close-btn" onclick="toggleChat()">✕</button>
     </div>
-    <div class="chat-messages" id="chatMessages">
-      <div class="chat-msg bot"><div class="chat-bubble">Hi! I am Jeevan Mitra AI. Ask me about farming, disease, prices or use voice 🎤</div></div>
+    <div class="chat-msgs" id="chatMessages">
+      <div class="chat-msg bot">
+        <div class="chat-avatar">🤖</div>
+        <div class="chat-bubble" id="welcome-message">Hello! I'm JeevanMitra AI — your smart farming companion. Ask me about crops, diseases, yield or prices! 🌿</div>
+      </div>
     </div>
-    <div class="chat-quick-btns">
-      <button onclick="quickAsk('What is the best crop for clay soil?')">🌱 Soil query</button>
-      <button onclick="quickAsk('Give tips for powdery mildew on grapes')">🍇 Disease</button>
-      <button onclick="quickAsk('Show onion price trend')">🧅 Price</button>
+    <div class="quick-btns" id="quickActions">
+      <button class="quick-btn" onclick="quickChat('crop')" data-i18n="qa_crop">🌱 Best crop?</button>
+      <button class="quick-btn" onclick="quickChat('yield')" data-i18n="qa_yield">📊 Yield</button>
+      <button class="quick-btn" onclick="quickChat('disease')" data-i18n="qa_disease">🔍 Disease</button>
+      <button class="quick-btn" onclick="quickChat('price')" data-i18n="qa_price">💰 Prices</button>
+      <button class="quick-btn" onclick="quickChat('season')">🗓️ Season</button>
     </div>
     <div class="chat-input-row">
-      <input type="text" id="chatInput" placeholder="Ask about farming..." onkeypress="if(event.key==='Enter') sendGroqChat()">
-      <button id="voiceTriggerBtn" onclick="startOmniVoiceRecognition()" title="Voice input via Omni">🎤</button>
-      <button onclick="sendGroqChat()">➤</button>
+      <input type="text" class="chat-input" id="chatInput" placeholder="Type or use mic…" onkeypress="if(event.key==='Enter')sendChat()">
+      <button class="voice-btn" id="voiceBtn" onclick="startVoice()" title="Voice input">🎤</button>
+      <button class="send-btn" onclick="sendChat()">➤</button>
     </div>
-    <div style="font-size:0.65rem; text-align:center; padding:4px; color:var(--text3);">⚡ OmniDimension voice enabled</div>
   </div>
-</div>
 
-<button class="chat-fab" id="chatFab" onclick="toggleChatCollapse()">💬</button>
-<div id="toastMsg" class="toast"></div>
+</div><!-- /main -->
 
-<!-- API KEY MODAL -->
-<div id="apiModal" class="modal-overlay">
+<button class="chat-fab" id="chatFab" onclick="toggleChat()">💬</button>
+<div class="toast" id="toast"></div>
+
+<!-- API MODAL -->
+<div class="modal-overlay" id="apiModal">
   <div class="modal-box">
-    <h2>🔗 Groq API Key</h2>
-    <p>Free from <a href="https://console.groq.com" target="_blank">console.groq.com</a> (gsk_...)</p>
-    <input type="password" id="groqApiKeyInput" placeholder="gsk_..." class="modal-input">
-    <div class="btn-row"><button class="btn btn-green" id="saveApiKeyBtn">Save & Activate</button><button onclick="closeKeyModal()" class="btn btn-outline">Skip (demo)</button></div>
+    <h2>🔑 Connect Groq AI</h2>
+    <p>JeevanMitra AI uses <strong>Groq</strong> — free, fast, no credit card needed. Get your API key in 60 seconds:</p>
+    <ol style="font-size:0.8rem;color:var(--text2);padding-left:1.2rem;margin-bottom:1rem;line-height:2;">
+      <li>Go to <a href="https://console.groq.com" target="_blank" style="color:var(--green);">console.groq.com</a></li>
+      <li>Sign up free → API Keys → Create Key</li>
+      <li>Paste below — key starts with <code style="color:var(--green);">gsk_</code></li>
+    </ol>
+    <input type="password" class="modal-input" id="apiKeyInput" placeholder="gsk_..." autocomplete="off">
+    <div class="modal-btns">
+      <button class="btn btn-green" onclick="saveKey()" style="flex:1;justify-content:center;">✓ Save & Activate</button>
+      <button class="btn btn-outline" onclick="closeModal()">Skip (Demo Mode)</button>
+    </div>
+    <a href="https://console.groq.com/keys" target="_blank" class="modal-link">↗ Open Groq Console</a>
   </div>
 </div>
 
-<!-- OmniDimension Widget Loader -->
-
-    <script id="omnidimension-web-widget" async src="https://omnidim.io/web_widget.js?secret_key=de49ff3e6231999c3ea5f472ae00a869" ></script>
-    
-
-<script>
-  // ---------- GLOBALS ----------
-  let GROQ_API_KEY = localStorage.getItem('groq_api_key') || '';
-  let isTyping = false;
-
-  // Helper DOM
-  function showToast(msg) { let t = document.getElementById('toastMsg'); t.innerText = msg; t.style.opacity = '1'; setTimeout(()=> t.style.opacity='0', 2800); }
-  function updateApiStatus() { 
-    const bar = document.getElementById('apiBar'); 
-    const textSpan = document.getElementById('apiBarText');
-    if(GROQ_API_KEY && GROQ_API_KEY.startsWith('gsk_')) {
-      bar.classList.remove('disconnected'); bar.style.background = '#e2f3e2'; document.querySelector('.api-dot').style.background = '#2ecc71';
-      textSpan.innerText = '✅ Groq AI Active · Voice + Chat Ready';
-    } else {
-      bar.classList.add('disconnected'); document.querySelector('.api-dot').style.background = '#e67e22';
-      textSpan.innerText = '🔑 Click to set Groq API key (free)';
-    }
-  }
-  function openKeyModal() { document.getElementById('apiModal').classList.add('active'); }
-  function closeKeyModal() { document.getElementById('apiModal').classList.remove('active'); }
-  document.getElementById('saveApiKeyBtn').onclick = () => {
-    let key = document.getElementById('groqApiKeyInput').value.trim();
-    if(key && key.startsWith('gsk_')) { GROQ_API_KEY = key; localStorage.setItem('groq_api_key', key); showToast('✅ Groq key saved! Now you can use vision & chat'); closeKeyModal(); updateApiStatus(); }
-    else { showToast('❌ Enter valid key starting with gsk_'); }
-  };
-  updateApiStatus();
-
-  // ---------- GROQ CHAT (LLAMA 3) + Vision simulation (with key)
-  async function callGroqChat(messages) {
-    if(!GROQ_API_KEY || !GROQ_API_KEY.startsWith('gsk_')) { return "⚠️ Please add your Groq API key (click top bar). Get free key from console.groq.com"; }
-    try {
-      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${GROQ_API_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model: 'llama3-8b-8192', messages: messages, temperature: 0.7 })
-      });
-      const data = await res.json();
-      if(data.choices && data.choices[0]) return data.choices[0].message.content;
-      else return "Groq error: " + (data.error?.message || "unknown");
-    } catch(e) { return "Network error: "+e.message; }
-  }
-
-  async function sendGroqChat() {
-    let input = document.getElementById('chatInput');
-    let msg = input.value.trim();
-    if(!msg) return;
-    appendChatMessage(msg, 'user');
-    input.value = '';
-    // show typing
-    const typingId = showTypingIndicator();
-    let reply = await callGroqChat([{ role: "user", content: `You are JeevanMitra AI, an expert farming assistant. Answer concisely and helpfully: ${msg}` }]);
-    removeTypingIndicator(typingId);
-    appendChatMessage(reply, 'bot');
-  }
-  function quickAsk(q) { document.getElementById('chatInput').value = q; sendGroqChat(); }
-  function appendChatMessage(text, sender) {
-    const container = document.getElementById('chatMessages');
-    const div = document.createElement('div');
-    div.className = `chat-msg ${sender}`;
-    div.innerHTML = `<div class="chat-bubble">${text.replace(/\n/g, '<br>')}</div>`;
-    container.appendChild(div);
-    container.scrollTop = container.scrollHeight;
-  }
-  function showTypingIndicator() {
-    const container = document.getElementById('chatMessages');
-    const div = document.createElement('div');
-    div.id = 'typing-indicator';
-    div.className = 'chat-msg bot';
-    div.innerHTML = `<div class="chat-bubble"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
-    container.appendChild(div);
-    container.scrollTop = container.scrollHeight;
-    return 'typing-indicator';
-  }
-  function removeTypingIndicator(id) { let el = document.getElementById('typing-indicator'); if(el) el.remove(); }
-
-  // ---------- OMNIDIMENSION VOICE INTEGRATION ----------
-  function startOmniVoiceRecognition() {
-    if(typeof OmniDimension !== 'undefined' && OmniDimension.startVoiceInput) {
-      OmniDimension.startVoiceInput({
-        onResult: (text) => {
-          document.getElementById('chatInput').value = text;
-          sendGroqChat();
-        },
-        onError: (err) => { showToast("Voice error: " + err); }
-      });
-    } else {
-      // fallback browser speech
-      if(!('webkitSpeechRecognition' in window)) { showToast("Voice requires Omni widget or modern browser"); return; }
-      const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-      const recog = new SpeechRecognition();
-      recog.lang = 'en-IN';
-      recog.onresult = (e) => { let transcript = e.results[0][0].transcript; document.getElementById('chatInput').value = transcript; sendGroqChat(); };
-      recog.start();
-    }
-  }
-
-  // ---------- Disease Detection with Groq Vision (mocked but using Groq if key present + vision description)
-  document.getElementById('diseaseDetectBtn').onclick = async () => {
-    const fileInput = document.getElementById('leafImg');
-    if(!fileInput.files || fileInput.files.length === 0) { showToast("Please upload a leaf image first"); return; }
-    const file = fileInput.files[0];
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const base64 = e.target.result.split(',')[1];
-      if(!GROQ_API_KEY) { showToast("Groq key missing! Set API key for AI diagnosis"); document.getElementById('diseaseResultArea').innerHTML = `<div class="card"><h2>❌ Analysis Failed</h2><p>callGroqVision requires API key</p></div>`; return; }
-      showToast("Analyzing leaf with Groq vision (llama-3.2-11b-vision)...");
-      try {
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${GROQ_API_KEY}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: 'llama-3.2-11b-vision-preview',
-            messages: [{ role: 'user', content: [{ type: 'text', text: "Analyze this leaf image. Identify crop disease (if any) with confidence and suggest organic remedy." }, { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${base64}` } }] }],
-            max_tokens: 500
-          })
-        });
-        const data = await response.json();
-        let diagnosis = data.choices?.[0]?.message?.content || "Unable to diagnose";
-        document.getElementById('diseaseResultArea').innerHTML = `<div><h3>🧬 Diagnosis</h3><p>${diagnosis}</p><button class="btn btn-sm btn-outline" onclick="quickAsk('How to treat the disease: ${diagnosis.substring(0,80)}')">Ask follow-up</button></div>`;
-      } catch(err) { document.getElementById('diseaseResultArea').innerHTML = `<p>Error: ${err.message}</p>`; }
-    };
-    reader.readAsDataURL(file);
-  };
-  function demoDiseaseMsg(type) {
-    let msg = type==='healthy'?'🌿 Healthy leaf. No disease detected.' : (type==='blight'?'⚠️ Late Blight: Use copper fungicide, remove infected leaves.' : (type==='rust'?'🔴 Rust fungus: Neem oil spray & ensure air circulation.'));
-    document.getElementById('diseaseResultArea').innerHTML = `<div><h3>Demo</h3><p>${msg}</p><button class="btn btn-sm btn-outline" onclick="quickAsk('Treatment for ${msg}')">Ask AI</button></div>`;
-  }
-  function previewImage(event) { let file = event.target.files[0]; if(file){ let reader = new FileReader(); reader.onload = e=> document.getElementById('imgPreview').innerHTML = `<img src="${e.target.result}" width="100%" style="max-height:120px; object-fit:cover; border-radius:12px;">`; reader.readAsDataURL(file); } }
-  document.getElementById('leafImg').addEventListener('change', previewImage);
-  
-  // Crop recommendation simple (mock + Groq enhancer)
-  document.getElementById('cropRecBtn').onclick = async () => {
-    let N = document.getElementById('n').value; let P = document.getElementById('p').value; let K = document.getElementById('k').value;
-    let temp=document.getElementById('temp').value; let hum=document.getElementById('hum').value;
-    let msgPrompt = `Suggest 3 suitable crops based on N=${N}, P=${P}, K=${K}, temp=${temp}C, humidity=${hum}%. India context.`;
-    if(GROQ_API_KEY) {
-      let answer = await callGroqChat([{ role: "user", content: msgPrompt }]);
-      document.getElementById('cropRecommendResult').innerHTML = `<div style="background:#eef5e9;padding:12px;border-radius:16px;"><strong>🌾 AI Recommendation</strong><br>${answer}</div>`;
-    } else {
-      document.getElementById('cropRecommendResult').innerHTML = `<div>Based on values: Rice, Maize, Groundnut suitable. (Set API key for detailed AI)</div>`;
-    }
-  };
-  // Market prices with Groq insight
-  const mockPrices = [{crop:"Rice", price:2250, trend:"+2%"},{crop:"Wheat",price:2450,trend:"+1%"},{crop:"Maize",price:2100,trend:"0%"},{crop:"Cotton",price:6800,trend:"-1%"}];
-  function renderMarket() { let html = ''; mockPrices.forEach(p=>{ html += `<tr><td>${p.crop}</td><td>₹${p.price}</td><td>${p.trend}</td></tr>`; }); document.querySelector('#marketTable tbody').innerHTML = html; }
-  document.getElementById('refreshMarket').onclick = async ()=>{
-    renderMarket();
-    if(GROQ_API_KEY) { let insight = await callGroqChat([{role:"user",content:"Give short market outlook for Indian crops rice, wheat. Keep friendly."}]); document.getElementById('marketInsight').innerHTML = `💡 Groq Insight: ${insight}`; }
-    else { document.getElementById('marketInsight').innerHTML = `🔑 Set Groq key for AI market insights`; }
-  }; renderMarket();
-  
-  // sliders live update
-  function bindSliders() { ['n','p','k','temp','hum'].forEach(id=>{ let el=document.getElementById(id); if(el) el.oninput = function(){ document.getElementById(id+'-val').innerText = this.value; }; }); } bindSliders(); document.getElementById('n-val').innerText=50; document.getElementById('p-val').innerText=50; document.getElementById('k-val').innerText=50; document.getElementById('temp-val').innerText=25; document.getElementById('hum-val').innerText=65;
-
-  // Tabs logic
-  document.querySelectorAll('.tab-btn').forEach(btn => { btn.onclick = () => { document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); let tabName = btn.getAttribute('data-tab'); document.querySelectorAll('.tab-content').forEach(tc=>tc.classList.remove('active')); document.getElementById(`tab-${tabName}`).classList.add('active'); }; });
-  function toggleChatCollapse() { let panel=document.getElementById('chatPanel'); if(panel.style.display==='none') panel.style.display='flex'; else panel.style.display='none'; document.getElementById('chatFab').style.display=panel.style.display==='none'?'flex':'none'; }
-  // initial
-  window.toggleChatCollapse = toggleChatCollapse;
-  window.sendGroqChat = sendGroqChat;
-  window.startOmniVoiceRecognition = startOmniVoiceRecognition;
-  window.quickAsk = quickAsk;
-  window.demoDiseaseMsg = demoDiseaseMsg;
-  window.openKeyModal = openKeyModal;
-  window.closeKeyModal = closeKeyModal;
-  // default set resize
-  if (window.innerWidth <= 780) document.getElementById('chatPanel').style.display = 'none';
-</script>
+<script src="data/cropsData.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/crop.js"></script>
+<script src="js/yield.js"></script>
+<script src="js/disease.js"></script>
+<script src="js/market.js"></script>
+<script src="js/chat.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
