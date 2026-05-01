@@ -1,241 +1,138 @@
-# 🌿 JeevanMitra AI — Smart Farming Companion
+# 🌿 JeevanMitra AI – Smart Farming Companion
 
-<div align="center">
+**JeevanMitra AI** is a cutting-edge, browser‑based agricultural assistant that leverages **Groq’s ultra‑fast LLM and vision models** to help farmers and agronomists make data‑driven decisions. No server setup required – runs entirely in your browser with a single HTML file and external modules.
 
-![JeevanMitra AI Banner](https://img.shields.io/badge/🌿_JeevanMitra_AI-Smart_Farming_Companion-1a6b3a?style=for-the-badge)
-
-[![🏆🏆 Recognized among top teams – FusionX 2026 Hackathonr](https://img.shields.io/badge/🏆 Recognized among top teams – FusionX 2026 Hackathon-FFD700?style=flat-square)](.)
-[![Live Demo](https://img.shields.io/badge/🚀-Live_Demo-1a6b3a?style=flat-square)](https://YOUR_USERNAME.github.io/JeevanMitraAI)
-[![Languages](https://img.shields.io/badge/🌍-6_Languages-blue?style=flat-square)](.)
-[![Crops](https://img.shields.io/badge/🌾-20_Crops-green?style=flat-square)](.)
-[![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
-
-**An AI-powered agricultural intelligence platform for Indian farmers.**  
-Built with CNN-based disease detection, Graph Whisper AI chat, and real-time crop intelligence — in 6 regional languages.
-
-[🚀 Live Demo](https://YOUR_USERNAME.github.io/JeevanMitraAI) · [📖 How It Works](#how-it-works) · [🛠️ Tech Stack](#tech-stack) · [🚀 Getting Started](#getting-started)
-
-</div>
+![License](https://img.shields.io/badge/license-MIT-green)
+![Groq AI](https://img.shields.io/badge/Powered%20by-Groq-22c55e)
+![Multilingual](https://img.shields.io/badge/Multilingual-6%20Languages-blue)
 
 ---
 
-## 🏆 Hackathon Achievement
+## ✨ Key Features
 
-> Built and won a hackathon with this project — a full-stack AI platform for precision agriculture serving Indian farmers across language barriers, built as a single deployable web application.
+| Module | Description |
+|--------|-------------|
+| 🌾 **Crop Advisor** | Recommends the best crops based on soil nutrients (N, P, K), temperature, humidity, pH, rainfall, and soil type. Real‑time scoring with visual confidence bars. |
+| 📊 **Yield Forecast** | Predicts expected yield (tons/ha or nuts/ha) for 20+ crops using nutrient‑response models and irrigation level. Also estimates revenue based on market prices. |
+| 🔬 **Disease Detection** | Upload a leaf image and let Groq vision models identify diseases (blight, rust, mildew, bacterial spot) with severity, symptoms, and treatment recommendations. |
+| 💰 **Market Prices** | Displays current (simulated) market prices for all crops with trends and 7‑day change. Sort by price or trend. Interactive price chart. |
+| 📅 **Crop Calendar** | Sowing and harvest guide for 8 Indian regions (Karnataka, Maharashtra, Tamil Nadu, etc.) with crop‑specific seasons. |
+| 🤖 **AI Chat Assistant** | Ask natural language questions about crops, diseases, yield, or prices. Powered by Groq’s LLM (Llama 3.3 / Gemma 2). Supports voice input in 6 languages. |
+| 🌐 **Multilingual UI** | Complete interface in English, ಕನ್ನಡ, हिंदी, മലയാളം, தமிழ், తెలుగు. Speech recognition works in all these languages. |
+| 🎤 **Voice Input** | Click the microphone button and speak your query – hands‑free operation. |
+| ☁️ **Auto Weather Fill** | Fetches live temperature, humidity & rainfall using your geolocation (Open‑Meteo API). |
+| 🔑 **BYO API Key** | Bring your own **free** Groq API key – no credit card required. Key stored locally. |
+
+---
+
+## 🚀 Live Demo
+
+You can try JeevanMitra AI instantly by opening `index.html` in a modern browser (Chrome, Edge, Firefox).
+
+> **Note**: For full AI features (chat & vision disease detection), obtain a free Groq API key from [console.groq.com](https://console.groq.com). The app works in demo mode without a key (local crop recommendations, yield prediction, market prices, calendar – all functional).
+
+---
+
+## 📁 Project Structure
+JeevanMitraAI/
+├── index.html # Main application (UI + core logic)
+├── README.md # This file
+├── assets/
+│ └── images/ # Logos, favicon, screenshots
+│ ├── logo.svg
+│ ├── favicon.ico
+│ └── hero-bg.jpg
+├── data/
+│ └── cropsData.js # Crop database, translations, yield profiles, calendar
+└── js/
+├── chat.js # Groq API integration, voice, chat UI└── market.js # Market price simulation & chart
+
+
+---
+
+## 🔧 Setup & Installation
+
+1. **Clone or download** the repository.
+2. **Open `index.html`** in your browser – that’s it! No build step, no server.
+3. **(Optional) Get a Groq API key**:
+   - Go to [console.groq.com](https://console.groq.com) and sign up (free).
+   - Navigate to **API Keys** → **Create Key**.
+   - Copy the key (starts with `gsk_`).
+   - Click the yellow bar in the app and paste your key. The app will remember it.
+
+4. **For voice input**: Allow microphone access when prompted.
+
+---
+
+## 🧠 How It Works (Technical Overview)
+
+### Crop Recommendation Engine
+- Each crop has ideal ranges for N, P, K, temperature, humidity, pH, and rainfall.
+- The app computes a weighted score (0–100) based on how close the user’s inputs fall within those ranges.
+- Soil type bonuses (e.g., black soil for cotton) increase the score.
+- Top 5 crops are displayed with match percentage, missing factors, and seasonal tags.
+
+### Yield Prediction
+- Uses a linear nutrient‑response model: yield = baseYield × (1 + nutrient factors) × irrigation factor.
+- Each crop has specific sensitivity to N, P, and K derived from agronomic research.
+- Revenue is calculated using the crop’s market price (₹/quintal or ₹/100 nuts).
+
+### Groq AI Integration
+- **Chat**: Sends farmer’s question + current soil data + top crop recommendations as context. Groq’s low‑latency models (Llama 3.3 70B, Gemma 2 9B) generate concise, helpful answers in the selected language.
+- **Vision**: Uploaded leaf image is base64‑encoded and sent to a vision model (Llama 3.2 Vision). The model returns a structured JSON with disease name, confidence, severity, symptoms, and treatment.
+
+### Multilingual & Voice
+- UI text is stored in a JSON translation object. Dynamic swapping via `setLanguage()`.
+- Web Speech API is configured with Indian locale codes (`en-IN`, `kn-IN`, etc.) for accurate voice recognition.
+
+---
+
+## 🌟 Why This Project Stands Out
+
+- **Zero‑dependency architecture** – No npm, no frameworks, no backend. Pure HTML/CSS/JS.
+- **Real AI in the browser** – Uses Groq’s public API directly (CORS‑enabled). No proxy required.
+- **Designed for rural India** – Works offline in demo mode, supports 6 major Indian languages, and runs on low‑end devices.
+- **Practical for farmers** – Provides actionable insights: which crop to plant, expected yield, disease treatment, best selling market.
+- **Portfolio‑ready** – Clean dark mode UI, responsive layout, interactive charts, and smooth animations.
 
 ---
 
 ## 📸 Screenshots
 
-> *(Add your screenshots here — drag & drop into GitHub after upload)*
+> *(Add actual screenshots in `assets/images/` and reference them here)*
 
-| Crop Recommendation | Disease Detection | Market Prices |
-|---|---|---|
-| ![Crop](assets/screenshots/crop.png) | ![Disease](assets/screenshots/disease.png) | ![Market](assets/screenshots/market.png) |
-
----
-
-## ✨ Features
-
-### 🌾 Crop Recommendation Engine
-- Inputs: **N, P, K** (soil nutrients), Temperature, Humidity, Soil pH, Rainfall, Soil Type
-- Scores all **20 crops** using a weighted multi-factor algorithm
-- Displays **Top 5 matches** with confidence scores and match/miss factor breakdown
-- Live preview updates as you adjust sliders
-- Soil health meters with status indicators (Low / OK / High)
-
-### 🧠 CNN-Based Disease Detection
-- Upload a **leaf image** → AI classifies disease via vision model
-- Returns: disease name, confidence %, severity level, symptoms, treatment steps
-- **CNN feature extraction** pipeline: pattern recognition → classification → report
-- Supports: Leaf Blight, Rust, Powdery Mildew, Bacterial Spot, Downy Mildew, Healthy
-- Demo mode for offline/testing use
-
-### 📊 Yield Prediction
-- Regression model using NPK values + irrigation level + land area
-- Covers **20 crops**: Rice, Wheat, Maize, Cotton, Sugarcane, Banana, Potato, Turmeric, Ginger, Coconut, Mango, and more
-- Outputs estimated yield in tonnes + revenue projection in ₹
-
-### 💰 Live Market Price Tracker
-- Real-time simulated mandi prices for all 20 crops
-- Trend indicators: ↑ Up · ↓ Down · → Stable
-- Sortable table (price, name, trend)
-- **Canvas-based price chart** with historical trend visualization
-- Source: major mandis (Kochi, Delhi, Erode, Cochin, Lasalgaon, etc.)
-
-### 📅 Crop Calendar
-- Month-wise planting/harvesting schedule for all 20 crops
-- Filter by crop or month
-- Color-coded sowing vs. harvest periods
-
-### 🤖 Graph Whisper AI Chat Assistant
-- Powered by **Groq LLaMA** (fast inference)
-- Context-aware: answers questions about Indian farming, soil, weather, pests
-- **Voice input** (Web Speech API) + **text-to-speech output**
-- Quick-action buttons for common farming queries
-- Supports conversation history
-
-### 🌍 6-Language Support
-Full UI + AI responses in:
-
-| Language | Script |
-|----------|--------|
-| English | Latin |
-| हिन्दी (Hindi) | Devanagari |
-| മലയാളം (Malayalam) | Malayalam |
-| ಕನ್ನಡ (Kannada) | Kannada |
-| தமிழ் (Tamil) | Tamil |
-| తెలుగు (Telugu) | Telugu |
+| Crop Advisor | Disease Detection | Market Prices |
+|--------------|-------------------|----------------|
+| ![Crop Advisor](./assets/images/screenshot-crop.png) | ![Disease](./assets/images/screenshot-disease.png) | ![Market](./assets/images/screenshot-market.png) |
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Customization & Extension
 
-```
-Frontend          → Vanilla HTML5, CSS3, JavaScript (ES6+)
-AI / LLM          → Groq API (LLaMA 3.1) — Graph Whisper chat
-Vision AI         → Groq Vision — CNN disease detection pipeline
-Charts            → HTML5 Canvas API (custom price chart renderer)
-Voice             → Web Speech API (Speech Recognition + Synthesis)
-Multilingual      → Custom i18n engine with 6-language JSON store
-Crop Intelligence → Rule-based scoring engine (20 crops × 8 parameters)
-Deployment        → GitHub Pages (zero-config, free)
-```
+- **Add a new crop**: Edit `CROP_DB` in `data/cropsData.js`. Provide ideal ranges, emoji, market price, and soil bonus.
+- **Add a new language**: Extend the `i18n` object in `index.html` and the `cropNames` object in `cropsData.js`.
+- **Use a different LLM**: Modify `MODELS` array in `chat.js` (supports any Groq‑compatible model).
+- **Integrate real market API**: Replace `loadMarketPrices()` with a fetch to a public commodity price API (e.g., data.gov.in).
 
 ---
 
-## 🧠 How It Works
+## 🙏 Acknowledgements
 
-### Crop Recommendation Algorithm
-```
-Input: {N, P, K, Temperature, Humidity, pH, Rainfall, SoilType}
-  ↓
-For each crop in CROP_DB (20 crops):
-  score = Σ weighted_factor_match(input, crop_requirements)
-  matchedFactors = [...], missedFactors = [...]
-  ↓
-rankAllCrops() → sort by score descending
-  ↓
-Output: Top 5 crops with confidence % + why/why-not breakdown
-```
-
-### Disease Detection Pipeline (CNN)
-```
-Image Upload → FileReader (base64)
-  ↓
-Groq Vision API call with structured JSON prompt
-  ↓
-CNN feature extraction: ["lesion pattern", "color distribution", "edge texture"]
-  ↓
-Classification: disease type + severity + confidence %
-  ↓
-Treatment plan generation → voice readout (TTS)
-```
-
-### Yield Prediction Model
-```
-Inputs: crop, N, P, K, area (ha), irrigation_factor
-  ↓
-base_yield = CROP_DB[crop].yieldRange (kg/ha)
-npk_factor = f(N, P, K) — weighted nutrient contribution
-irr_factor = {rain_fed: 1.0, partial: 1.15, full: 1.3}
-  ↓
-predicted_yield = base_yield × npk_factor × irr_factor × area
-revenue_estimate = predicted_yield × market_price
-```
+- **Groq** – For providing blazing‑fast, free inference APIs.
+- **Open‑Meteo** – For free weather data.
+- **Font Awesome** (conceptual) – For icons (emojis used instead for simplicity).
+- **All contributors** – Farmers, agronomists, and open‑source community.
 
 ---
 
-## 🚀 Getting Started
+## 📄 License
 
-### Option 1: Just open it (no setup)
-```bash
-git clone https://github.com/YOUR_USERNAME/JeevanMitraAI.git
-cd JeevanMitraAI
-open index.html    # macOS
-# or double-click index.html on Windows/Linux
-```
-
-Crop recommendation, yield prediction, market prices, and crop calendar work **immediately** — no API key needed.
-
-### Option 2: Enable AI features (Groq API)
-1. Get a **free** Groq API key at [console.groq.com](https://console.groq.com) (takes 1 minute)
-2. Open the app → click the yellow bar at the top → paste your key (`gsk_...`)
-3. Disease Detection + AI Chat are now fully active
-
-### Option 3: Deploy live (GitHub Pages)
-```bash
-# After pushing to GitHub:
-# Settings → Pages → Source: main branch / root → Save
-# Live in ~60 seconds at: https://YOUR_USERNAME.github.io/JeevanMitraAI
-```
+MIT License – free to use, modify, and distribute for agricultural and educational purposes.
 
 ---
 
-## 📁 Project Structure
+## 📞 Contact & Support
 
-```
-JeevanMitraAI/
-│
-├── index.html          # Main app shell — HTML structure only
-├── style.css           # All styling — CSS variables, responsive, animations
-├── script.js           # All logic — AI, crop engine, chart, i18n, voice
-│
-├── assets/
-│   └── screenshots/    # Add app screenshots here for README
-│
-└── README.md           # This file
-```
+For issues or suggestions, please open a GitHub issue or contact the maintainer.
 
----
-
-## 🌾 Supported Crops
-
-| # | Crop | | # | Crop |
-|---|------|-|---|------|
-| 1 | 🌾 Rice | | 11 | 🧅 Onion |
-| 2 | 🌿 Wheat | | 12 | 🫘 Soybean |
-| 3 | 🌽 Maize | | 13 | 🫛 Chickpea (Chana) |
-| 4 | 🪴 Cotton | | 14 | 🌾 Jowar (Sorghum) |
-| 5 | 🌱 Sugarcane | | 15 | 🌻 Mustard |
-| 6 | 🌾 Millet (Bajra) | | 16 | 🟡 Turmeric |
-| 7 | 🍌 Banana | | 17 | 🫚 Ginger |
-| 8 | 🥔 Potato | | 18 | 🥥 Coconut |
-| 9 | 🥜 Groundnut | | 19 | 🥭 Mango |
-| 10 | 🍅 Tomato | | 20 | 🍈 Papaya |
-
----
-
-## 🤝 Contributing
-
-Pull requests are welcome. For major changes, open an issue first.
-
-1. Fork the repo
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
-
-## 📜 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
----
-
-## 👨‍💻 Author
-
-**Your Name**  
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat-square&logo=linkedin)](https://linkedin.com/in/YOUR_PROFILE)
-[![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=flat-square&logo=github)](https://github.com/YOUR_USERNAME)
-
----
-
-<div align="center">
-
-Made with ❤️ for Indian farmers · 🏆 Hackathon Winner
-
-*"Technology that speaks the farmer's language"*
-
-</div>
+**Empower Indian farming with AI – JeevanMitra AI 🌱**
