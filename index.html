@@ -116,12 +116,18 @@
           <div class="form-group">
             <label data-i18n="select_crop">Select Crop</label>
             <select id="yield-crop" onchange="predictYield()">
-              <option value="rice">🌾 Rice</option><option value="wheat">🌿 Wheat</option>
-              <option value="maize">🌽 Maize</option><option value="cotton">🪴 Cotton</option>
-              <option value="sugarcane">🌱 Sugarcane</option><option value="millet">🌾 Millet</option>
-              <option value="banana">🍌 Banana</option><option value="potato">🥔 Potato</option>
-              <option value="groundnut">🥜 Groundnut</option><option value="tomato">🍅 Tomato</option>
-              <option value="onion">🧅 Onion</option><option value="soybean">🫘 Soybean</option>
+              <option value="rice">🌾 Rice</option>
+              <option value="wheat">🌿 Wheat</option>
+              <option value="maize">🌽 Maize</option>
+              <option value="cotton">🪴 Cotton</option>
+              <option value="sugarcane">🌱 Sugarcane</option>
+              <option value="millet">🌾 Millet</option>
+              <option value="banana">🍌 Banana</option>
+              <option value="potato">🥔 Potato</option>
+              <option value="groundnut">🥜 Groundnut</option>
+              <option value="tomato">🍅 Tomato</option>
+              <option value="onion">🧅 Onion</option>
+              <option value="soybean">🫘 Soybean</option>
               <option value="chickpea">🫛 Chickpea</option>
               <option value="jowar">🌾 Jowar</option>
               <option value="mustard">🌻 Mustard</option>
@@ -249,16 +255,19 @@
 
   </div><!-- /content -->
 
-  <!-- ══ CHAT PANEL ══ -->
+  <!-- ══ RIGHT SIDEBAR: GROQ CHAT ══ -->
   <div class="chat-panel" id="chatPanel">
     <div class="chat-header">
-      <span>🤖 JeevanMitra AI Chat</span>
-      <button class="chat-close-btn" onclick="toggleChat()" title="Close chat">✕</button>
+      <span>🤖 JeevanMitra AI</span>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <span id="groq-status-dot" title="Groq status" style="width:8px;height:8px;border-radius:50%;background:#f6ad55;display:inline-block;"></span>
+        <button class="chat-close-btn" onclick="toggleChat()" title="Hide chat">✕</button>
+      </div>
     </div>
     <div class="chat-messages" id="chatMessages">
       <div class="chat-msg bot">
         <div class="chat-avatar">🤖</div>
-        <div class="chat-bubble" id="welcome-message">Hello! Ask me about crops, diseases, yield, or prices.</div>
+        <div class="chat-bubble" id="welcome-message">Hello! I'm JeevanMitra AI. Ask me about crops, diseases, yield or prices — by text or voice!</div>
       </div>
     </div>
     <div class="chat-quick-btns">
@@ -268,15 +277,15 @@
       <button onclick="quickChat('season')">🌤️ Season</button>
     </div>
     <div class="chat-input-row">
-      <input type="text" id="chatInput" placeholder="Ask anything about farming..." onkeypress="if(event.key==='Enter')sendChat()">
-      <button id="voiceBtn" onclick="startVoice()" title="Voice input">🎤</button>
+      <input type="text" id="chatInput" placeholder="Ask anything..." onkeypress="if(event.key==='Enter')sendChat()">
+      <button id="voiceBtn" onclick="startVoice()" title="Voice input (browser mic)">🎤</button>
       <button onclick="sendChat()" title="Send">➤</button>
     </div>
   </div>
 
 </div><!-- /main -->
 
-<!-- Floating Chat Button -->
+<!-- Floating button shown when chat is hidden (mobile) -->
 <button class="chat-fab" id="chatFab" onclick="toggleChat()" title="Open AI Chat">💬</button>
 
 <div class="toast" id="toast"></div>
@@ -285,7 +294,7 @@
 <div class="modal-overlay" id="apiModal">
   <div class="modal-box">
     <h2>🔑 Connect Groq AI</h2>
-    <p>JeevanMitra AI uses <strong>Groq</strong> — free, fast, no credit card needed. Get your API key in 60 seconds:</p>
+    <p>JeevanMitra AI uses <strong>Groq</strong> — free, fast, no credit card needed.</p>
     <ol style="font-size:0.8rem;color:var(--text2);padding-left:1.2rem;margin-bottom:1rem;line-height:2;">
       <li>Go to <a href="https://console.groq.com" target="_blank" style="color:var(--green);">console.groq.com</a></li>
       <li>Sign up free → API Keys → Create Key</li>
@@ -300,7 +309,7 @@
   </div>
 </div>
 
-<!-- Scripts -->
+<!-- ── Scripts ── -->
 <script src="data/cropsData.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/crop.js"></script>
@@ -308,224 +317,135 @@
 <script src="js/disease.js"></script>
 <script src="js/market.js"></script>
 <script src="js/app.js"></script>
+<script src="js/chat.js"></script>
 
-<!-- OmniDimension Voice Widget (loaded last, single instance) -->
+<!-- OmniDimension Voice Widget — Full Interface, single instance -->
 <script id="omnidimension-web-widget" async
   src="https://omnidim.io/web_widget.js?secret_key=23f7aa2ecdc9cca0ecc99e75a542b676">
 </script>
 
-<!-- Bridge: OmniDimension voice → Groq chat -->
-<script>
-(function() {
-  // Wait for OmniDimension to load, then bridge its transcript into Groq chat
-  function setupOmniBridge() {
-    // Method 1: postMessage listener — OmniDimension sends transcripts via window messages
-    window.addEventListener('message', function(event) {
-      // Accept messages from any origin since OmniDimension uses an iframe
-      var data = event.data;
-      if (!data) return;
-
-      // OmniDimension transcript event (adjust key names if their API differs)
-      var transcript =
-        data.transcript ||       // common key
-        data.text ||
-        data.message ||
-        (data.type === 'TRANSCRIPT' && data.content) ||
-        (data.type === 'omnidimension-transcript' && data.content) ||
-        null;
-
-      if (transcript && typeof transcript === 'string' && transcript.trim()) {
-        var input = document.getElementById('chatInput');
-        if (input) {
-          input.value = transcript.trim();
-          // Dispatch to Groq chat
-          if (typeof sendChat === 'function') sendChat();
-        }
-      }
-    });
-
-    // Method 2: Poll for OmniDimension's global callback API (if they expose one)
-    var omniCheckInterval = setInterval(function() {
-      // Some versions expose window.OmniDimension or window.omnidimension
-      var omni = window.OmniDimension || window.omnidimension || window.OmniDimensionWidget;
-      if (omni && typeof omni.onTranscript === 'function') {
-        omni.onTranscript(function(text) {
-          var input = document.getElementById('chatInput');
-          if (input && text) {
-            input.value = text.trim();
-            if (typeof sendChat === 'function') sendChat();
-          }
-        });
-        clearInterval(omniCheckInterval);
-      }
-    }, 500);
-
-    // Stop polling after 15s regardless
-    setTimeout(function() { clearInterval(omniCheckInterval); }, 15000);
-  }
-
-  // Run after page fully loads
-  if (document.readyState === 'complete') {
-    setupOmniBridge();
-  } else {
-    window.addEventListener('load', setupOmniBridge);
-  }
-})();
-</script>
-
-<!-- CSS patches for chat panel & FAB (add to style.css if preferred) -->
+<!-- Chat Panel CSS (add to style.css if preferred) -->
 <style>
-  .main { display: flex; gap: 1rem; }
-  .content { flex: 1; min-width: 0; }
+/* ── Layout ── */
+.main { display:flex; gap:1rem; align-items:flex-start; }
+.content { flex:1; min-width:0; }
 
-  /* Chat Panel */
-  .chat-panel {
-    width: 320px;
-    min-width: 280px;
-    display: flex;
-    flex-direction: column;
-    background: var(--card, #fff);
-    border-radius: 12px;
-    border: 1px solid var(--border, #e0e0e0);
-    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-    height: calc(100vh - 130px);
-    position: sticky;
-    top: 10px;
-    overflow: hidden;
-  }
-  .chat-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    background: var(--green, #2d9e5f);
-    color: #fff;
-    font-weight: 600;
-    font-size: 0.9rem;
-  }
-  .chat-close-btn {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 1rem;
-    cursor: pointer;
-    padding: 2px 6px;
-    border-radius: 4px;
-  }
-  .chat-close-btn:hover { background: rgba(255,255,255,0.2); }
-  .chat-messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 0.8rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-  .chat-msg { display: flex; gap: 0.5rem; align-items: flex-start; }
-  .chat-msg.user { flex-direction: row-reverse; }
-  .chat-avatar { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
-  .chat-bubble {
-    background: var(--bg2, #f4f6f0);
-    border-radius: 10px;
-    padding: 0.5rem 0.75rem;
-    font-size: 0.82rem;
-    line-height: 1.45;
-    max-width: 85%;
-  }
-  .chat-msg.user .chat-bubble {
-    background: var(--green, #2d9e5f);
-    color: #fff;
-  }
-  .chat-quick-btns {
-    display: flex;
-    gap: 0.35rem;
-    padding: 0.5rem 0.8rem;
-    flex-wrap: wrap;
-    border-top: 1px solid var(--border, #e0e0e0);
-  }
-  .chat-quick-btns button {
-    font-size: 0.72rem;
-    padding: 0.25rem 0.55rem;
-    border-radius: 20px;
-    border: 1px solid var(--green, #2d9e5f);
-    background: none;
-    color: var(--green, #2d9e5f);
-    cursor: pointer;
-    white-space: nowrap;
-  }
-  .chat-quick-btns button:hover { background: var(--green, #2d9e5f); color: #fff; }
-  .chat-input-row {
-    display: flex;
-    gap: 0.4rem;
-    padding: 0.6rem 0.8rem;
-    border-top: 1px solid var(--border, #e0e0e0);
-  }
-  .chat-input-row input {
-    flex: 1;
-    border: 1px solid var(--border, #ddd);
-    border-radius: 8px;
-    padding: 0.45rem 0.7rem;
-    font-size: 0.82rem;
-    outline: none;
-  }
-  .chat-input-row input:focus { border-color: var(--green, #2d9e5f); }
-  .chat-input-row button {
-    background: var(--green, #2d9e5f);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 0.4rem 0.65rem;
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
-  .chat-input-row button:hover { opacity: 0.85; }
-  #voiceBtn.listening { background: #e53e3e !important; animation: pulse 1s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+/* ── Chat Panel ── */
+.chat-panel {
+  width:300px; min-width:270px;
+  display:flex; flex-direction:column;
+  background:var(--card,#fff);
+  border-radius:14px;
+  border:1px solid var(--border,#e0e0e0);
+  box-shadow:0 4px 24px rgba(0,0,0,0.09);
+  height:calc(100vh - 130px);
+  position:sticky; top:10px;
+  overflow:hidden;
+  transition:all 0.3s ease;
+}
+.chat-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:0.7rem 1rem;
+  background:var(--green,#2d9e5f);
+  color:#fff; font-weight:600; font-size:0.88rem;
+  flex-shrink:0;
+}
+.chat-close-btn {
+  background:none; border:none; color:#fff;
+  font-size:1rem; cursor:pointer;
+  padding:2px 6px; border-radius:4px;
+}
+.chat-close-btn:hover { background:rgba(255,255,255,0.2); }
 
-  /* Floating Chat Button */
-  .chat-fab {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    width: 54px;
-    height: 54px;
-    border-radius: 50%;
-    background: var(--green, #2d9e5f);
-    color: #fff;
-    font-size: 1.5rem;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-    z-index: 1000;
-    display: none; /* hidden when panel is visible */
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s;
-  }
-  .chat-fab:hover { transform: scale(1.1); }
+/* ── Messages ── */
+.chat-messages {
+  flex:1; overflow-y:auto;
+  padding:0.8rem;
+  display:flex; flex-direction:column; gap:0.6rem;
+}
+.chat-msg { display:flex; gap:0.5rem; align-items:flex-start; }
+.chat-msg.user { flex-direction:row-reverse; }
+.chat-avatar { font-size:1.15rem; flex-shrink:0; margin-top:2px; }
+.chat-bubble {
+  background:var(--bg2,#f4f6f0);
+  border-radius:10px;
+  padding:0.5rem 0.75rem;
+  font-size:0.81rem; line-height:1.45;
+  max-width:88%;
+}
+.chat-msg.user .chat-bubble {
+  background:var(--green,#2d9e5f); color:#fff;
+}
 
-  /* Typing dots */
-  .typing-dots { display: flex; gap: 4px; align-items: center; height: 18px; }
-  .typing-dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--text3, #aaa);
-    animation: bounce 1.2s infinite;
-  }
-  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+/* ── Quick buttons ── */
+.chat-quick-btns {
+  display:flex; gap:0.3rem; padding:0.45rem 0.7rem;
+  flex-wrap:wrap; border-top:1px solid var(--border,#e0e0e0);
+  flex-shrink:0;
+}
+.chat-quick-btns button {
+  font-size:0.7rem; padding:0.22rem 0.5rem;
+  border-radius:20px;
+  border:1px solid var(--green,#2d9e5f);
+  background:none; color:var(--green,#2d9e5f);
+  cursor:pointer; white-space:nowrap;
+}
+.chat-quick-btns button:hover { background:var(--green,#2d9e5f); color:#fff; }
 
-  /* Responsive: stack on mobile */
-  @media (max-width: 768px) {
-    .main { flex-direction: column; }
-    .chat-panel {
-      width: 100%;
-      min-width: unset;
-      height: 420px;
-      position: static;
-    }
-    .chat-fab { display: flex; }
-  }
+/* ── Input row ── */
+.chat-input-row {
+  display:flex; gap:0.35rem;
+  padding:0.55rem 0.7rem;
+  border-top:1px solid var(--border,#e0e0e0);
+  flex-shrink:0;
+}
+.chat-input-row input {
+  flex:1; border:1px solid var(--border,#ddd);
+  border-radius:8px; padding:0.42rem 0.65rem;
+  font-size:0.81rem; outline:none;
+}
+.chat-input-row input:focus { border-color:var(--green,#2d9e5f); }
+.chat-input-row button {
+  background:var(--green,#2d9e5f); color:#fff;
+  border:none; border-radius:8px;
+  padding:0.38rem 0.6rem;
+  cursor:pointer; font-size:0.88rem;
+}
+.chat-input-row button:hover { opacity:0.85; }
+#voiceBtn.listening { background:#e53e3e!important; animation:pulse 1s infinite; }
+
+/* ── Floating button ── */
+.chat-fab {
+  position:fixed; bottom:24px; right:24px;
+  width:52px; height:52px; border-radius:50%;
+  background:var(--green,#2d9e5f); color:#fff;
+  font-size:1.4rem; border:none; cursor:pointer;
+  box-shadow:0 4px 16px rgba(0,0,0,0.2);
+  z-index:999; display:none;
+  align-items:center; justify-content:center;
+  transition:transform 0.2s;
+}
+.chat-fab:hover { transform:scale(1.08); }
+
+/* ── Typing dots ── */
+.typing-dots { display:flex; gap:4px; align-items:center; height:18px; }
+.typing-dot {
+  width:7px; height:7px; border-radius:50%;
+  background:var(--text3,#aaa);
+  animation:bounce 1.2s infinite;
+}
+.typing-dot:nth-child(2){animation-delay:.2s}
+.typing-dot:nth-child(3){animation-delay:.4s}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+
+/* ── Mobile ── */
+@media(max-width:768px){
+  .main{flex-direction:column;}
+  .chat-panel{width:100%;min-width:unset;height:420px;position:static;}
+  .chat-fab{display:flex;}
+}
 </style>
 
 </body>
