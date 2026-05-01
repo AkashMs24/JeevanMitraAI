@@ -5,6 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🌿 JeevanMitra AI — Smart Farming Companion</title>
 <link rel="stylesheet" href="css/style.css">
+<style>
+  /* Additional style to position Omni voice widget nicely */
+  #omni-widget-component {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    border-radius: 24px;
+    overflow: hidden;
+  }
+  
+  /* Adjust main content to not overlap with widget */
+  .main {
+    margin-bottom: 60px;
+  }
+  
+  @media (max-width: 768px) {
+    #omni-widget-component {
+      width: 90% !important;
+      bottom: 10px;
+      right: 5%;
+    }
+  }
+</style>
 </head>
 <body>
 
@@ -244,37 +269,15 @@
     </div>
 
   </div><!-- /content -->
-
-  <!-- ══ CHAT PANEL ══ -->
-  <div class="chat-panel" id="chatPanel">
-    <div class="chat-head">
-      <h3><span class="chat-dot"></span> JeevanMitra Assistant</h3>
-      <button class="chat-close-btn" onclick="toggleChat()">✕</button>
-    </div>
-    <div class="chat-msgs" id="chatMessages">
-      <div class="chat-msg bot">
-        <div class="chat-avatar">🤖</div>
-        <div class="chat-bubble" id="welcome-message">Hello! I'm JeevanMitra AI — your smart farming companion. Ask me about crops, diseases, yield or prices! 🌿</div>
-      </div>
-    </div>
-    <div class="quick-btns" id="quickActions">
-      <button class="quick-btn" onclick="quickChat('crop')" data-i18n="qa_crop">🌱 Best crop?</button>
-      <button class="quick-btn" onclick="quickChat('yield')" data-i18n="qa_yield">📊 Yield</button>
-      <button class="quick-btn" onclick="quickChat('disease')" data-i18n="qa_disease">🔍 Disease</button>
-      <button class="quick-btn" onclick="quickChat('price')" data-i18n="qa_price">💰 Prices</button>
-      <button class="quick-btn" onclick="quickChat('season')">🗓️ Season</button>
-    </div>
-    <div class="chat-input-row">
-      <input type="text" class="chat-input" id="chatInput" placeholder="Type or use mic…" onkeypress="if(event.key==='Enter')sendChat()">
-      <button class="voice-btn" id="voiceBtn" onclick="startVoice()" title="Voice input">🎤</button>
-      <button class="send-btn" onclick="sendChat()">➤</button>
-    </div>
-  </div>
-
 </div><!-- /main -->
 
-<button class="chat-fab" id="chatFab" onclick="toggleChat()">💬</button>
-<div class="toast" id="toast"></div>
+<!-- ============================================ -->
+<!-- OMNI VOICE WIDGET - Full Interface Style     -->
+<!-- Configured as Voice Widget with glassmorphic  -->
+<!-- ============================================ -->
+<div id="omni-widget-component"></div>
+
+<script id="omnidimension-web-widget" async src="https://omnidim.io/web_widget.js?secret_key=de49ff3e6231999c3ea5f472ae00a869"></script>
 
 <!-- API MODAL -->
 <div class="modal-overlay" id="apiModal">
@@ -304,9 +307,21 @@
 <script src="js/chat.js"></script>
 <script src="js/app.js"></script>
 
-<div id="omni-widget-component" style={{ width: "70%", height: "500px" }}></div>
-
-<script id="omnidimension-web-widget" async src="https://omnidim.io/web_widget.js?secret_key=de49ff3e6231999c3ea5f472ae00a869" ></script>
+<script>
+  // Optional: Initialize Omni widget with custom config (if needed)
+  window.addEventListener('load', function() {
+    console.log('🌿 JeevanMitra AI with Omni Voice Widget ready');
+    
+    // You can add custom initialization for the voice widget here if needed
+    if (window.OmniWidget) {
+      window.OmniWidget.init({
+        voiceEnabled: true,
+        language: 'en',
+        autoOpen: false
+      });
+    }
+  });
+</script>
 
 </body>
 </html>
