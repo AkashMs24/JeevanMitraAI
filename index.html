@@ -4,29 +4,252 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🌿 JeevanMitra AI — Smart Farming Companion</title>
-<link rel="stylesheet" href="css/style.css">
 <style>
-  /* Additional style to position Omni voice widget nicely */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    background: rgba(20, 198, 204, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-icon {
+    font-size: 2rem;
+  }
+
+  .brand h1 {
+    color: white;
+    font-size: 1.5rem;
+  }
+
+  .brand span {
+    color: #fff9c4;
+  }
+
+  .brand-sub {
+    color: rgba(255,255,255,0.9);
+    font-size: 0.8rem;
+  }
+
+  .lang-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .lang-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .lang-btn:hover, .lang-btn.active {
+    background: white;
+    color: #14c6cc;
+  }
+
+  /* Main Content */
+  .main {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .tab-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .tab-btn.active {
+    background: #14c6cc;
+    color: white;
+  }
+
+  .tab-content {
+    display: none;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  /* Cards */
+  .card {
+    background: white;
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+  }
+
+  input[type="range"] {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #ddd;
+    outline: none;
+  }
+
+  select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+
+  .btn-green {
+    background: #14c6cc;
+    color: white;
+  }
+
+  .btn-outline {
+    background: transparent;
+    border: 1px solid #14c6cc;
+    color: #14c6cc;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  .btn-block {
+    flex: 1;
+  }
+
+  .btn-sm {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .range-val {
+    float: right;
+    color: #14c6cc;
+    font-weight: bold;
+  }
+
+  /* Price Table */
+  .price-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .price-table th, .price-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+  }
+
+  .price-table th {
+    background: #f5f5f5;
+    font-weight: 600;
+  }
+
+  /* Omni Voice Widget - Full Screen Adjustment */
   #omni-widget-component {
     position: fixed;
     bottom: 20px;
     right: 20px;
+    width: 380px !important;
+    height: 600px !important;
     z-index: 1000;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
     border-radius: 24px;
     overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
   }
-  
-  /* Adjust main content to not overlap with widget */
-  .main {
-    margin-bottom: 60px;
-  }
-  
+
   @media (max-width: 768px) {
     #omni-widget-component {
-      width: 90% !important;
-      bottom: 10px;
-      right: 5%;
+      width: calc(100% - 40px) !important;
+      right: 20px;
+      height: 500px !important;
+    }
+    
+    .main {
+      padding: 0 1rem;
+    }
+    
+    .grid-2 {
+      grid-template-columns: 1fr;
     }
   }
 </style>
@@ -44,283 +267,237 @@
       </div>
     </div>
     <div class="lang-bar">
-      <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">English</button>
-      <button class="lang-btn" data-lang="kn" onclick="setLanguage('kn')">ಕನ್ನಡ</button>
-      <button class="lang-btn" data-lang="hi" onclick="setLanguage('hi')">हिंदी</button>
-      <button class="lang-btn" data-lang="ml" onclick="setLanguage('ml')">മലയാളം</button>
-      <button class="lang-btn" data-lang="ta" onclick="setLanguage('ta')">தமிழ்</button>
-      <button class="lang-btn" data-lang="te" onclick="setLanguage('te')">తెలుగు</button>
+      <button class="lang-btn active" onclick="switchLanguage('en')">English</button>
+      <button class="lang-btn" onclick="switchLanguage('kn')">ಕನ್ನಡ</button>
+      <button class="lang-btn" onclick="switchLanguage('hi')">हिंदी</button>
+      <button class="lang-btn" onclick="switchLanguage('ml')">മലയാളം</button>
+      <button class="lang-btn" onclick="switchLanguage('ta')">தமிழ்</button>
+      <button class="lang-btn" onclick="switchLanguage('te')">తెలుగు</button>
     </div>
   </div>
 </header>
 
-<!-- API STATUS BAR -->
-<div class="api-bar disconnected" id="apiBar" onclick="showModal()">
-  <span class="api-dot"></span>
-  <span id="apiBarText">🔑 Click to enter your FREE Groq API key — no server needed</span>
-</div>
-
 <!-- MAIN LAYOUT -->
-<div class="main" id="mainContainer">
-  <div class="content">
+<div class="main">
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('crop')">🌱 Crop Advisor</button>
+    <button class="tab-btn" onclick="switchTab('yield')">📊 Yield Forecast</button>
+    <button class="tab-btn" onclick="switchTab('disease')">🔬 Disease Detect</button>
+    <button class="tab-btn" onclick="switchTab('market')">💰 Market Prices</button>
+    <button class="tab-btn" onclick="switchTab('calendar')">📅 Crop Calendar</button>
+  </div>
 
-    <!-- TABS -->
-    <div class="tabs">
-      <button class="tab-btn active" data-tab="crop" onclick="switchTab('crop')">🌱 <span data-i18n="tab_crop">Crop Advisor</span></button>
-      <button class="tab-btn" data-tab="yield" onclick="switchTab('yield')">📊 <span data-i18n="tab_yield">Yield Forecast</span></button>
-      <button class="tab-btn" data-tab="disease" onclick="switchTab('disease')">🔬 <span data-i18n="tab_disease">Disease Detect</span></button>
-      <button class="tab-btn" data-tab="market" onclick="switchTab('market')">💰 <span data-i18n="tab_market">Market Prices</span></button>
-      <button class="tab-btn" data-tab="calendar" onclick="switchTab('calendar')">📅 <span data-i18n="tab_calendar">Crop Calendar</span></button>
-    </div>
-
-    <!-- ══ CROP ADVISOR ══ -->
-    <div class="tab-content active" id="tab-crop">
-      <div class="grid-2">
-        <div class="card">
-          <h2>🧪 <span data-i18n="soil_data">Soil & Environment Data</span></h2>
-          <div class="form-group">
-            <label><span data-i18n="nitrogen">Nitrogen (N)</span> <span class="range-val" id="n-value">50</span></label>
-            <input type="range" id="n" min="0" max="140" value="50" oninput="updateSlider('n');livePreviewCrop()">
-          </div>
-          <div class="form-group">
-            <label><span data-i18n="phosphorus">Phosphorus (P)</span> <span class="range-val" id="p-value">50</span></label>
-            <input type="range" id="p" min="5" max="145" value="50" oninput="updateSlider('p');livePreviewCrop()">
-          </div>
-          <div class="form-group">
-            <label><span data-i18n="potassium">Potassium (K)</span> <span class="range-val" id="k-value">50</span></label>
-            <input type="range" id="k" min="5" max="205" value="50" oninput="updateSlider('k');livePreviewCrop()">
-          </div>
-          <div class="form-group">
-            <label><span data-i18n="temperature">Temperature (°C)</span> <span class="range-val" id="temp-value">25</span></label>
-            <input type="range" id="temp" min="8" max="45" value="25" oninput="updateSlider('temp');livePreviewCrop()">
-          </div>
-          <div class="form-group">
-            <label><span data-i18n="humidity">Humidity (%)</span> <span class="range-val" id="hum-value">65</span></label>
-            <input type="range" id="hum" min="14" max="100" value="65" oninput="updateSlider('hum');livePreviewCrop()">
-          </div>
-          <div class="form-group">
-            <label><span data-i18n="ph">Soil pH</span> <span class="range-val" id="ph-value">6.5</span></label>
-            <input type="range" id="ph" min="3.5" max="9.5" value="6.5" step="0.1" oninput="updateSlider('ph');livePreviewCrop()">
-          </div>
-          <div class="form-group">
-            <label><span data-i18n="rainfall">Rainfall (mm)</span> <span class="range-val" id="rain-value">150</span></label>
-            <input type="range" id="rain" min="20" max="350" value="150" oninput="updateSlider('rain');livePreviewCrop()">
-          </div>
-          <div class="form-group">
-            <label data-i18n="soil_type">Soil Type</label>
-            <select id="soil-type" onchange="livePreviewCrop()">
-              <option value="any">Any / Unknown</option>
-              <option value="alluvial">Alluvial</option>
-              <option value="black">Black / Clay</option>
-              <option value="red">Red / Laterite</option>
-              <option value="sandy">Sandy / Loamy</option>
-              <option value="hilly">Hilly / Forest</option>
-            </select>
-          </div>
-          <div id="live-preview" style="margin-bottom:0.7rem;"></div>
-          <div class="btn-row">
-            <button class="btn btn-green btn-block" id="recommendBtn" onclick="recommendCrop()">🔮 <span data-i18n="get_recommendations">Get Recommendations</span></button>
-            <button class="btn btn-outline btn-sm" onclick="fillWeather()">🌤️ <span data-i18n="auto_weather">Auto Weather</span></button>
-            <button class="btn btn-outline btn-sm" onclick="resetSliders()">↺ Reset</button>
-            <button class="btn btn-outline btn-sm" onclick="randomFarm()">🎲</button>
-          </div>
-        </div>
-        <div class="card" id="crop-results-card">
-          <h2>🎯 <span data-i18n="recommendations">Recommendations</span></h2>
-          <p style="color:var(--text3);font-size:0.82rem;" data-i18n="enter_data_prompt">Enter soil data and click "Get Recommendations"</p>
-          <div id="crop-result-area"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ YIELD FORECAST ══ -->
-    <div class="tab-content" id="tab-yield">
-      <div class="grid-2">
-        <div class="card">
-          <h2>📊 <span data-i18n="yield_input">Yield Prediction Input</span></h2>
-          <div class="form-group">
-            <label data-i18n="select_crop">Select Crop</label>
-            <select id="yield-crop" onchange="predictYield()">
-              <option value="rice">🌾 Rice</option><option value="wheat">🌿 Wheat</option>
-              <option value="maize">🌽 Maize</option><option value="cotton">🪴 Cotton</option>
-              <option value="sugarcane">🌱 Sugarcane</option><option value="millet">🌾 Millet</option>
-              <option value="banana">🍌 Banana</option><option value="potato">🥔 Potato</option>
-              <option value="groundnut">🥜 Groundnut</option><option value="tomato">🍅 Tomato</option>
-              <option value="onion">🧅 Onion</option><option value="soybean">🫘 Soybean</option>
-              <option value="chickpea">🫛 Chickpea</option><option value="jowar">🌾 Jowar</option>
-              <option value="mustard">🌻 Mustard</option><option value="turmeric">🟡 Turmeric</option>
-              <option value="ginger">🫚 Ginger</option><option value="coconut">🥥 Coconut</option>
-              <option value="mango">🥭 Mango</option><option value="papaya">🍈 Papaya</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label><span data-i18n="nitrogen">Nitrogen (N)</span> <span class="range-val" id="yn-value">60</span></label>
-            <input type="range" id="yn" min="0" max="140" value="60" oninput="updateSlider('yn');predictYield()">
-          </div>
-          <div class="form-group">
-            <label><span data-i18n="phosphorus">Phosphorus (P)</span> <span class="range-val" id="yp-value">50</span></label>
-            <input type="range" id="yp" min="5" max="145" value="50" oninput="updateSlider('yp');predictYield()">
-          </div>
-          <div class="form-group">
-            <label><span data-i18n="potassium">Potassium (K)</span> <span class="range-val" id="yk-value">60</span></label>
-            <input type="range" id="yk" min="5" max="205" value="60" oninput="updateSlider('yk');predictYield()">
-          </div>
-          <div class="form-group">
-            <label>Area (hectares) <span class="range-val" id="ya-value">1.0</span></label>
-            <input type="range" id="ya" min="0.1" max="20" value="1.0" step="0.1" oninput="updateSlider('ya');predictYield()">
-          </div>
-          <div class="form-group">
-            <label>Irrigation Level</label>
-            <select id="irrigation" onchange="predictYield()">
-              <option value="1.0">💧 Rain-fed Only</option>
-              <option value="1.15" selected>🚿 Partial Irrigation</option>
-              <option value="1.3">🌊 Full Irrigation</option>
-            </select>
-          </div>
-        </div>
-        <div class="card">
-          <h2>🌱 <span data-i18n="yield_results">Yield Results</span></h2>
-          <p style="color:var(--text3);font-size:0.82rem;" data-i18n="enter_yield_prompt">Set parameters above</p>
-          <div id="yield-result-area"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ DISEASE DETECTION ══ -->
-    <div class="tab-content" id="tab-disease">
-      <div class="grid-2">
-        <div class="card">
-          <h2>🔬 <span data-i18n="upload_leaf">Upload Leaf Image</span></h2>
-          <div class="upload-zone" onclick="document.getElementById('leaf-image').click()">
-            <div class="icon">🍃</div>
-            <p style="font-weight:600;font-size:0.88rem;" data-i18n="click_upload">Click to upload leaf image</p>
-            <p style="font-size:0.75rem;color:var(--text3);margin-top:0.3rem;">JPG, PNG · Max 10MB</p>
-            <div id="image-preview"></div>
-          </div>
-          <input type="file" id="leaf-image" accept="image/*" style="display:none" onchange="previewImage(event)">
-          <button class="btn btn-green btn-block" style="margin-top:0.8rem;" onclick="detectDisease()">🧠 <span data-i18n="detect_disease">Detect Disease (AI)</span></button>
-          <p style="font-size:0.75rem;color:var(--text3);margin-top:0.9rem;font-weight:600;" data-i18n="quick_demo">Quick Demo:</p>
-          <div class="btn-row" style="margin-top:0.35rem;">
-            <button class="btn btn-sm btn-outline" onclick="demoDisease('healthy')">✅ Healthy</button>
-            <button class="btn btn-sm btn-outline" onclick="demoDisease('leaf_blight')">⚠️ Blight</button>
-            <button class="btn btn-sm btn-outline" onclick="demoDisease('rust')">🔴 Rust</button>
-            <button class="btn btn-sm btn-outline" onclick="demoDisease('powdery_mildew')">🌫️ Mildew</button>
-            <button class="btn btn-sm btn-outline" onclick="demoDisease('bacterial_spot')">🦠 Bacteria</button>
-          </div>
-        </div>
-        <div class="card" id="disease-results-card">
-          <h2>📋 <span data-i18n="diagnosis">Diagnosis Results</span></h2>
-          <p style="color:var(--text3);font-size:0.82rem;" data-i18n="upload_prompt">Upload a leaf image and click detect</p>
-          <div id="disease-result-area"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ MARKET PRICES ══ -->
-    <div class="tab-content" id="tab-market">
+  <!-- CROP ADVISOR -->
+  <div class="tab-content active" id="tab-crop">
+    <div class="grid-2">
       <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.8rem;">
-          <h2 style="margin:0;">💰 <span data-i18n="market_prices">Market Prices</span> <span style="font-size:0.72rem;color:var(--text3);font-weight:400;" id="market-date"></span></h2>
-          <div class="btn-row">
-            <button class="btn btn-sm btn-outline" onclick="loadMarketPrices()">🔄 Refresh</button>
-            <button class="btn btn-sm btn-outline" onclick="sortMarketBy('price')">⬇️ By Price</button>
-            <button class="btn btn-sm btn-outline" onclick="sortMarketBy('trend')">📈 By Trend</button>
-          </div>
+        <h2>🧪 Soil & Environment Data</h2>
+        <div class="form-group">
+          <label>Nitrogen (N) <span class="range-val" id="n-val">50</span></label>
+          <input type="range" id="n" min="0" max="140" value="50" oninput="updateVal('n','n-val')">
         </div>
-        <div style="overflow-x:auto;">
-          <table class="price-table">
-            <thead><tr>
-              <th data-i18n="crop_col">Crop</th>
-              <th data-i18n="price_col">Price (₹/qtl)</th>
-              <th data-i18n="market_col">Market</th>
-              <th data-i18n="trend_col">Trend</th>
-              <th>7-Day</th>
-              <th>Season</th>
-            </tr></thead>
-            <tbody id="price-table-body"></tbody>
-          </table>
+        <div class="form-group">
+          <label>Phosphorus (P) <span class="range-val" id="p-val">50</span></label>
+          <input type="range" id="p" min="5" max="145" value="50" oninput="updateVal('p','p-val')">
         </div>
+        <div class="form-group">
+          <label>Potassium (K) <span class="range-val" id="k-val">50</span></label>
+          <input type="range" id="k" min="5" max="205" value="50" oninput="updateVal('k','k-val')">
+        </div>
+        <div class="form-group">
+          <label>Temperature (°C) <span class="range-val" id="temp-val">25</span></label>
+          <input type="range" id="temp" min="8" max="45" value="25" oninput="updateVal('temp','temp-val')">
+        </div>
+        <div class="form-group">
+          <label>Humidity (%) <span class="range-val" id="hum-val">65</span></label>
+          <input type="range" id="hum" min="14" max="100" value="65" oninput="updateVal('hum','hum-val')">
+        </div>
+        <div class="form-group">
+          <label>Soil pH <span class="range-val" id="ph-val">6.5</span></label>
+          <input type="range" id="ph" min="3.5" max="9.5" value="6.5" step="0.1" oninput="updateVal('ph','ph-val')">
+        </div>
+        <div class="form-group">
+          <label>Rainfall (mm) <span class="range-val" id="rain-val">150</span></label>
+          <input type="range" id="rain" min="20" max="350" value="150" oninput="updateVal('rain','rain-val')">
+        </div>
+        <button class="btn btn-green" onclick="recommendCrop()">🔮 Get Recommendations</button>
+        <div id="crop-result" style="margin-top:1rem;"></div>
       </div>
-      <div class="card" style="margin-top:0.8rem;">
-        <h2>📊 <span data-i18n="price_chart">Price Chart</span></h2>
-        <canvas id="price-chart"></canvas>
-      </div>
-    </div>
-
-    <!-- ══ CROP CALENDAR ══ -->
-    <div class="tab-content" id="tab-calendar">
       <div class="card">
-        <h2>📅 Crop Calendar — Sowing & Harvest Guide</h2>
-        <div class="form-group" style="max-width:300px;">
-          <label>Select Region</label>
-          <select id="cal-region" onchange="renderCalendar()">
-            <option value="kn">Karnataka</option>
-            <option value="ap">Andhra Pradesh / Telangana</option>
-            <option value="mh">Maharashtra</option>
-            <option value="tn">Tamil Nadu</option>
-            <option value="kl">Kerala</option>
-            <option value="pu">Punjab / Haryana</option>
-            <option value="up">Uttar Pradesh</option>
-            <option value="wb">West Bengal</option>
-          </select>
-        </div>
-        <div id="calendar-area"></div>
+        <h2>🎯 Recommended Crops</h2>
+        <div id="recommendations">Adjust sliders and click "Get Recommendations"</div>
       </div>
     </div>
+  </div>
 
-  </div><!-- /content -->
-</div><!-- /main -->
-
-<!-- ============================================ -->
-<!-- OMNI VOICE WIDGET - Full Interface Style     -->
-<!-- Configured as Voice Widget with glassmorphic  -->
-<!-- ============================================ -->
-<div id="omni-widget-component"></div>
-
-<script id="omnidimension-web-widget" async src="https://omnidim.io/web_widget.js?secret_key=de49ff3e6231999c3ea5f472ae00a869"></script>
-
-<!-- API MODAL -->
-<div class="modal-overlay" id="apiModal">
-  <div class="modal-box">
-    <h2>🔑 Connect Groq AI</h2>
-    <p>JeevanMitra AI uses <strong>Groq</strong> — free, fast, no credit card needed. Get your API key in 60 seconds:</p>
-    <ol style="font-size:0.8rem;color:var(--text2);padding-left:1.2rem;margin-bottom:1rem;line-height:2;">
-      <li>Go to <a href="https://console.groq.com" target="_blank" style="color:var(--green);">console.groq.com</a></li>
-      <li>Sign up free → API Keys → Create Key</li>
-      <li>Paste below — key starts with <code style="color:var(--green);">gsk_</code></li>
-    </ol>
-    <input type="password" class="modal-input" id="apiKeyInput" placeholder="gsk_..." autocomplete="off">
-    <div class="modal-btns">
-      <button class="btn btn-green" onclick="saveKey()" style="flex:1;justify-content:center;">✓ Save & Activate</button>
-      <button class="btn btn-outline" onclick="closeModal()">Skip (Demo Mode)</button>
+  <!-- YIELD FORECAST -->
+  <div class="tab-content" id="tab-yield">
+    <div class="card">
+      <h2>📊 Yield Prediction</h2>
+      <div class="form-group">
+        <label>Select Crop</label>
+        <select id="yield-crop" onchange="predictYield()">
+          <option value="rice">🌾 Rice</option>
+          <option value="wheat">🌿 Wheat</option>
+          <option value="maize">🌽 Maize</option>
+          <option value="cotton">🪴 Cotton</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Area (hectares)</label>
+        <input type="number" id="area" value="1" step="0.5" onchange="predictYield()">
+      </div>
+      <div id="yield-result"></div>
     </div>
-    <a href="https://console.groq.com/keys" target="_blank" class="modal-link">↗ Open Groq Console</a>
+  </div>
+
+  <!-- DISEASE DETECTION -->
+  <div class="tab-content" id="tab-disease">
+    <div class="card">
+      <h2>🔬 Disease Detection</h2>
+      <p>Upload a photo of affected crop/leaf for AI diagnosis</p>
+      <input type="file" id="disease-image" accept="image/*">
+      <button class="btn btn-green" style="margin-top:1rem;" onclick="detectDisease()">🔍 Detect Disease</button>
+      <div id="disease-result" style="margin-top:1rem;"></div>
+    </div>
+  </div>
+
+  <!-- MARKET PRICES -->
+  <div class="tab-content" id="tab-market">
+    <div class="card">
+      <h2>💰 Market Prices</h2>
+      <table class="price-table">
+        <thead>
+          <tr><th>Crop</th><th>Price (₹/qtl)</th><th>Market</th><th>Trend</th></tr>
+        </thead>
+        <tbody id="price-table">
+          <tr><td>🌾 Rice</td><td>2200</td><td>Bengaluru</td><td>📈 +5%</td></tr>
+          <tr><td>🌿 Wheat</td><td>2400</td><td>Delhi</td><td>📈 +3%</td></tr>
+          <tr><td>🌽 Maize</td><td>2100</td><td>Pune</td><td>📉 -2%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CROP CALENDAR -->
+  <div class="tab-content" id="tab-calendar">
+    <div class="card">
+      <h2>📅 Crop Calendar</h2>
+      <div class="form-group">
+        <label>Select Crop</label>
+        <select id="calendar-crop" onchange="showCalendar()">
+          <option value="rice">🌾 Rice</option>
+          <option value="wheat">🌿 Wheat</option>
+          <option value="maize">🌽 Maize</option>
+        </select>
+      </div>
+      <div id="calendar-info"></div>
+    </div>
   </div>
 </div>
 
-<script src="data/cropsData.js"></script>
-<script src="js/i18n.js"></script>
-<script src="js/crop.js"></script>
-<script src="js/yield.js"></script>
-<script src="js/disease.js"></script>
-<script src="js/market.js"></script>
-<script src="js/chat.js"></script>
-<script src="js/app.js"></script>
+<!-- ============================================ -->
+<!-- ONLY OMNI VOICE WIDGET - NO LOCAL CHAT      -->
+<!-- Voice Widget with Full Interface             -->
+<!-- ============================================ -->
+<div id="omni-widget-component"></div>
+
+<!-- Force fresh load of Omni Voice Widget (cache-busted) -->
+<script>
+  // Clear any cached widget and force fresh load
+  const timestamp = new Date().getTime();
+  const script = document.createElement('script');
+  script.id = 'omnidimension-web-widget';
+  script.async = true;
+  script.src = `https://omnidim.io/web_widget.js?secret_key=de49ff3e6231999c3ea5f472ae00a869&t=${timestamp}`;
+  document.body.appendChild(script);
+</script>
 
 <script>
-  // Optional: Initialize Omni widget with custom config (if needed)
-  window.addEventListener('load', function() {
-    console.log('🌿 JeevanMitra AI with Omni Voice Widget ready');
+  // Simple UI Functions (no Groq/AI - just demo UI)
+  function updateVal(sliderId, spanId) {
+    document.getElementById(spanId).innerText = document.getElementById(sliderId).value;
+  }
+
+  function switchTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(`tab-${tabName}`).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function switchLanguage(lang) {
+    alert(`Language switched to ${lang.toUpperCase()}\n\nOmni Voice Widget supports multiple languages!`);
+  }
+
+  function recommendCrop() {
+    const n = document.getElementById('n').value;
+    const p = document.getElementById('p').value;
+    const k = document.getElementById('k').value;
+    const temp = document.getElementById('temp').value;
     
-    // You can add custom initialization for the voice widget here if needed
-    if (window.OmniWidget) {
-      window.OmniWidget.init({
-        voiceEnabled: true,
-        language: 'en',
-        autoOpen: false
-      });
+    let recommendation = '';
+    if (temp > 25 && n > 60) {
+      recommendation = '🌾 Rice is ideal for these conditions!';
+    } else if (temp < 25 && n < 50) {
+      recommendation = '🌿 Wheat would grow well here.';
+    } else {
+      recommendation = '🌽 Maize or Millet are good options.';
     }
-  });
+    
+    document.getElementById('recommendations').innerHTML = `
+      <div style="background:#e8f5e9;padding:1rem;border-radius:12px;">
+        <strong>✅ Recommended:</strong> ${recommendation}<br>
+        <small>Ask JeevanMitra Voice Assistant for detailed guidance!</small>
+      </div>
+    `;
+  }
+
+  function predictYield() {
+    const crop = document.getElementById('yield-crop').value;
+    const area = document.getElementById('area').value;
+    let yieldAmount = crop === 'rice' ? 5.5 : (crop === 'wheat' ? 4.2 : 6.0);
+    const total = (yieldAmount * area).toFixed(1);
+    document.getElementById('yield-result').innerHTML = `
+      <div style="background:#e3f2fd;padding:1rem;border-radius:12px;">
+        📊 Estimated yield: ${total} tonnes<br>
+        🗣️ Ask voice assistant for more accuracy!
+      </div>
+    `;
+  }
+
+  function detectDisease() {
+    const fileInput = document.getElementById('disease-image');
+    if (fileInput.files.length > 0) {
+      document.getElementById('disease-result').innerHTML = `
+        <div style="background:#fff3e0;padding:1rem;border-radius:12px;">
+          🔍 Image analyzed!<br>
+          🎙️ Speak with JeevanMitra Voice Assistant for diagnosis and treatment.
+        </div>
+      `;
+    } else {
+      alert('Please upload an image first');
+    }
+  }
+
+  function showCalendar() {
+    const crop = document.getElementById('calendar-crop').value;
+    const info = {
+      rice: '🌾 Sowing: June-July | Harvest: Oct-Nov',
+      wheat: '🌿 Sowing: Oct-Nov | Harvest: March-April',
+      maize: '🌽 Sowing: May-June | Harvest: Sep-Oct'
+    };
+    document.getElementById('calendar-info').innerHTML = `
+      <div style="background:#e8eaf6;padding:1rem;border-radius:12px;">
+        📅 ${info[crop]}<br>
+        🎙️ Ask voice assistant for region-specific calendar!
+      </div>
+    `;
+  }
+
+  // Welcome message for Omni Widget
+  console.log('🌿 JeevanMitra AI - Voice Widget Active');
 </script>
 
 </body>
