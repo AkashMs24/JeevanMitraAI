@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🌿 JeevanMitra AI — Smart Farming Companion</title>
+<meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src * 'unsafe-inline'; frame-src *; img-src * data:; style-src * 'unsafe-inline';">
 <style>
   * {
     margin: 0;
@@ -17,7 +18,6 @@
     min-height: 100vh;
   }
 
-  /* Header */
   .header {
     background: rgba(20, 198, 204, 0.95);
     backdrop-filter: blur(10px);
@@ -44,30 +44,12 @@
     gap: 12px;
   }
 
-  .brand-icon {
-    font-size: 2rem;
-  }
+  .brand-icon { font-size: 2rem; }
+  .brand h1 { color: white; font-size: 1.5rem; }
+  .brand span { color: #fff9c4; }
+  .brand-sub { color: rgba(255,255,255,0.9); font-size: 0.8rem; }
 
-  .brand h1 {
-    color: white;
-    font-size: 1.5rem;
-  }
-
-  .brand span {
-    color: #fff9c4;
-  }
-
-  .brand-sub {
-    color: rgba(255,255,255,0.9);
-    font-size: 0.8rem;
-  }
-
-  .lang-bar {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
+  .lang-bar { display: flex; gap: 8px; flex-wrap: wrap; }
   .lang-btn {
     padding: 6px 12px;
     border: none;
@@ -77,27 +59,11 @@
     cursor: pointer;
     transition: all 0.3s;
   }
+  .lang-btn:hover, .lang-btn.active { background: white; color: #14c6cc; }
 
-  .lang-btn:hover, .lang-btn.active {
-    background: white;
-    color: #14c6cc;
-  }
-
-  /* Main Content */
-  .main {
-    max-width: 1400px;
-    margin: 2rem auto;
-    padding: 0 2rem;
-  }
-
-  /* Tabs */
-  .tabs {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 2rem;
-  }
-
+  .main { max-width: 1400px; margin: 2rem auto; padding: 0 2rem; }
+  
+  .tabs { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem; }
   .tab-btn {
     padding: 12px 24px;
     border: none;
@@ -109,21 +75,11 @@
     transition: all 0.3s;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   }
-
-  .tab-btn.active {
-    background: #14c6cc;
-    color: white;
-  }
-
-  .tab-content {
-    display: none;
-  }
-
-  .tab-content.active {
-    display: block;
-  }
-
-  /* Cards */
+  .tab-btn.active { background: #14c6cc; color: white; }
+  
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  
   .card {
     background: white;
     border-radius: 20px;
@@ -131,40 +87,24 @@
     margin-bottom: 1.5rem;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   }
-
+  
   .grid-2 {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: 1.5rem;
   }
-
-  .form-group {
-    margin-bottom: 1rem;
-  }
-
-  .form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: #333;
-  }
-
-  input[type="range"] {
-    width: 100%;
-    height: 6px;
-    border-radius: 3px;
-    background: #ddd;
-    outline: none;
-  }
-
-  select {
+  
+  .form-group { margin-bottom: 1rem; }
+  .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333; }
+  input[type="range"] { width: 100%; height: 6px; border-radius: 3px; background: #ddd; outline: none; }
+  select, input[type="number"] {
     width: 100%;
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 1rem;
   }
-
+  
   .btn {
     padding: 10px 20px;
     border: none;
@@ -173,90 +113,81 @@
     font-weight: 600;
     transition: all 0.3s;
   }
+  .btn-green { background: #14c6cc; color: white; }
+  .btn-outline { background: transparent; border: 1px solid #14c6cc; color: #14c6cc; }
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1rem; }
+  .btn-block { flex: 1; }
+  .btn-sm { padding: 6px 12px; font-size: 0.85rem; }
+  .range-val { float: right; color: #14c6cc; font-weight: bold; }
+  
+  .price-table { width: 100%; border-collapse: collapse; }
+  .price-table th, .price-table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+  .price-table th { background: #f5f5f5; font-weight: 600; }
 
-  .btn-green {
-    background: #14c6cc;
-    color: white;
-  }
-
-  .btn-outline {
-    background: transparent;
-    border: 1px solid #14c6cc;
-    color: #14c6cc;
-  }
-
-  .btn-row {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 1rem;
-  }
-
-  .btn-block {
-    flex: 1;
-  }
-
-  .btn-sm {
-    padding: 6px 12px;
-    font-size: 0.85rem;
-  }
-
-  .range-val {
-    float: right;
-    color: #14c6cc;
-    font-weight: bold;
-  }
-
-  /* Price Table */
-  .price-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  .price-table th, .price-table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #eee;
-  }
-
-  .price-table th {
-    background: #f5f5f5;
-    font-weight: 600;
-  }
-
-  /* Omni Voice Widget - Full Screen Adjustment */
+  /* OMNI VOICE WIDGET - FIXED VISIBILITY */
   #omni-widget-component {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
     width: 380px !important;
     height: 600px !important;
-    z-index: 1000;
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    z-index: 9999 !important;
+    border-radius: 24px !important;
+    overflow: visible !important;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important;
+    background: white !important;
+    display: block !important;
+  }
+  
+  #omni-widget-component iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+    border-radius: 24px !important;
   }
 
   @media (max-width: 768px) {
     #omni-widget-component {
       width: calc(100% - 40px) !important;
-      right: 20px;
+      right: 20px !important;
       height: 500px !important;
     }
-    
-    .main {
-      padding: 0 1rem;
-    }
-    
-    .grid-2 {
-      grid-template-columns: 1fr;
-    }
+    .main { padding: 0 1rem; }
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+  
+  /* Voice widget open button styling */
+  .voice-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: #14c6cc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: all 0.3s;
+    animation: pulse 2s infinite;
+  }
+  
+  .voice-indicator:hover {
+    transform: scale(1.1);
+  }
+  
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(20, 198, 204, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(20, 198, 204, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(20, 198, 204, 0); }
   }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="header">
   <div class="header-inner">
     <div class="brand">
@@ -277,9 +208,7 @@
   </div>
 </header>
 
-<!-- MAIN LAYOUT -->
 <div class="main">
-  <!-- TABS -->
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('crop')">🌱 Crop Advisor</button>
     <button class="tab-btn" onclick="switchTab('yield')">📊 Yield Forecast</button>
@@ -288,39 +217,17 @@
     <button class="tab-btn" onclick="switchTab('calendar')">📅 Crop Calendar</button>
   </div>
 
-  <!-- CROP ADVISOR -->
   <div class="tab-content active" id="tab-crop">
     <div class="grid-2">
       <div class="card">
         <h2>🧪 Soil & Environment Data</h2>
-        <div class="form-group">
-          <label>Nitrogen (N) <span class="range-val" id="n-val">50</span></label>
-          <input type="range" id="n" min="0" max="140" value="50" oninput="updateVal('n','n-val')">
-        </div>
-        <div class="form-group">
-          <label>Phosphorus (P) <span class="range-val" id="p-val">50</span></label>
-          <input type="range" id="p" min="5" max="145" value="50" oninput="updateVal('p','p-val')">
-        </div>
-        <div class="form-group">
-          <label>Potassium (K) <span class="range-val" id="k-val">50</span></label>
-          <input type="range" id="k" min="5" max="205" value="50" oninput="updateVal('k','k-val')">
-        </div>
-        <div class="form-group">
-          <label>Temperature (°C) <span class="range-val" id="temp-val">25</span></label>
-          <input type="range" id="temp" min="8" max="45" value="25" oninput="updateVal('temp','temp-val')">
-        </div>
-        <div class="form-group">
-          <label>Humidity (%) <span class="range-val" id="hum-val">65</span></label>
-          <input type="range" id="hum" min="14" max="100" value="65" oninput="updateVal('hum','hum-val')">
-        </div>
-        <div class="form-group">
-          <label>Soil pH <span class="range-val" id="ph-val">6.5</span></label>
-          <input type="range" id="ph" min="3.5" max="9.5" value="6.5" step="0.1" oninput="updateVal('ph','ph-val')">
-        </div>
-        <div class="form-group">
-          <label>Rainfall (mm) <span class="range-val" id="rain-val">150</span></label>
-          <input type="range" id="rain" min="20" max="350" value="150" oninput="updateVal('rain','rain-val')">
-        </div>
+        <div class="form-group"><label>Nitrogen (N) <span class="range-val" id="n-val">50</span></label><input type="range" id="n" min="0" max="140" value="50" oninput="updateVal('n','n-val')"></div>
+        <div class="form-group"><label>Phosphorus (P) <span class="range-val" id="p-val">50</span></label><input type="range" id="p" min="5" max="145" value="50" oninput="updateVal('p','p-val')"></div>
+        <div class="form-group"><label>Potassium (K) <span class="range-val" id="k-val">50</span></label><input type="range" id="k" min="5" max="205" value="50" oninput="updateVal('k','k-val')"></div>
+        <div class="form-group"><label>Temperature (°C) <span class="range-val" id="temp-val">25</span></label><input type="range" id="temp" min="8" max="45" value="25" oninput="updateVal('temp','temp-val')"></div>
+        <div class="form-group"><label>Humidity (%) <span class="range-val" id="hum-val">65</span></label><input type="range" id="hum" min="14" max="100" value="65" oninput="updateVal('hum','hum-val')"></div>
+        <div class="form-group"><label>Soil pH <span class="range-val" id="ph-val">6.5</span></label><input type="range" id="ph" min="3.5" max="9.5" value="6.5" step="0.1" oninput="updateVal('ph','ph-val')"></div>
+        <div class="form-group"><label>Rainfall (mm) <span class="range-val" id="rain-val">150</span></label><input type="range" id="rain" min="20" max="350" value="150" oninput="updateVal('rain','rain-val')"></div>
         <button class="btn btn-green" onclick="recommendCrop()">🔮 Get Recommendations</button>
         <div id="crop-result" style="margin-top:1rem;"></div>
       </div>
@@ -331,28 +238,15 @@
     </div>
   </div>
 
-  <!-- YIELD FORECAST -->
   <div class="tab-content" id="tab-yield">
     <div class="card">
       <h2>📊 Yield Prediction</h2>
-      <div class="form-group">
-        <label>Select Crop</label>
-        <select id="yield-crop" onchange="predictYield()">
-          <option value="rice">🌾 Rice</option>
-          <option value="wheat">🌿 Wheat</option>
-          <option value="maize">🌽 Maize</option>
-          <option value="cotton">🪴 Cotton</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Area (hectares)</label>
-        <input type="number" id="area" value="1" step="0.5" onchange="predictYield()">
-      </div>
+      <div class="form-group"><label>Select Crop</label><select id="yield-crop" onchange="predictYield()"><option value="rice">🌾 Rice</option><option value="wheat">🌿 Wheat</option><option value="maize">🌽 Maize</option><option value="cotton">🪴 Cotton</option></select></div>
+      <div class="form-group"><label>Area (hectares)</label><input type="number" id="area" value="1" step="0.5" onchange="predictYield()"></div>
       <div id="yield-result"></div>
     </div>
   </div>
 
-  <!-- DISEASE DETECTION -->
   <div class="tab-content" id="tab-disease">
     <div class="card">
       <h2>🔬 Disease Detection</h2>
@@ -363,74 +257,96 @@
     </div>
   </div>
 
-  <!-- MARKET PRICES -->
   <div class="tab-content" id="tab-market">
     <div class="card">
       <h2>💰 Market Prices</h2>
-      <table class="price-table">
-        <thead>
-          <tr><th>Crop</th><th>Price (₹/qtl)</th><th>Market</th><th>Trend</th></tr>
-        </thead>
-        <tbody id="price-table">
-          <tr><td>🌾 Rice</td><td>2200</td><td>Bengaluru</td><td>📈 +5%</td></tr>
-          <tr><td>🌿 Wheat</td><td>2400</td><td>Delhi</td><td>📈 +3%</td></tr>
-          <tr><td>🌽 Maize</td><td>2100</td><td>Pune</td><td>📉 -2%</td></tr>
-        </tbody>
-      </table>
+      <table class="price-table"><thead><tr><th>Crop</th><th>Price (₹/qtl)</th><th>Market</th><th>Trend</th></tr></thead>
+      <tbody id="price-table"><tr><td>🌾 Rice</td><td>2200</td><td>Bengaluru</td><td>📈 +5%</td></tr>
+      <tr><td>🌿 Wheat</td><td>2400</td><td>Delhi</td><td>📈 +3%</td></tr>
+      <tr><td>🌽 Maize</td><td>2100</td><td>Pune</td><td>📉 -2%</td></tr></tbody></table>
     </div>
   </div>
 
-  <!-- CROP CALENDAR -->
   <div class="tab-content" id="tab-calendar">
     <div class="card">
       <h2>📅 Crop Calendar</h2>
-      <div class="form-group">
-        <label>Select Crop</label>
-        <select id="calendar-crop" onchange="showCalendar()">
-          <option value="rice">🌾 Rice</option>
-          <option value="wheat">🌿 Wheat</option>
-          <option value="maize">🌽 Maize</option>
-        </select>
-      </div>
+      <div class="form-group"><label>Select Crop</label><select id="calendar-crop" onchange="showCalendar()"><option value="rice">🌾 Rice</option><option value="wheat">🌿 Wheat</option><option value="maize">🌽 Maize</option></select></div>
       <div id="calendar-info"></div>
     </div>
   </div>
 </div>
 
-<!-- ============================================ -->
-<!-- ONLY OMNI VOICE WIDGET - NO LOCAL CHAT      -->
-<!-- Voice Widget with Full Interface             -->
-<!-- ============================================ -->
+<!-- OMNI VOICE WIDGET CONTAINER -->
 <div id="omni-widget-component"></div>
 
-<!-- Force fresh load of Omni Voice Widget (cache-busted) -->
 <script>
-  // Clear any cached widget and force fresh load
-  const timestamp = new Date().getTime();
-  const script = document.createElement('script');
-  script.id = 'omnidimension-web-widget';
-  script.async = true;
-  script.src = `https://omnidim.io/web_widget.js?secret_key=de49ff3e6231999c3ea5f472ae00a869&t=${timestamp}`;
-  document.body.appendChild(script);
-</script>
-
-<script>
-  // Simple UI Functions (no Groq/AI - just demo UI)
+  // Clear any existing Omni scripts and reload fresh
+  (function() {
+    // Remove any existing Omni scripts
+    const existingScripts = document.querySelectorAll('script[id="omnidimension-web-widget"]');
+    existingScripts.forEach(script => script.remove());
+    
+    // Create fresh script with cache busting
+    const script = document.createElement('script');
+    script.id = 'omnidimension-web-widget';
+    script.async = true;
+    script.src = `https://omnidim.io/web_widget.js?secret_key=de49ff3e6231999c3ea5f472ae00a869&_=${Date.now()}`;
+    
+    script.onload = function() {
+      console.log('✅ Omni Voice Widget loaded successfully');
+      
+      // Try to show the widget if it's hidden
+      setTimeout(() => {
+        const widget = document.getElementById('omni-widget-component');
+        if (widget) {
+          widget.style.display = 'block';
+          widget.style.visibility = 'visible';
+          console.log('✅ Omni Widget visible');
+          
+          // Try to find and show iframe
+          const iframe = widget.querySelector('iframe');
+          if (iframe) {
+            iframe.style.display = 'block';
+            console.log('✅ Iframe visible');
+          }
+        }
+      }, 1000);
+    };
+    
+    script.onerror = function() {
+      console.error('❌ Failed to load Omni Widget');
+      showFallbackVoiceButton();
+    };
+    
+    document.body.appendChild(script);
+  })();
+  
+  // Fallback voice button if Omni fails
+  function showFallbackVoiceButton() {
+    const btn = document.createElement('div');
+    btn.className = 'voice-indicator';
+    btn.innerHTML = '🎤';
+    btn.onclick = () => alert('🎙️ JeevanMitra Voice Assistant\n\nSpeak your farming questions!\n\nTry: "What crop should I grow?" or "Tell me about rice farming"');
+    document.body.appendChild(btn);
+  }
+  
+  // UI Functions
   function updateVal(sliderId, spanId) {
     document.getElementById(spanId).innerText = document.getElementById(sliderId).value;
   }
-
+  
   function switchTab(tabName) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.getElementById(`tab-${tabName}`).classList.add('active');
     event.target.classList.add('active');
   }
-
+  
   function switchLanguage(lang) {
-    alert(`Language switched to ${lang.toUpperCase()}\n\nOmni Voice Widget supports multiple languages!`);
+    const languages = { en: 'English', kn: 'Kannada', hi: 'Hindi', ml: 'Malayalam', ta: 'Tamil', te: 'Telugu' };
+    alert(`🌐 Language switched to ${languages[lang]}\n\n🎙️ JeevanMitra Voice Assistant will respond in this language.`);
   }
-
+  
   function recommendCrop() {
     const n = document.getElementById('n').value;
     const p = document.getElementById('p').value;
@@ -438,67 +354,33 @@
     const temp = document.getElementById('temp').value;
     
     let recommendation = '';
-    if (temp > 25 && n > 60) {
-      recommendation = '🌾 Rice is ideal for these conditions!';
-    } else if (temp < 25 && n < 50) {
-      recommendation = '🌿 Wheat would grow well here.';
-    } else {
-      recommendation = '🌽 Maize or Millet are good options.';
-    }
+    if (temp > 25 && n > 60) recommendation = '🌾 Rice is ideal for these conditions!';
+    else if (temp < 25 && n < 50) recommendation = '🌿 Wheat would grow well here.';
+    else recommendation = '🌽 Maize or Millet are good options.';
     
-    document.getElementById('recommendations').innerHTML = `
-      <div style="background:#e8f5e9;padding:1rem;border-radius:12px;">
-        <strong>✅ Recommended:</strong> ${recommendation}<br>
-        <small>Ask JeevanMitra Voice Assistant for detailed guidance!</small>
-      </div>
-    `;
+    document.getElementById('recommendations').innerHTML = `<div style="background:#e8f5e9;padding:1rem;border-radius:12px;"><strong>✅ Recommended:</strong> ${recommendation}<br><small>🎙️ Ask JeevanMitra Voice Assistant for detailed guidance!</small></div>`;
   }
-
+  
   function predictYield() {
     const crop = document.getElementById('yield-crop').value;
     const area = document.getElementById('area').value;
     let yieldAmount = crop === 'rice' ? 5.5 : (crop === 'wheat' ? 4.2 : 6.0);
     const total = (yieldAmount * area).toFixed(1);
-    document.getElementById('yield-result').innerHTML = `
-      <div style="background:#e3f2fd;padding:1rem;border-radius:12px;">
-        📊 Estimated yield: ${total} tonnes<br>
-        🗣️ Ask voice assistant for more accuracy!
-      </div>
-    `;
+    document.getElementById('yield-result').innerHTML = `<div style="background:#e3f2fd;padding:1rem;border-radius:12px;">📊 Estimated yield: ${total} tonnes<br>🎙️ Ask voice assistant for more accuracy!</div>`;
   }
-
+  
   function detectDisease() {
     const fileInput = document.getElementById('disease-image');
     if (fileInput.files.length > 0) {
-      document.getElementById('disease-result').innerHTML = `
-        <div style="background:#fff3e0;padding:1rem;border-radius:12px;">
-          🔍 Image analyzed!<br>
-          🎙️ Speak with JeevanMitra Voice Assistant for diagnosis and treatment.
-        </div>
-      `;
-    } else {
-      alert('Please upload an image first');
-    }
+      document.getElementById('disease-result').innerHTML = `<div style="background:#fff3e0;padding:1rem;border-radius:12px;">🔍 Image analyzed!<br>🎙️ Speak with JeevanMitra Voice Assistant for diagnosis and treatment.</div>`;
+    } else { alert('Please upload an image first'); }
   }
-
+  
   function showCalendar() {
     const crop = document.getElementById('calendar-crop').value;
-    const info = {
-      rice: '🌾 Sowing: June-July | Harvest: Oct-Nov',
-      wheat: '🌿 Sowing: Oct-Nov | Harvest: March-April',
-      maize: '🌽 Sowing: May-June | Harvest: Sep-Oct'
-    };
-    document.getElementById('calendar-info').innerHTML = `
-      <div style="background:#e8eaf6;padding:1rem;border-radius:12px;">
-        📅 ${info[crop]}<br>
-        🎙️ Ask voice assistant for region-specific calendar!
-      </div>
-    `;
+    const info = { rice: '🌾 Sowing: June-July | Harvest: Oct-Nov', wheat: '🌿 Sowing: Oct-Nov | Harvest: March-April', maize: '🌽 Sowing: May-June | Harvest: Sep-Oct' };
+    document.getElementById('calendar-info').innerHTML = `<div style="background:#e8eaf6;padding:1rem;border-radius:12px;">📅 ${info[crop]}<br>🎙️ Ask voice assistant for region-specific calendar!</div>`;
   }
-
-  // Welcome message for Omni Widget
-  console.log('🌿 JeevanMitra AI - Voice Widget Active');
 </script>
-
 </body>
 </html>
