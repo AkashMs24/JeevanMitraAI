@@ -4,7 +4,7 @@
 
 ![JeevanMitra AI Banner](https://img.shields.io/badge/🌿_JeevanMitra_AI-Smart_Farming_Companion-1a6b3a?style=for-the-badge)
 
-[![🏆🏆 Recognized among top teams – FusionX 2026 Hackathonr](https://img.shields.io/badge/🏆-Hackathon_special-FFD700?style=flat-square)](.)
+[![🏆🏆 Recognized among top teams – FusionX 2026 Hackathonr](https://img.shields.io/badge/🏆 Recognized among top teams – FusionX 2026 Hackathon-FFD700?style=flat-square)](.)
 [![Live Demo](https://img.shields.io/badge/🚀-Live_Demo-1a6b3a?style=flat-square)](https://YOUR_USERNAME.github.io/JeevanMitraAI)
 [![Languages](https://img.shields.io/badge/🌍-6_Languages-blue?style=flat-square)](.)
 [![Crops](https://img.shields.io/badge/🌾-20_Crops-green?style=flat-square)](.)
