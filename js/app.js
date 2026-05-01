@@ -1,7 +1,6 @@
 // ═══════════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════════
-let _groqKey = '';
 let isChatVisible = true;
 
 // ═══════════════════════════════════════════════════════
@@ -19,14 +18,14 @@ function closeModal() {
 function saveKey() {
   const k = document.getElementById('apiKeyInput').value.trim();
   if (!k.startsWith('gsk_') || k.length < 20) {
-    alert('Invalid key. Groq keys start with gsk_...');
+    alert('❌ Invalid key. Groq keys start with gsk_...');
     return;
   }
   _groqKey = k;
   localStorage.setItem(KEY_STORE, k);
   closeModal();
   updateApiBar(true);
-  toast('Groq AI connected!');
+  toast('✅ Groq AI connected! Full AI mode active.');
 }
 
 function updateApiBar(connected) {
@@ -34,32 +33,15 @@ function updateApiBar(connected) {
   const txt = document.getElementById('apiBarText');
   bar.className = 'api-bar ' + (connected ? 'connected' : 'disconnected');
   txt.textContent = connected
-    ? 'Groq AI Connected — Chat & Disease Detection Ready'
-    : 'Click to enter your FREE Groq API key';
-}
-
-// ═══════════════════════════════════════════════════════
-// SPEECH (for disease/crop results only)
-// ═══════════════════════════════════════════════════════
-function speakText(text) {
-  if (!('speechSynthesis' in window)) return;
-  speechSynthesis.cancel();
-  const cleanText = text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-  if (!cleanText) return;
-  const u = new SpeechSynthesisUtterance(cleanText);
-  const langMap = { en: 'en-IN', kn: 'kn-IN', hi: 'hi-IN', ml: 'ml-IN', ta: 'ta-IN', te: 'te-IN' };
-  u.lang = langMap[currentLanguage] || 'en-IN';
-  u.rate = 0.85;
-  const voices = speechSynthesis.getVoices();
-  const best = voices.find(v => v.lang === u.lang) || voices.find(v => v.lang.startsWith(u.lang.split('-')[0]));
-  if (best) u.voice = best;
-  speechSynthesis.speak(u);
+    ? '⚡ Groq AI Connected — Direct API, No Server Needed  (click to change key)'
+    : '🔑 Click to enter your FREE Groq API key — works directly in browser, no server needed';
 }
 
 // ═══════════════════════════════════════════════════════
 // INITIALIZATION
 // ═══════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
+  // Load saved API key
   const saved = localStorage.getItem(KEY_STORE);
   if (saved) {
     _groqKey = saved;
@@ -68,39 +50,47 @@ document.addEventListener('DOMContentLoaded', () => {
     updateApiBar(false);
     setTimeout(showModal, 800);
   }
-
+  
+  // API modal event listeners
   document.getElementById('apiKeyInput').addEventListener('keypress', e => {
     if (e.key === 'Enter') saveKey();
   });
   document.getElementById('apiModal').addEventListener('click', e => {
     if (e.target === e.currentTarget) closeModal();
   });
-
+  
+  // Initialize all components
   updateAllSliders();
   loadMarketPrices();
   applyTranslations();
   livePreviewCrop();
   predictYield();
   renderCalendar();
-
-  if ('speechSynthesis' in window) {
-    speechSynthesis.getVoices();
-    speechSynthesis.onvoiceschanged = () => {
-      console.log('Voices loaded:', speechSynthesis.getVoices().length);
-    };
-  }
-
+  
+  // Set welcome message
   const wEl = document.getElementById('welcome-message');
   if (wEl) wEl.textContent = t('chat_welcome');
-
-  console.log('JeevanMitra AI v2.0 Ready');
+  
+  // Preload voices for speech synthesis
+  if ('speechSynthesis' in window) {
+    speechSynthesis.getVoices();
+    speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+  }
+  
+  console.log('🌿 JeevanMitra AI v2.0 — Standalone, No Server, Direct Groq API');
 });
 
+// ═══════════════════════════════════════════════════════
+// RESIZE HANDLER
+// ═══════════════════════════════════════════════════════
 window.addEventListener('resize', () => {
   if (document.getElementById('tab-market')?.classList.contains('active')) {
     drawChart();
   }
 });
 
+// ═══════════════════════════════════════════════════════
+// EXPOSE TO GLOBAL SCOPE (for onclick attributes)
+// ═══════════════════════════════════════════════════════
 window.saveKey = saveKey;
 window.closeModal = closeModal;
