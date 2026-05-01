@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🌿 JeevanMitra AI — Smart Farming Companion</title>
 <link rel="stylesheet" href="css/style.css">
-<link rel="icon" type="image/svg+xml" href="assets/images/logo.svg">
 </head>
 <body>
 
@@ -20,18 +19,18 @@
       </div>
     </div>
     <div class="lang-bar">
-      <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')" aria-label="English">English</button>
-      <button class="lang-btn" data-lang="kn" onclick="setLanguage('kn')" aria-label="Kannada">ಕನ್ನಡ</button>
-      <button class="lang-btn" data-lang="hi" onclick="setLanguage('hi')" aria-label="Hindi">हिंदी</button>
-      <button class="lang-btn" data-lang="ml" onclick="setLanguage('ml')" aria-label="Malayalam">മലയാളം</button>
-      <button class="lang-btn" data-lang="ta" onclick="setLanguage('ta')" aria-label="Tamil">தமிழ்</button>
-      <button class="lang-btn" data-lang="te" onclick="setLanguage('te')" aria-label="Telugu">తెలుగు</button>
+      <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">English</button>
+      <button class="lang-btn" data-lang="kn" onclick="setLanguage('kn')">ಕನ್ನಡ</button>
+      <button class="lang-btn" data-lang="hi" onclick="setLanguage('hi')">हिंदी</button>
+      <button class="lang-btn" data-lang="ml" onclick="setLanguage('ml')">മലയാളം</button>
+      <button class="lang-btn" data-lang="ta" onclick="setLanguage('ta')">தமிழ்</button>
+      <button class="lang-btn" data-lang="te" onclick="setLanguage('te')">తెలుగు</button>
     </div>
   </div>
 </header>
 
 <!-- API STATUS BAR -->
-<div class="api-bar disconnected" id="apiBar" onclick="showModal()" role="button" tabindex="0" aria-label="Configure Groq API key">
+<div class="api-bar disconnected" id="apiBar" onclick="showModal()">
   <span class="api-dot"></span>
   <span id="apiBarText">🔑 Click to enter your FREE Groq API key — no server needed</span>
 </div>
@@ -41,49 +40,49 @@
   <div class="content">
 
     <!-- TABS -->
-    <div class="tabs" role="tablist">
-      <button class="tab-btn active" data-tab="crop" onclick="switchTab('crop')" role="tab" aria-label="Crop Advisor">🌱 <span data-i18n="tab_crop">Crop Advisor</span></button>
-      <button class="tab-btn" data-tab="yield" onclick="switchTab('yield')" role="tab" aria-label="Yield Forecast">📊 <span data-i18n="tab_yield">Yield Forecast</span></button>
-      <button class="tab-btn" data-tab="disease" onclick="switchTab('disease')" role="tab" aria-label="Disease Detection">🔬 <span data-i18n="tab_disease">Disease Detect</span></button>
-      <button class="tab-btn" data-tab="market" onclick="switchTab('market')" role="tab" aria-label="Market Prices">💰 <span data-i18n="tab_market">Market Prices</span></button>
-      <button class="tab-btn" data-tab="calendar" onclick="switchTab('calendar')" role="tab" aria-label="Crop Calendar">📅 <span data-i18n="tab_calendar">Crop Calendar</span></button>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="crop" onclick="switchTab('crop')">🌱 <span data-i18n="tab_crop">Crop Advisor</span></button>
+      <button class="tab-btn" data-tab="yield" onclick="switchTab('yield')">📊 <span data-i18n="tab_yield">Yield Forecast</span></button>
+      <button class="tab-btn" data-tab="disease" onclick="switchTab('disease')">🔬 <span data-i18n="tab_disease">Disease Detect</span></button>
+      <button class="tab-btn" data-tab="market" onclick="switchTab('market')">💰 <span data-i18n="tab_market">Market Prices</span></button>
+      <button class="tab-btn" data-tab="calendar" onclick="switchTab('calendar')">📅 <span data-i18n="tab_calendar">Crop Calendar</span></button>
     </div>
 
     <!-- ══ CROP ADVISOR ══ -->
-    <div class="tab-content active" id="tab-crop" role="tabpanel">
+    <div class="tab-content active" id="tab-crop">
       <div class="grid-2">
         <div class="card">
           <h2>🧪 <span data-i18n="soil_data">Soil & Environment Data</span></h2>
           <div class="form-group">
-            <label for="n"><span data-i18n="nitrogen">Nitrogen (N)</span> <span class="range-val" id="n-value">50</span></label>
+            <label><span data-i18n="nitrogen">Nitrogen (N)</span> <span class="range-val" id="n-value">50</span></label>
             <input type="range" id="n" min="0" max="140" value="50" oninput="updateSlider('n');livePreviewCrop()">
           </div>
           <div class="form-group">
-            <label for="p"><span data-i18n="phosphorus">Phosphorus (P)</span> <span class="range-val" id="p-value">50</span></label>
+            <label><span data-i18n="phosphorus">Phosphorus (P)</span> <span class="range-val" id="p-value">50</span></label>
             <input type="range" id="p" min="5" max="145" value="50" oninput="updateSlider('p');livePreviewCrop()">
           </div>
           <div class="form-group">
-            <label for="k"><span data-i18n="potassium">Potassium (K)</span> <span class="range-val" id="k-value">50</span></label>
+            <label><span data-i18n="potassium">Potassium (K)</span> <span class="range-val" id="k-value">50</span></label>
             <input type="range" id="k" min="5" max="205" value="50" oninput="updateSlider('k');livePreviewCrop()">
           </div>
           <div class="form-group">
-            <label for="temp"><span data-i18n="temperature">Temperature (°C)</span> <span class="range-val" id="temp-value">25</span></label>
+            <label><span data-i18n="temperature">Temperature (°C)</span> <span class="range-val" id="temp-value">25</span></label>
             <input type="range" id="temp" min="8" max="45" value="25" oninput="updateSlider('temp');livePreviewCrop()">
           </div>
           <div class="form-group">
-            <label for="hum"><span data-i18n="humidity">Humidity (%)</span> <span class="range-val" id="hum-value">65</span></label>
+            <label><span data-i18n="humidity">Humidity (%)</span> <span class="range-val" id="hum-value">65</span></label>
             <input type="range" id="hum" min="14" max="100" value="65" oninput="updateSlider('hum');livePreviewCrop()">
           </div>
           <div class="form-group">
-            <label for="ph"><span data-i18n="ph">Soil pH</span> <span class="range-val" id="ph-value">6.5</span></label>
+            <label><span data-i18n="ph">Soil pH</span> <span class="range-val" id="ph-value">6.5</span></label>
             <input type="range" id="ph" min="3.5" max="9.5" value="6.5" step="0.1" oninput="updateSlider('ph');livePreviewCrop()">
           </div>
           <div class="form-group">
-            <label for="rain"><span data-i18n="rainfall">Rainfall (mm)</span> <span class="range-val" id="rain-value">150</span></label>
+            <label><span data-i18n="rainfall">Rainfall (mm)</span> <span class="range-val" id="rain-value">150</span></label>
             <input type="range" id="rain" min="20" max="350" value="150" oninput="updateSlider('rain');livePreviewCrop()">
           </div>
           <div class="form-group">
-            <label for="soil-type" data-i18n="soil_type">Soil Type</label>
+            <label data-i18n="soil_type">Soil Type</label>
             <select id="soil-type" onchange="livePreviewCrop()">
               <option value="any">Any / Unknown</option>
               <option value="alluvial">Alluvial</option>
@@ -110,12 +109,12 @@
     </div>
 
     <!-- ══ YIELD FORECAST ══ -->
-    <div class="tab-content" id="tab-yield" role="tabpanel">
+    <div class="tab-content" id="tab-yield">
       <div class="grid-2">
         <div class="card">
           <h2>📊 <span data-i18n="yield_input">Yield Prediction Input</span></h2>
           <div class="form-group">
-            <label for="yield-crop" data-i18n="select_crop">Select Crop</label>
+            <label data-i18n="select_crop">Select Crop</label>
             <select id="yield-crop" onchange="predictYield()">
               <option value="rice">🌾 Rice</option><option value="wheat">🌿 Wheat</option>
               <option value="maize">🌽 Maize</option><option value="cotton">🪴 Cotton</option>
@@ -130,23 +129,23 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="yn"><span data-i18n="nitrogen">Nitrogen (N)</span> <span class="range-val" id="yn-value">60</span></label>
+            <label><span data-i18n="nitrogen">Nitrogen (N)</span> <span class="range-val" id="yn-value">60</span></label>
             <input type="range" id="yn" min="0" max="140" value="60" oninput="updateSlider('yn');predictYield()">
           </div>
           <div class="form-group">
-            <label for="yp"><span data-i18n="phosphorus">Phosphorus (P)</span> <span class="range-val" id="yp-value">50</span></label>
+            <label><span data-i18n="phosphorus">Phosphorus (P)</span> <span class="range-val" id="yp-value">50</span></label>
             <input type="range" id="yp" min="5" max="145" value="50" oninput="updateSlider('yp');predictYield()">
           </div>
           <div class="form-group">
-            <label for="yk"><span data-i18n="potassium">Potassium (K)</span> <span class="range-val" id="yk-value">60</span></label>
+            <label><span data-i18n="potassium">Potassium (K)</span> <span class="range-val" id="yk-value">60</span></label>
             <input type="range" id="yk" min="5" max="205" value="60" oninput="updateSlider('yk');predictYield()">
           </div>
           <div class="form-group">
-            <label for="ya">Area (hectares) <span class="range-val" id="ya-value">1.0</span></label>
+            <label>Area (hectares) <span class="range-val" id="ya-value">1.0</span></label>
             <input type="range" id="ya" min="0.1" max="20" value="1.0" step="0.1" oninput="updateSlider('ya');predictYield()">
           </div>
           <div class="form-group">
-            <label for="irrigation">Irrigation Level</label>
+            <label>Irrigation Level</label>
             <select id="irrigation" onchange="predictYield()">
               <option value="1.0">💧 Rain-fed Only</option>
               <option value="1.15" selected>🚿 Partial Irrigation</option>
@@ -163,25 +162,25 @@
     </div>
 
     <!-- ══ DISEASE DETECTION ══ -->
-    <div class="tab-content" id="tab-disease" role="tabpanel">
+    <div class="tab-content" id="tab-disease">
       <div class="grid-2">
         <div class="card">
           <h2>🔬 <span data-i18n="upload_leaf">Upload Leaf Image</span></h2>
-          <div class="upload-zone" onclick="document.getElementById('leaf-image').click()" role="button" tabindex="0" aria-label="Upload leaf image">
+          <div class="upload-zone" onclick="document.getElementById('leaf-image').click()">
             <div class="icon">🍃</div>
             <p style="font-weight:600;font-size:0.88rem;" data-i18n="click_upload">Click to upload leaf image</p>
             <p style="font-size:0.75rem;color:var(--text3);margin-top:0.3rem;">JPG, PNG · Max 10MB</p>
             <div id="image-preview"></div>
           </div>
-          <input type="file" id="leaf-image" accept="image/*" style="display:none" onchange="previewImage(event)" aria-hidden="true">
+          <input type="file" id="leaf-image" accept="image/*" style="display:none" onchange="previewImage(event)">
           <button class="btn btn-green btn-block" style="margin-top:0.8rem;" onclick="detectDisease()">🧠 <span data-i18n="detect_disease">Detect Disease (AI)</span></button>
           <p style="font-size:0.75rem;color:var(--text3);margin-top:0.9rem;font-weight:600;" data-i18n="quick_demo">Quick Demo:</p>
           <div class="btn-row" style="margin-top:0.35rem;">
-            <button class="btn btn-sm btn-outline" onclick="demoDisease('healthy')" aria-label="Demo healthy leaf">✅ Healthy</button>
-            <button class="btn btn-sm btn-outline" onclick="demoDisease('leaf_blight')" aria-label="Demo leaf blight">⚠️ Blight</button>
-            <button class="btn btn-sm btn-outline" onclick="demoDisease('rust')" aria-label="Demo rust disease">🔴 Rust</button>
-            <button class="btn btn-sm btn-outline" onclick="demoDisease('powdery_mildew')" aria-label="Demo powdery mildew">🌫️ Mildew</button>
-            <button class="btn btn-sm btn-outline" onclick="demoDisease('bacterial_spot')" aria-label="Demo bacterial spot">🦠 Bacteria</button>
+            <button class="btn btn-sm btn-outline" onclick="demoDisease('healthy')">✅ Healthy</button>
+            <button class="btn btn-sm btn-outline" onclick="demoDisease('leaf_blight')">⚠️ Blight</button>
+            <button class="btn btn-sm btn-outline" onclick="demoDisease('rust')">🔴 Rust</button>
+            <button class="btn btn-sm btn-outline" onclick="demoDisease('powdery_mildew')">🌫️ Mildew</button>
+            <button class="btn btn-sm btn-outline" onclick="demoDisease('bacterial_spot')">🦠 Bacteria</button>
           </div>
         </div>
         <div class="card" id="disease-results-card">
@@ -193,37 +192,42 @@
     </div>
 
     <!-- ══ MARKET PRICES ══ -->
-    <div class="tab-content" id="tab-market" role="tabpanel">
+    <div class="tab-content" id="tab-market">
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.8rem;">
           <h2 style="margin:0;">💰 <span data-i18n="market_prices">Market Prices</span> <span style="font-size:0.72rem;color:var(--text3);font-weight:400;" id="market-date"></span></h2>
           <div class="btn-row">
-            <button class="btn btn-sm btn-outline" onclick="loadMarketPrices()" aria-label="Refresh prices">🔄 Refresh</button>
-            <button class="btn btn-sm btn-outline" onclick="sortMarketBy('price')" aria-label="Sort by price">⬇️ By Price</button>
-            <button class="btn btn-sm btn-outline" onclick="sortMarketBy('trend')" aria-label="Sort by trend">📈 By Trend</button>
+            <button class="btn btn-sm btn-outline" onclick="loadMarketPrices()">🔄 Refresh</button>
+            <button class="btn btn-sm btn-outline" onclick="sortMarketBy('price')">⬇️ By Price</button>
+            <button class="btn btn-sm btn-outline" onclick="sortMarketBy('trend')">📈 By Trend</button>
           </div>
         </div>
         <div style="overflow-x:auto;">
           <table class="price-table">
-            <thead>
-              <tr><th data-i18n="crop_col">Crop</th><th data-i18n="price_col">Price (₹/qtl)</th><th data-i18n="market_col">Market</th><th data-i18n="trend_col">Trend</th><th>7-Day</th><th>Season</th></tr>
-            </thead>
+            <thead><tr>
+              <th data-i18n="crop_col">Crop</th>
+              <th data-i18n="price_col">Price (₹/qtl)</th>
+              <th data-i18n="market_col">Market</th>
+              <th data-i18n="trend_col">Trend</th>
+              <th>7-Day</th>
+              <th>Season</th>
+            </tr></thead>
             <tbody id="price-table-body"></tbody>
           </table>
         </div>
       </div>
       <div class="card" style="margin-top:0.8rem;">
         <h2>📊 <span data-i18n="price_chart">Price Chart</span></h2>
-        <canvas id="price-chart" aria-label="Price comparison chart"></canvas>
+        <canvas id="price-chart"></canvas>
       </div>
     </div>
 
     <!-- ══ CROP CALENDAR ══ -->
-    <div class="tab-content" id="tab-calendar" role="tabpanel">
+    <div class="tab-content" id="tab-calendar">
       <div class="card">
         <h2>📅 Crop Calendar — Sowing & Harvest Guide</h2>
         <div class="form-group" style="max-width:300px;">
-          <label for="cal-region">Select Region</label>
+          <label>Select Region</label>
           <select id="cal-region" onchange="renderCalendar()">
             <option value="kn">Karnataka</option>
             <option value="ap">Andhra Pradesh / Telangana</option>
@@ -245,7 +249,7 @@
   <div class="chat-panel" id="chatPanel">
     <div class="chat-head">
       <h3><span class="chat-dot"></span> JeevanMitra Assistant</h3>
-      <button class="chat-close-btn" onclick="toggleChat()" aria-label="Close chat panel">✕</button>
+      <button class="chat-close-btn" onclick="toggleChat()">✕</button>
     </div>
     <div class="chat-msgs" id="chatMessages">
       <div class="chat-msg bot">
@@ -261,19 +265,19 @@
       <button class="quick-btn" onclick="quickChat('season')">🗓️ Season</button>
     </div>
     <div class="chat-input-row">
-      <input type="text" class="chat-input" id="chatInput" placeholder="Type or use mic…" onkeypress="if(event.key==='Enter')sendChat()" aria-label="Chat message">
-      <button class="voice-btn" id="voiceBtn" onclick="startVoice()" aria-label="Voice input">🎤</button>
-      <button class="send-btn" onclick="sendChat()" aria-label="Send message">➤</button>
+      <input type="text" class="chat-input" id="chatInput" placeholder="Type or use mic…" onkeypress="if(event.key==='Enter')sendChat()">
+      <button class="voice-btn" id="voiceBtn" onclick="startVoice()" title="Voice input">🎤</button>
+      <button class="send-btn" onclick="sendChat()">➤</button>
     </div>
   </div>
 
 </div><!-- /main -->
 
-<button class="chat-fab" id="chatFab" onclick="toggleChat()" aria-label="Toggle chat">💬</button>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<button class="chat-fab" id="chatFab" onclick="toggleChat()">💬</button>
+<div class="toast" id="toast"></div>
 
 <!-- API MODAL -->
-<div class="modal-overlay" id="apiModal" role="dialog" aria-modal="true">
+<div class="modal-overlay" id="apiModal">
   <div class="modal-box">
     <h2>🔑 Connect Groq AI</h2>
     <p>JeevanMitra AI uses <strong>Groq</strong> — free, fast, no credit card needed. Get your API key in 60 seconds:</p>
@@ -282,7 +286,7 @@
       <li>Sign up free → API Keys → Create Key</li>
       <li>Paste below — key starts with <code style="color:var(--green);">gsk_</code></li>
     </ol>
-    <input type="password" class="modal-input" id="apiKeyInput" placeholder="gsk_..." autocomplete="off" aria-label="Groq API key">
+    <input type="password" class="modal-input" id="apiKeyInput" placeholder="gsk_..." autocomplete="off">
     <div class="modal-btns">
       <button class="btn btn-green" onclick="saveKey()" style="flex:1;justify-content:center;">✓ Save & Activate</button>
       <button class="btn btn-outline" onclick="closeModal()">Skip (Demo Mode)</button>
@@ -291,15 +295,13 @@
   </div>
 </div>
 
-<!-- Scripts -->
 <script src="data/cropsData.js"></script>
 <script src="js/i18n.js"></script>
-<script src="js/market.js"></script>
 <script src="js/crop.js"></script>
 <script src="js/yield.js"></script>
 <script src="js/disease.js"></script>
+<script src="js/market.js"></script>
 <script src="js/chat.js"></script>
 <script src="js/app.js"></script>
-
 </body>
 </html>
