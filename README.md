@@ -264,7 +264,7 @@ Use it, modify it, sell it, save farms with it. 🌾
 
 <div align="center">
 
-**Built with 💚 in 48 hours for India's farmers**
+**Built with 💚 in 24 hours for India's farmers**
 
 *Addresses [UN SDG 2 — Zero Hunger](https://sdgs.un.org/goals/goal2)*
 
