@@ -13,7 +13,7 @@
 
 <br/>
 
-> **"Built in 48 hours. Used for 48 years."**
+> **"Built in 24 hours. Used for 24 years."**
 > 
 > *JeevanMitra AI — because every Indian farmer deserves a smart companion.*
 
