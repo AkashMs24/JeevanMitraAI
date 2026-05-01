@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════════
-let isChatVisible = true;
+let _groqKey = '';
 
 // ═══════════════════════════════════════════════════════
 // API KEY MANAGEMENT
@@ -25,7 +25,7 @@ function saveKey() {
   localStorage.setItem(KEY_STORE, k);
   closeModal();
   updateApiBar(true);
-  toast('✅ Groq AI connected! Full AI mode active.');
+  toast('✅ Groq AI connected! Disease detection active.');
 }
 
 function updateApiBar(connected) {
@@ -33,8 +33,8 @@ function updateApiBar(connected) {
   const txt = document.getElementById('apiBarText');
   bar.className = 'api-bar ' + (connected ? 'connected' : 'disconnected');
   txt.textContent = connected
-    ? '⚡ Groq AI Connected — Direct API, No Server Needed  (click to change key)'
-    : '🔑 Click to enter your FREE Groq API key — works directly in browser, no server needed';
+    ? '⚡ Groq AI Connected — Disease Detection Ready  (click to change key)'
+    : '🔑 Click to enter your FREE Groq API key — needed for disease detection';
 }
 
 // ═══════════════════════════════════════════════════════
@@ -67,17 +67,13 @@ document.addEventListener('DOMContentLoaded', () => {
   predictYield();
   renderCalendar();
   
-  // Set welcome message
-  const wEl = document.getElementById('welcome-message');
-  if (wEl) wEl.textContent = t('chat_welcome');
-  
   // Preload voices for speech synthesis
   if ('speechSynthesis' in window) {
     speechSynthesis.getVoices();
     speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
   }
   
-  console.log('🌿 JeevanMitra AI v2.0 — Standalone, No Server, Direct Groq API');
+  console.log('🌿 JeevanMitra AI v2.0 — OmniDimension Voice Agent Integrated');
 });
 
 // ═══════════════════════════════════════════════════════
@@ -90,7 +86,7 @@ window.addEventListener('resize', () => {
 });
 
 // ═══════════════════════════════════════════════════════
-// EXPOSE TO GLOBAL SCOPE (for onclick attributes)
+// EXPOSE TO GLOBAL SCOPE
 // ═══════════════════════════════════════════════════════
 window.saveKey = saveKey;
 window.closeModal = closeModal;
