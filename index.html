@@ -8,9 +8,6 @@
 </head>
 <body>
 
-<!-- OmniDimension Widget Container -->
-<div id="omni-widget-component" style="width: 70%; height: 500px; display: none;"></div>
-
 <!-- HEADER -->
 <header class="header">
   <div class="header-inner">
@@ -39,7 +36,7 @@
 </div>
 
 <!-- MAIN LAYOUT -->
-<div class="main chat-hidden" id="mainContainer">
+<div class="main" id="mainContainer">
   <div class="content">
 
     <!-- TABS -->
@@ -251,7 +248,36 @@
     </div>
 
   </div><!-- /content -->
+
+  <!-- ══ CHAT PANEL ══ -->
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-header">
+      <span>🤖 JeevanMitra AI Chat</span>
+      <button class="chat-close-btn" onclick="toggleChat()" title="Close chat">✕</button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg bot">
+        <div class="chat-avatar">🤖</div>
+        <div class="chat-bubble" id="welcome-message">Hello! Ask me about crops, diseases, yield, or prices.</div>
+      </div>
+    </div>
+    <div class="chat-quick-btns">
+      <button onclick="quickChat('crop')">🌱 Crop?</button>
+      <button onclick="quickChat('disease')">🔬 Disease</button>
+      <button onclick="quickChat('price')">💰 Price</button>
+      <button onclick="quickChat('season')">🌤️ Season</button>
+    </div>
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" placeholder="Ask anything about farming..." onkeypress="if(event.key==='Enter')sendChat()">
+      <button id="voiceBtn" onclick="startVoice()" title="Voice input">🎤</button>
+      <button onclick="sendChat()" title="Send">➤</button>
+    </div>
+  </div>
+
 </div><!-- /main -->
+
+<!-- Floating Chat Button -->
+<button class="chat-fab" id="chatFab" onclick="toggleChat()" title="Open AI Chat">💬</button>
 
 <div class="toast" id="toast"></div>
 
@@ -274,6 +300,7 @@
   </div>
 </div>
 
+<!-- Scripts -->
 <script src="data/cropsData.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/crop.js"></script>
@@ -282,12 +309,224 @@
 <script src="js/market.js"></script>
 <script src="js/app.js"></script>
 
-<!-- OmniDimension Voice + Chat Widget -->
+<!-- OmniDimension Voice Widget (loaded last, single instance) -->
+<script id="omnidimension-web-widget" async
+  src="https://omnidim.io/web_widget.js?secret_key=23f7aa2ecdc9cca0ecc99e75a542b676">
+</script>
 
-<div id="omni-widget-component" style={{ width: "70%", height: "500px" }}></div>
+<!-- Bridge: OmniDimension voice → Groq chat -->
+<script>
+(function() {
+  // Wait for OmniDimension to load, then bridge its transcript into Groq chat
+  function setupOmniBridge() {
+    // Method 1: postMessage listener — OmniDimension sends transcripts via window messages
+    window.addEventListener('message', function(event) {
+      // Accept messages from any origin since OmniDimension uses an iframe
+      var data = event.data;
+      if (!data) return;
 
-<script id="omnidimension-web-widget" async src="https://omnidim.io/web_widget.js?secret_key=23f7aa2ecdc9cca0ecc99e75a542b676" ></script>
+      // OmniDimension transcript event (adjust key names if their API differs)
+      var transcript =
+        data.transcript ||       // common key
+        data.text ||
+        data.message ||
+        (data.type === 'TRANSCRIPT' && data.content) ||
+        (data.type === 'omnidimension-transcript' && data.content) ||
+        null;
 
+      if (transcript && typeof transcript === 'string' && transcript.trim()) {
+        var input = document.getElementById('chatInput');
+        if (input) {
+          input.value = transcript.trim();
+          // Dispatch to Groq chat
+          if (typeof sendChat === 'function') sendChat();
+        }
+      }
+    });
+
+    // Method 2: Poll for OmniDimension's global callback API (if they expose one)
+    var omniCheckInterval = setInterval(function() {
+      // Some versions expose window.OmniDimension or window.omnidimension
+      var omni = window.OmniDimension || window.omnidimension || window.OmniDimensionWidget;
+      if (omni && typeof omni.onTranscript === 'function') {
+        omni.onTranscript(function(text) {
+          var input = document.getElementById('chatInput');
+          if (input && text) {
+            input.value = text.trim();
+            if (typeof sendChat === 'function') sendChat();
+          }
+        });
+        clearInterval(omniCheckInterval);
+      }
+    }, 500);
+
+    // Stop polling after 15s regardless
+    setTimeout(function() { clearInterval(omniCheckInterval); }, 15000);
+  }
+
+  // Run after page fully loads
+  if (document.readyState === 'complete') {
+    setupOmniBridge();
+  } else {
+    window.addEventListener('load', setupOmniBridge);
+  }
+})();
+</script>
+
+<!-- CSS patches for chat panel & FAB (add to style.css if preferred) -->
+<style>
+  .main { display: flex; gap: 1rem; }
+  .content { flex: 1; min-width: 0; }
+
+  /* Chat Panel */
+  .chat-panel {
+    width: 320px;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    background: var(--card, #fff);
+    border-radius: 12px;
+    border: 1px solid var(--border, #e0e0e0);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    height: calc(100vh - 130px);
+    position: sticky;
+    top: 10px;
+    overflow: hidden;
+  }
+  .chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--green, #2d9e5f);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .chat-close-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .chat-close-btn:hover { background: rgba(255,255,255,0.2); }
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .chat-msg { display: flex; gap: 0.5rem; align-items: flex-start; }
+  .chat-msg.user { flex-direction: row-reverse; }
+  .chat-avatar { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+  .chat-bubble {
+    background: var(--bg2, #f4f6f0);
+    border-radius: 10px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    max-width: 85%;
+  }
+  .chat-msg.user .chat-bubble {
+    background: var(--green, #2d9e5f);
+    color: #fff;
+  }
+  .chat-quick-btns {
+    display: flex;
+    gap: 0.35rem;
+    padding: 0.5rem 0.8rem;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--border, #e0e0e0);
+  }
+  .chat-quick-btns button {
+    font-size: 0.72rem;
+    padding: 0.25rem 0.55rem;
+    border-radius: 20px;
+    border: 1px solid var(--green, #2d9e5f);
+    background: none;
+    color: var(--green, #2d9e5f);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .chat-quick-btns button:hover { background: var(--green, #2d9e5f); color: #fff; }
+  .chat-input-row {
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.6rem 0.8rem;
+    border-top: 1px solid var(--border, #e0e0e0);
+  }
+  .chat-input-row input {
+    flex: 1;
+    border: 1px solid var(--border, #ddd);
+    border-radius: 8px;
+    padding: 0.45rem 0.7rem;
+    font-size: 0.82rem;
+    outline: none;
+  }
+  .chat-input-row input:focus { border-color: var(--green, #2d9e5f); }
+  .chat-input-row button {
+    background: var(--green, #2d9e5f);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.4rem 0.65rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  .chat-input-row button:hover { opacity: 0.85; }
+  #voiceBtn.listening { background: #e53e3e !important; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+  /* Floating Chat Button */
+  .chat-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: var(--green, #2d9e5f);
+    color: #fff;
+    font-size: 1.5rem;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    z-index: 1000;
+    display: none; /* hidden when panel is visible */
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+  }
+  .chat-fab:hover { transform: scale(1.1); }
+
+  /* Typing dots */
+  .typing-dots { display: flex; gap: 4px; align-items: center; height: 18px; }
+  .typing-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--text3, #aaa);
+    animation: bounce 1.2s infinite;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+  /* Responsive: stack on mobile */
+  @media (max-width: 768px) {
+    .main { flex-direction: column; }
+    .chat-panel {
+      width: 100%;
+      min-width: unset;
+      height: 420px;
+      position: static;
+    }
+    .chat-fab { display: flex; }
+  }
+</style>
 
 </body>
 </html>
