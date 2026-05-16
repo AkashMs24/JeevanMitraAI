@@ -251,7 +251,7 @@ git push origin your-branch
 |---|---|
 | 🌐 Live App | [akashms24.github.io/JeevanMitraAI](https://akashms24.github.io/JeevanMitraAI/) |
 | 🐛 Issues | [GitHub Issues](https://github.com/akashms24/JeevanMitraAI/issues) |
-| 📧 Email | akashms@example.com |
+| 📧 Email | ms2akash@gmail.com |
 
 ---
 
