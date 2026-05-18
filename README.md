@@ -3,6 +3,7 @@
 <img src="https://img.shields.io/badge/🌿-JeevanMitra_AI-2d6a4f?style=for-the-badge&labelColor=1b4332" alt="JeevanMitra AI"/>
 
 # 🌿 JeevanMitra AI
+
 ### *Smart Farming Companion — Empowering Indian Farmers with AI*
 
 [![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-akashms24.github.io-brightgreen?style=for-the-badge)](https://akashms24.github.io/JeevanMitraAI/)
@@ -14,7 +15,7 @@
 <br/>
 
 > **"Built in 24 hours. Used for 24 years."**
-> 
+>
 > *JeevanMitra AI — because every Indian farmer deserves a smart companion.*
 
 <br/>
@@ -30,12 +31,13 @@
 <div align="center">
 
 ### 🥇 *"Best AI Innovation for Social Impact"*
-**Winner — FUSHIONX Hackathon 2026**
+
+**Winner — FUSIONX Hackathon 2026**
 
 </div>
 
 > *"JeevanMitra AI tackles one of India's most critical challenges — farmer distress — with elegant, accessible, and truly innovative AI. Zero server costs, multi-language voice interface, and real-time market intelligence packaged in a browser. This is technology serving humanity."*
-> — **Head Judge, FUSHIONX 2026**
+> — **Head Judge, FUSIONX 2026**
 
 | What Made Us Win |
 |---|
@@ -54,10 +56,10 @@ India's 150 million farmers face daily, life-altering decisions with little to n
 | Challenge | Reality |
 |---|---|
 | ❓ Which crop to plant? | Often decided by tradition, not soil science |
-| 🐛 Disease outbreaks | Spread for days before identified |
+| 🐛 Disease outbreaks | Spread for days before being identified |
 | 📉 Market price uncertainty | Farmers sell low, middlemen profit |
 | 🌦️ Climate unpredictability | Yields vary wildly year to year |
-| 🔍 No local-language expert advice | 70%+ of farmers not comfortable in English |
+| 🔍 No local-language expert advice | 70%+ of farmers are not comfortable in English |
 
 **JeevanMitra AI answers all of this — instantly, for free, in your browser.**
 
@@ -70,31 +72,44 @@ Enter your soil nutrients (N, P, K), temperature, humidity, pH, and rainfall —
 
 > *"Don't guess — let AI tell you what grows best in YOUR soil."*
 
+---
+
 ### 2. 📊 Yield Forecaster
 Predict your harvest in tons/hectare before you plant. Get revenue estimates and AI-generated optimization tips to maximize profit.
 
 > *"Know your profit before planting a single seed."*
+
+---
 
 ### 3. 🔬 Disease Detection
 Upload a leaf photo or use demo mode — get instant diagnosis and treatment suggestions powered by Groq AI.
 
 > *"Diagnoses in seconds what takes experts days."*
 
+---
+
 ### 4. 💰 Live Market Prices
-Real-time prices for 20+ crops across major Indian markets (Kochi, Delhi, Mumbai, and more) — with UP / STABLE / DOWN trend indicators and 7-day change tracking.
+Real-time prices for 20+ crops across major Indian markets (Kochi, Delhi, Mumbai, and more) — with **UP / STABLE / DOWN** trend indicators and 7-day change tracking.
 
 > *"Sell when prices peak — we track the trends for you."*
+
+---
 
 ### 5. 📅 Crop Calendar
 Region-specific sowing and harvest guides for Karnataka, Maharashtra, Tamil Nadu, Punjab, and more.
 
 > *"Never miss the planting window again."*
 
+---
+
 ### 6. 🎤 Voice Assistant
-Click the mic → ask naturally in your language:  
-*"What crop grows best in black soil?"* or *"Show me tomato prices"*
+Click the mic → ask naturally in your language:
+- *"What crop grows best in black soil?"*
+- *"Show me tomato prices"*
 
 > *"For farmers who prefer speaking over typing."*
+
+---
 
 ### 7. 🌐 Multi-Language Support
 Switch between **English · ಕನ್ನಡ · हिंदी · മലയാളം · தமிழ் · తెలుగు** instantly.
@@ -113,9 +128,9 @@ Switch between **English · ಕನ್ನಡ · हिंदी · മലയാ�
 | 📊 Market Prices | Delayed, manual | **Live + trend analysis** |
 | 🔬 Disease Detection | Manual lookup | **AI-powered diagnosis** |
 | 🎤 Voice Interface | Rare | **Built-in** |
-| 🚀 Setup | Server + install | **Zero — runs in browser** |
+| 🚀 Setup Required | Server + install | **Zero — runs in browser** |
 | 🏗️ Infrastructure | Heavy backend | **Serverless (GitHub Pages)** |
-| 📱 Device | High-end only | **Works on ₹2000 phones** |
+| 📱 Device Compatibility | High-end only | **Works on ₹2000 phones** |
 
 ---
 
@@ -126,9 +141,9 @@ This isn't a rules-based chatbot. JeevanMitra uses **Groq's LPU™ (Language Pro
 - ⚡ **Sub-second responses** — no spinning wheels, no waiting
 - 🆓 **Completely free** — no credit card, no hidden limits
 - 🔐 **Private** — your API key stays in YOUR browser only
-- 📶 **Works on slow connections** — lightweight, serverless
+- 📶 **Works on slow connections** — lightweight and serverless
 
-> *"Most teams used basic if-else logic. JeevanMitra shipped PRODUCTION-READY Groq AI integration in 48 hours. That's engineering excellence."*
+> *"Most teams used basic if-else logic. JeevanMitra shipped production-ready Groq AI integration in 48 hours. That's engineering excellence."*
 > — **Hackathon Judge**
 
 ---
@@ -137,20 +152,41 @@ This isn't a rules-based chatbot. JeevanMitra uses **Groq's LPU™ (Language Pro
 
 | Layer | Technology | Why |
 |---|---|---|
-| Frontend | HTML5, CSS3, Vanilla JS | Zero dependencies, works everywhere |
+| Frontend | HTML5, CSS3, Vanilla JS | Clean separation of concerns, works everywhere |
+| Styling | `css/style.css` | Modular, maintainable stylesheets |
+| Logic | `js/app.js` | Organized JavaScript, easy to extend |
+| Crop Data | `data/cropsData.js` | Easily updatable crop & region datasets |
 | AI Engine | Groq API (Mixtral 8x7B) | Fastest inference, generous free tier |
 | Charts | Chart.js | Beautiful, lightweight visualizations |
-| Voice | Web Speech API + Widget | Seamless voice UX |
+| Voice | Web Speech API | Seamless voice UX |
 | Hosting | GitHub Pages | 100% uptime, global CDN |
 | i18n | JSON-based | Easy to extend to 100+ languages |
 | **Cost** | **$0 / month** | **Fully serverless architecture** |
 
 ### Architecture Highlights
+
 ```
 🔥 No backend servers     — Everything runs in the browser
 🔥 User-held API keys     — Privacy preserved, no data leaks
-🔥 Progressive enhancement — Works even without JavaScript
-🔥 One-click deploy        — No DevOps, no Docker, no stress
+🔥 Modular file structure — CSS, JS, and data in separate folders
+🔥 One-click deploy       — No DevOps, no Docker, no stress
+```
+
+---
+
+## 📁 Project Structure
+
+```
+JeevanMitraAI/
+├── css/
+│   └── style.css          # All styles and responsive design
+├── data/
+│   └── cropsData.js       # Crop database, market prices, calendar data
+├── js/
+│   └── app.js             # Core app logic, AI integration, voice interface
+├── index.html             # Main entry point
+├── .gitignore
+└── README.md
 ```
 
 ---
@@ -158,13 +194,16 @@ This isn't a rules-based chatbot. JeevanMitra uses **Groq's LPU™ (Language Pro
 ## 🚀 Quick Start
 
 ### Option 1 — Just Use It (30 seconds)
+
 1. 👉 Open **[https://akashms24.github.io/JeevanMitraAI/](https://akashms24.github.io/JeevanMitraAI/)**
 2. Enter your free Groq API key in the top bar
 3. Start exploring — no training required!
 
-> **Get your free Groq key in 60 seconds:**  
-> [console.groq.com](https://console.groq.com) → API Keys → Create Key  
+> **Get your free Groq key in 60 seconds:**
+> [console.groq.com](https://console.groq.com) → API Keys → Create Key
 > *(Key starts with `gsk_`)*
+
+---
 
 ### Option 2 — Run Locally
 
@@ -177,8 +216,11 @@ cd JeevanMitraAI
 
 # Open in browser (no build step needed!)
 open index.html
-# or: python3 -m http.server 8080
+# or serve with Python:
+python3 -m http.server 8080
 ```
+
+> No `npm install`. No build step. No configuration. Just open and go.
 
 ---
 
@@ -224,10 +266,12 @@ git push origin your-branch
 ```
 
 **Ways to contribute:**
-- 🌾 Add crop data for more regions
+
+- 🌾 Add crop data in `data/cropsData.js` for more regions
 - 🗣️ Translate to more Indian languages (Marathi, Bengali, Odia, etc.)
-- 📈 Integrate government mandi board price APIs
+- 📈 Integrate government mandi board price APIs in `js/app.js`
 - 🐛 Add disease image datasets for better AI accuracy
+- 🎨 Improve UI/UX in `css/style.css`
 - 🐞 Report bugs via [GitHub Issues](https://github.com/akashms24/JeevanMitraAI/issues)
 
 ---
@@ -257,7 +301,7 @@ git push origin your-branch
 
 ## 📜 License
 
-**MIT License** — free for all, forever.  
+**MIT License** — free for all, forever.
 Use it, modify it, sell it, save farms with it. 🌾
 
 ---
