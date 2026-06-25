@@ -276,17 +276,6 @@ git push origin your-branch
 
 ---
 
-## 💬 What People Are Saying
-
-> *"I showed this to my father, a cotton farmer in Vidarbha. He asked 'मराठी आहे का?' and when I switched to Marathi support, he smiled — 'हा तर खरा मित्र आहे' — This is a true friend."*
-> — **Team member's family, Demo Day**
-
-> *"The judges spent 20 minutes playing with disease detection — they kept uploading random leaves from plants outside the venue!"*
-> — **Hackathon Volunteer**
-
-> *"This is exactly what we built LPUs for."*
-> — **Groq CTO, on seeing the project**
-
 ---
 
 ## 📞 Contact
