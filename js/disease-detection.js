@@ -1,82 +1,49 @@
-/**
- * AI Disease Detection using Vision API
- * Analyzes crop images for diseases and pests
- */
-
 class DiseaseDetector {
     async analyzeImage(file) {
-        showLoading('🔬 Analyzing disease with AI vision...');
-
+        showLoading('🔬 AI vision analysis…');
         try {
             const base64 = await imageToBase64(file);
-            
-            const prompt = `Analyze this crop image for diseases, pests, or health issues.
-
-            Provide response in JSON format:
-            {
-                "disease": "disease name",
-                "confidence": "percentage",
-                "severity": "low/medium/high",
-                "symptoms": "list of visible symptoms",
-                "treatment": "recommended treatment steps",
-                "prevention": "prevention methods",
-                "urgency": "action needed immediately/soon/optional"
-            }`;
-
-            const response = await groqAPI.chat(prompt);
-            
-            // Parse JSON from response
-            const jsonMatch = response.match(/\{[\s\S]*\}/);
-            const diseaseData = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(response);
-
+            const mimeType = file.type || 'image/jpeg';
+            const prompt = 'Analyze this crop image. Return JSON: {"disease":"name","confidence":"%","severity":"low/medium/high","symptoms":"...","treatment":"...","prevention":"...","urgency":"immediate/soon/optional"}';
+            const response = await groqAPI.analyzeImage(base64, prompt, mimeType);
+            let data;
+            try { const m = response.match(/\{[\s\S]*\}/); data = m ? JSON.parse(m[0]) : JSON.parse(response); }
+            catch { data = { disease: 'Analysis Complete', confidence: 'N/A', severity: 'medium', symptoms: response.substring(0, 500), treatment: 'Consult local expert.', prevention: 'Maintain crop nutrition.', urgency: 'soon' }; }
             hideLoading();
-            return diseaseData;
-        } catch (error) {
-            hideLoading();
-            showToast(`❌ ${error.message}`, 'error');
-            throw error;
-        }
+            return data;
+        } catch (e) { hideLoading(); showToast(`❌ ${e.message}`, 'error'); throw e; }
     }
 }
-
 const diseaseDetector = new DiseaseDetector();
-
-// Handle image upload
 function handleImageUpload(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    if (!groqAPI.isConfigured()) {
-        showToast('❌ API key not configured', 'error');
-        return;
-    }
-
-    diseaseDetector.analyzeImage(file).then(result => {
-        displayDiseaseResult(result);
-    });
+    const file = event.target.files?.[0]; if (!file) return;
+    if (!groqAPI.isConfigured()) { showToast('❌ Configure API key', 'error'); return; }
+    diseaseDetector.analyzeImage(file).then(d => displayDiseaseResult(d)).catch(() => {});
 }
-
-// Handle drag and drop
 function handleDrop(event) {
     event.preventDefault();
     const file = event.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
-        document.getElementById('diseaseImageInput').files = event.dataTransfer.files;
+    if (file?.type.startsWith('image/')) {
+        const inp = document.getElementById('diseaseImageInput'); if (inp) inp.files = event.dataTransfer.files;
         handleImageUpload({ target: { files: [file] } });
     }
 }
-
-// Display disease results
 function displayDiseaseResult(data) {
-    document.getElementById('imageUploadArea').style.display = 'none';
-    document.getElementById('diseaseResultContainer').style.display = 'block';
-    
-    document.getElementById('diseaseName').textContent = data.disease || 'Unknown';
-    document.getElementById('diseaseSymptoms').textContent = data.symptoms || '--';
-    document.getElementById('diseaseTreatment').textContent = data.treatment || '--';
-    document.getElementById('diseasePrevention').textContent = data.prevention || '--';
-    
-    const severityEl = document.getElementById('severityLevel');
-    severityEl.textContent = `Severity: ${data.severity?.toUpperCase()}`;
-    severityEl.className = `severity-indicator severity-${data.severity}`;
+    const up = document.getElementById('imageUploadArea'), res = document.getElementById('diseaseResultContainer');
+    if (up) up.style.display = 'none'; if (res) res.style.display = 'block';
+    setSafeText('diseaseName', data.disease || '—');
+    setSafeText('diseaseSymptoms', data.symptoms || '—');
+    setSafeText('diseaseTreatment', data.treatment || '—');
+    setSafeText('diseasePrevention', data.prevention || '—');
+    const sev = document.getElementById('severityLevel');
+    if (sev) {
+        const s = (data.severity || 'low').toLowerCase();
+        sev.textContent = `Severity: ${(data.severity || '—').toUpperCase()}`;
+        sev.className = `severity-badge ${s === 'high' ? 'sev-high' : s === 'medium' ? 'sev-med' : 'sev-low'}`;
+    }
+}
+function resetDiseaseUpload() {
+    const up = document.getElementById('imageUploadArea'), res = document.getElementById('diseaseResultContainer');
+    if (up) up.style.display = ''; if (res) res.style.display = 'none';
+    const inp = document.getElementById('diseaseImageInput'); if (inp) inp.value = '';
 }
