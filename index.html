@@ -112,9 +112,8 @@
 
     <!-- ═══ SOIL ═══ -->
     <section class="tab-panel" id="tab-soil">
-        <div class="section-title"><h2 data-i18n="soil_tab_title">Soil Analysis</h2><p data-i18n="soil_tab_desc">Soil health scoring & recommendations</p></div>
+        <div class="section-title"><h2 data-i18n="soil_title">Soil Health Analysis</h2><p data-i18n="soil_desc">NPK & pH-based recommendations</p></div>
         <div class="grid-2">
-            <div class="glass-card"><h3 class="card-title"><span class="card-icon">📊</span><span data-i18n="soil_nutrients">Nutrients</span></h3><div id="soilNutrientChart"></div></div>
             <div class="glass-card">
                 <h3 class="card-title"><span class="card-icon">🎯</span><span data-i18n="soil_score">Health Score</span></h3>
                 <div class="big-score" id="soilHealthScore">0/100</div>
@@ -191,10 +190,11 @@
                 <button class="btn-outline" onclick="getLocation()"><span data-i18n="settings_refresh">🔄 Refresh</span></button>
             </div>
             <div class="setting-block">
-                <label data-i18n="settings_api_key">🔑 Groq API Key</label>
-                <input type="password" id="apiKeyInput" class="text-input" placeholder="gsk_…">
-                <p class="hint"><span data-i18n="settings_api_hint">Free key at</span> <a href="https://console.groq.com" target="_blank">console.groq.com</a></p>
-                <div class="btn-row"><button class="btn-glow" onclick="saveApiKey()"><span data-i18n="settings_save">Save</span></button><button class="btn-outline red" onclick="clearApiKey()"><span data-i18n="settings_clear">Clear</span></button></div>
+                <label style="color: var(--accent);">✅ Groq API Status</label>
+                <div class="loc-display" id="apiKeyStatus">
+                    <span id="keyStatusText">🔑 Loaded from GitHub Secret</span>
+                </div>
+                <p class="hint" style="color: var(--text-muted);">API key is securely injected during deployment</p>
             </div>
             <div class="setting-block">
                 <label data-i18n="settings_data">💾 Data</label>
@@ -206,6 +206,9 @@
 
 <div id="loadingSpinner" class="overlay-loading" style="display:none;"><div class="loader-ring"></div><p id="loadingText">Processing…</p></div>
 <div id="notificationToast" class="toast"></div>
+
+<!-- ✅ LOAD ENV CONFIG FIRST (injected by GitHub Actions) -->
+<script src="js/env-config.js"></script>
 
 <script src="data/cropsData.js"></script>
 <script src="js/config.js"></script>
