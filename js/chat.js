@@ -4,7 +4,7 @@ let voicesLoaded = false;
 
 const VOICE_LANGS = { en:'en-IN', kn:'kn-IN', hi:'hi-IN', ml:'ml-IN', ta:'ta-IN', te:'te-IN' };
 
-// ═══ VOICE INIT — must load voices async ═══
+// ═══ VOICE INIT ═══
 function initVoices() {
   return new Promise((resolve) => {
     const voices = speechSynthesis.getVoices();
@@ -17,24 +17,27 @@ function initVoices() {
   });
 }
 
-function speakText(text) {
+function speakText(text, lang = null) {
   if (!('speechSynthesis' in window)) return;
   if (!autoVoice) return;
+  
   speechSynthesis.cancel();
   const clean = text.replace(/<[^>]+>/g, '').replace(/[*#_`]/g, '').trim();
-  if (!clean) return;
+  if (!clean || clean.length === 0) return;
+  
   const u = new SpeechSynthesisUtterance(clean);
-  u.lang = VOICE_LANGS[currentLanguage] || 'en-IN';
-  u.rate = 0.9;
+  u.lang = lang ? VOICE_LANGS[lang] || 'en-IN' : VOICE_LANGS[currentLanguage] || 'en-IN';
+  u.rate = 0.85;
   u.pitch = 1.0;
   u.volume = 1.0;
+  
   const voices = speechSynthesis.getVoices();
   const targetLang = u.lang;
-  // Find exact match first, then partial
   const exact = voices.find(v => v.lang === targetLang);
   const partial = voices.find(v => v.lang && v.lang.startsWith(currentLanguage));
   const enIN = voices.find(v => v.lang === 'en-IN');
   u.voice = exact || partial || enIN || voices[0] || null;
+  
   try { speechSynthesis.speak(u); } catch (e) { console.warn('Speech failed:', e); }
 }
 
@@ -44,16 +47,18 @@ function stopSpeaking() {
 
 function startVoice() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { toast(t('voice_not_supported')); return; }
+  if (!SR) { toast('🎤 Voice not supported'); return; }
   const rec = new SR();
   rec.lang = VOICE_LANGS[currentLanguage] || 'en-IN';
   rec.interimResults = false;
   rec.maxAlternatives = 1;
   rec.continuous = false;
+  
   const btn = document.getElementById('voiceBtn');
   if (btn) btn.classList.add('listening');
-  toast(t('voice_listening'));
+  toast('🎤 Listening...');
   rec.start();
+  
   rec.onresult = e => {
     const txt = e.results[0][0].transcript;
     const inp = document.getElementById('chatInput');
@@ -61,12 +66,14 @@ function startVoice() {
     if (btn) btn.classList.remove('listening');
     sendChat();
   };
+  
   rec.onerror = e => {
     if (btn) btn.classList.remove('listening');
     if (e.error === 'not-allowed') toast('❌ Mic permission denied');
     else if (e.error === 'no-speech') toast('❌ No speech detected');
     else toast('❌ ' + e.error);
   };
+  
   rec.onend = () => { if (btn) btn.classList.remove('listening'); };
   setTimeout(() => { try { rec.stop(); } catch {} }, 8000);
 }
@@ -117,14 +124,16 @@ async function sendToGroq(userMsg) {
     removeTyping(tid);
     const html = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
     addMsg(html, 'bot');
-    // AUTO SPEAK in selected language
-    speakText(text);
+    
+    // ✅ AUTO-SPEAK immediately
+    speakText(text, currentLanguage);
   } catch (err) {
     removeTyping(tid);
     const reply = localReply(userMsg);
     addMsg(reply + '<br><small style="opacity:0.4">Demo — add Groq key</small>', 'bot');
-    // AUTO SPEAK local reply too
-    speakText(reply);
+    
+    // ✅ AUTO-SPEAK fallback too
+    speakText(reply, currentLanguage);
   }
 }
 
@@ -140,8 +149,8 @@ function localReply(msg) {
     const fmt = (a, b, c) => `🥇 <b>${lcn(a.k)}</b> (${a.score.toFixed(0)}%) → 🥈 <b>${lcn(b.k)}</b> (${b.score.toFixed(0)}%) → 🥉 <b>${lcn(c.k)}</b> (${c.score.toFixed(0)}%)`;
     return fmt(a, b, c);
   }
-  if (/disease|sick|spot|blight|rust|ರೋग|रोग|ரோగ|వ్యాధ/.test(m)) {
-    return { en:'Upload a leaf photo in 🔬 Disease Detection tab — AI identifies Leaf Blight, Rust, Powdery Mildew & more!', kn:'🔬 Disease Detection ಟ್ಯಾಬ್‌ನಲ್ಲಿ ಎಲೆ ಚಿತ್ರ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ — AI ರೋಗ ಗುರುತಿಸುತ್ತದೆ!', hi:'🔬 Disease Detection टैब में पत्ते की फोटो अपलोड करें — AI रोग पहचानेगा!', ml:'🔬 Disease Detection ടാബിൽ ഇല ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യൂ!', ta:'🔬 Disease Detection tab-ல் இலை படம் பதிவேற்றம் செய்யுங்கள்!', te:'🔬 Disease Detection tab లో ఆకు ఫోటో అప్‌లోడ్ చేయండి!' }[l] || '';
+  if (/disease|sick|spot|blight|rust|ರೋग|रोग|ரோگ|వ్యాధ/.test(m)) {
+    return { en:'Upload a leaf photo in 🔬 Disease Detection tab — AI identifies diseases!', kn:'🔬 ರೋಗ ಟ್ಯಾಬ್‌ನಲ್ಲಿ ಎಲೆ ಚಿತ್ರ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ!', hi:'🔬 ರോग ট্যাবে पत्ते की फोटो अपलोड करें!', ml:'🔬 രോഗം ടാബിൽ ഇല ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യൂ!', ta:'🔬 நோய় tab-ல் இலை படம் பதிவேற்றம் செய்யுங்கள்!', te:'🔬 వ్యాధి tab లో ఆకు ఫోటో అప్‌లోడ్ చేయండి!' }[l] || '';
   }
   if (/price|market|cost|sell|ಬೆಲ|मूल्य|വിപണി|விலை|ధర/.test(m)) {
     const prices = (typeof marketPricesService !== 'undefined' ? marketPricesService.getAllPrices() : []).slice(0, 6);
@@ -149,15 +158,15 @@ function localReply(msg) {
     const list = prices.map(p => `• ${p.name}: ₹${p.price} ${p.trend === 'up' ? '📈' : p.trend === 'down' ? '📉' : '➡️'}`).join('\n');
     return { en:`Market prices:\n${list}`, kn:`ಬೆಲೆಗಳು:\n${list}`, hi:`बाजार भाव:\n${list}`, ml:`വിലകൾ:\n${list}`, ta:`விலைகள்:\n${list}`, te:`ధరలు:\n${list}` }[l] || list;
   }
-  if (/yield|harvest|production|output|ಇಳುವ|उपज|വിളവ்|ವಿളೈச್ಛಲ್|దిగుబడి/.test(m)) {
+  if (/yield|harvest|production|output|ಇಳುವ|उपज|വിളവ്|దిగుబడి/.test(m)) {
     if (!ranked.length) return t('soil_empty');
     const top = ranked[0];
-    return { en:`Best crop for your soil: <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}% match). Go to 📊 Yield tab for detailed prediction!`, kn:`ನಿಮ್ಮ ಮಣ್ಣಿಗೆ <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%) ಅತ್ಯುತ್ತಮ. 📊 Yield tab ನೋಡಿ!`, hi:`आपकी मिट्टी के लिए <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%) सबसे अच्छा! 📊 Yield टैब देखें।`, ml:`നിങ്ങളുടെ മണ്ണിന് <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%) ഏറ്റവും നല്ലത്! 📊 Yield ടാബ് കാണുക.`, ta:`உங்கள் மண்ணுக்கு <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%) சிறந்தது! 📊 Yield tab பாருங்கள்.`, te:`మీ నేలకు <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%) ఉత్తమం! 📊 Yield tab చూడండి.` }[l] || '';
+    return { en:`Best crop: <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}% match). 📊 Check Yield tab!`, kn:`ಅತ್ಯುತ್ತಮ: <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%)`, hi:`सर्वश्रेष्ठ: <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%)`, ml:`ഏറ്റവും നല്ലത്: <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%)`, ta:`சிறந்தது: <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%)`, te:`ఉత్తమం: <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%)` }[l] || '';
   }
   if (/hi|hello|namaste|ನಮಸ್|नमस्|வணக்க|నమస్/.test(m)) {
-    return { en:"Hello! 🌿 I'm <b>JeevanMitra AI</b>.\n\nI help with:\n🌱 Crop recommendations\n📊 Yield prediction\n🔬 Disease detection\n💰 Market prices\n⛅ Weather\n📢 Advisories\n\nAsk anything!", kn:'ನಮಸ್ಕಾರ! 🌿 <b>ಜೀವನಮಿತ್ರ AI</b>\n\n🌱 ಬೆಳೆ ಶಿಫಾರಸು 📊 ಇಳುವರಿ 🔬 ರೋಗ 💰 ಬೆಲೆ ⛅ ಹವಾಮಾನ 📢 ಸಲಹೆ\n\nಏನು ಬೇಕಾದರೂ ಕೇಳಿ!', hi:'नमस्ते! 🌿 <b>जीवनमित्र AI</b>\n\n🌱 फसल 📊 उपज 🔬 रोग 💰 भाव ⛅ मौसम 📢 सलाह\n\nकुछ भी पूछें!', ml:'നമസ്കാരം! 🌿 <b>ജീവൻമിത്ര AI</b>\n\n🌱 വിള 📊 വിളവ് 🔬 രോഗം 💰 വില ⛅ കാലാവസ്ഥ 📢 ഉപദേശം', ta:'வணக்கம்! 🌿 <b>ஜீவன்மித்ரா AI</b>\n\n🌱 பயிர் 📊 விளைச்சல் 🔬 நோய் 💰 விலை ⛅ வானிலை 📢 ஆலோசனை', te:'నమస్కారం! 🌿 <b>జీవన్‌మిత్ర AI</b>\n\n🌱 పంట 📊 దిగుబడి 🔬 వ్యాధి 💰 ధరలు ⛅ వాతావరణం 📢 సలహాలు' }[l] || '';
+    return { en:"Hello! 🌿 I'm JeevanMitra AI. Ask about 🌱 crops, 📊 yield, 🔬 disease, 💰 prices, ⛅ weather!", kn:'ನಮಸ್ಕಾರ! 🌿 ನನ್ನ ಬಗ್ಗೆ ಏನು ಬೇಕಾದರೂ ಕೇಳಿ!', hi:'नमस्ते! 🌿 मेरी मदद की जरूरत है तो कहें!', ml:'നമസ്കാരം! 🌿 എന്നോട് ചോദിക്കൂ!', ta:'வணக்கம்! 🌿 എന്നോട് സൂചിപ്പിക്കുക!', te:'నమస్కారం! 🌿 నన్ను అడగండి!' }[l] || '';
   }
-  return { en:"Ask about 🌱 crops, 📊 yield, 🔬 diseases, 💰 prices, ⛅ weather, or 📢 advisories!", kn:'🌿 ಬೆಳೆ, ಇಳುವರಿ, ರೋಗ, ಬೆಲೆ ಬಗ್ಗೆ ಕೇಳಿ!', hi:'🌿 फसल, उपज, रोग, भाव, मौसम के बारे में पूछें!', ml:'🌿 വിള, വിളവ്, രോഗം, വില — എന്തും ചോദിക്കൂ!', ta:'🌿 பயிர், விளைச்சல், நோய், விலை — எதையும் கேளுங்கள்!', te:'🌿 పంట, దిగుబడి, వ్యాధి, ధర — ఏదైనా అడగండి!' }[l] || '';
+  return { en:"Ask about 🌱 crops, 📊 yield, 🔬 diseases, 💰 prices!", kn:'🌿 ಬೆಳೆ, ಇಳುವರಿ, ರೋಗ ಬಗ್ಗೆ ಕೇಳಿ!', hi:'🌿 फसल, उपज, रोग के बारे में पूछें!', ml:'🌿 വിള, വിളവ്, രോഗം ആയി ചോദിക്കൂ!', ta:'🌿 பயிர், விளைச്சல், நോய് கேளுங்கள்!', te:'🌿 పంట, దిగుబడి, వ్యాధి అడగండి!' }[l] || '';
 }
 
 function addMsg(text, sender) {
@@ -193,3 +202,6 @@ function toggleChat() {
   if (mc) mc.classList.toggle('chat-open', isChatVisible);
   if (fb) fb.innerHTML = isChatVisible ? '✕' : '💬';
 }
+
+// ✅ Init voices on page load
+window.addEventListener('load', initVoices);
