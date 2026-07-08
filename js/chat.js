@@ -1,22 +1,41 @@
 let isChatVisible = false;
 let autoVoice = true;
+let voicesLoaded = false;
 
 const VOICE_LANGS = { en:'en-IN', kn:'kn-IN', hi:'hi-IN', ml:'ml-IN', ta:'ta-IN', te:'te-IN' };
 
+// ═══ VOICE INIT — must load voices async ═══
+function initVoices() {
+  return new Promise((resolve) => {
+    const voices = speechSynthesis.getVoices();
+    if (voices.length > 0) { voicesLoaded = true; resolve(voices); return; }
+    speechSynthesis.onvoiceschanged = () => {
+      voicesLoaded = true;
+      resolve(speechSynthesis.getVoices());
+    };
+    setTimeout(() => { voicesLoaded = true; resolve(speechSynthesis.getVoices()); }, 1000);
+  });
+}
+
 function speakText(text) {
-  if (!('speechSynthesis' in window) || !autoVoice) return;
+  if (!('speechSynthesis' in window)) return;
+  if (!autoVoice) return;
   speechSynthesis.cancel();
-  const clean = text.replace(/<[^>]+>/g, '').replace(/[*#_`]/g, '');
-  if (!clean.trim()) return;
+  const clean = text.replace(/<[^>]+>/g, '').replace(/[*#_`]/g, '').trim();
+  if (!clean) return;
   const u = new SpeechSynthesisUtterance(clean);
   u.lang = VOICE_LANGS[currentLanguage] || 'en-IN';
-  u.rate = 0.88;
+  u.rate = 0.9;
   u.pitch = 1.0;
+  u.volume = 1.0;
   const voices = speechSynthesis.getVoices();
-  const exact = voices.find(v => v.lang === u.lang);
-  const partial = voices.find(v => v.lang.startsWith(currentLanguage));
-  u.voice = exact || partial || voices[0];
-  speechSynthesis.speak(u);
+  const targetLang = u.lang;
+  // Find exact match first, then partial
+  const exact = voices.find(v => v.lang === targetLang);
+  const partial = voices.find(v => v.lang && v.lang.startsWith(currentLanguage));
+  const enIN = voices.find(v => v.lang === 'en-IN');
+  u.voice = exact || partial || enIN || voices[0] || null;
+  try { speechSynthesis.speak(u); } catch (e) { console.warn('Speech failed:', e); }
 }
 
 function stopSpeaking() {
@@ -91,18 +110,20 @@ async function sendToGroq(userMsg) {
   const top3 = ranked.slice(0, 3).map(c => `${lcn(c.k)} (${c.score.toFixed(0)}%)`).join(', ');
   const langName = { en:'English', kn:'Kannada', hi:'Hindi', ml:'Malayalam', ta:'Tamil', te:'Telugu' }[currentLanguage] || 'English';
 
-  const sys = `You are JeevanMitra AI, an expert Indian farming assistant. Respond ONLY in ${langName} language.\nFarmer's soil: N=${inp.n}mg/kg, P=${inp.p}mg/kg, K=${inp.k}mg/kg, pH=${inp.ph}, Temp=${inp.temp}°C, Humidity=${inp.hum}%, Rainfall=${inp.rain}mm, Soil=${inp.soilType}\nTop recommended crops: ${top3}\n\nBe practical, concise (2-4 sentences), use <b> for key terms. Always be helpful.`;
+  const sys = `You are JeevanMitra AI, an expert Indian farming assistant. IMPORTANT: Respond ONLY in ${langName} language.\nFarmer's soil: N=${inp.n}mg/kg, P=${inp.p}mg/kg, K=${inp.k}mg/kg, pH=${inp.ph}, Temp=${inp.temp}°C, Humidity=${inp.hum}%, Rain=${inp.rain}mm\nTop crops: ${top3}\nBe practical, 2-3 sentences. Use <b> for key terms.`;
 
   try {
-    const text = await groqAPI.chat(sys + '\n\nFarmer asks: ' + userMsg);
+    const text = await groqAPI.chat(sys + '\n\nFarmer: ' + userMsg);
     removeTyping(tid);
     const html = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
     addMsg(html, 'bot');
+    // AUTO SPEAK in selected language
     speakText(text);
-  } catch {
+  } catch (err) {
     removeTyping(tid);
     const reply = localReply(userMsg);
-    addMsg(reply + '<br><small style="opacity:0.4">Demo — add Groq key for full AI</small>', 'bot');
+    addMsg(reply + '<br><small style="opacity:0.4">Demo — add Groq key</small>', 'bot');
+    // AUTO SPEAK local reply too
     speakText(reply);
   }
 }
@@ -117,31 +138,26 @@ function localReply(msg) {
     if (!ranked.length) return t('soil_empty');
     const [a, b, c] = ranked;
     const fmt = (a, b, c) => `🥇 <b>${lcn(a.k)}</b> (${a.score.toFixed(0)}%) → 🥈 <b>${lcn(b.k)}</b> (${b.score.toFixed(0)}%) → 🥉 <b>${lcn(c.k)}</b> (${c.score.toFixed(0)}%)`;
-    return { en: fmt(a,b,c), kn: fmt(a,b,c), hi: fmt(a,b,c), ml: fmt(a,b,c), ta: fmt(a,b,c), te: fmt(a,b,c) }[l] || fmt(a,b,c);
+    return fmt(a, b, c);
   }
-
-  if (/disease|sick|spot|blight|rust|ಬೆಳ|ರೋग|रोग|ரோగ|వ్యాధ/.test(m)) {
-    return { en:'Upload a leaf photo in the 🔬 Disease Detection tab — I\'ll identify Leaf Blight, Rust, Powdery Mildew & more with AI!', kn:'🔬 Disease Detection ಟ್ಯಾಬ್‌ನಲ್ಲಿ ಎಲೆ ಚಿತ್ರ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ — AI ರೋಗ ಗುರುತಿಸುತ್ತದೆ!', hi:'🔬 Disease Detection टैब में पत्ते की फोटो अपलोड करें — AI रोग पहचानेगा!', ml:'🔬 Disease Detection ടാബിൽ ഇല ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യൂ — AI രോഗം കണ്ടെത്തും!', ta:'🔬 Disease Detection tab-ல் இலை படம் பதிவேற்றம் செய்யுங்கள் — AI நோயை கண்டறியும்!', te:'🔬 Disease Detection tab లో ఆకు ఫోటో అప్‌లోడ్ చేయండి — AI వ్యాధి గుర్తిస్తుంది!' }[l] || '';
+  if (/disease|sick|spot|blight|rust|ರೋग|रोग|ரோగ|వ్యాధ/.test(m)) {
+    return { en:'Upload a leaf photo in 🔬 Disease Detection tab — AI identifies Leaf Blight, Rust, Powdery Mildew & more!', kn:'🔬 Disease Detection ಟ್ಯಾಬ್‌ನಲ್ಲಿ ಎಲೆ ಚಿತ್ರ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ — AI ರೋಗ ಗುರುತಿಸುತ್ತದೆ!', hi:'🔬 Disease Detection टैब में पत्ते की फोटो अपलोड करें — AI रोग पहचानेगा!', ml:'🔬 Disease Detection ടാബിൽ ഇല ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യൂ!', ta:'🔬 Disease Detection tab-ல் இலை படம் பதிவேற்றம் செய்யுங்கள்!', te:'🔬 Disease Detection tab లో ఆకు ఫోటో అప్‌లోడ్ చేయండి!' }[l] || '';
   }
-
-  if (/price|market|cost|sell|mandi|ಬೆಲ|मूल्य|विपണി|விலை|ధర/.test(m)) {
+  if (/price|market|cost|sell|ಬೆಲ|मूल्य|വിപണി|விலை|ధర/.test(m)) {
     const prices = (typeof marketPricesService !== 'undefined' ? marketPricesService.getAllPrices() : []).slice(0, 6);
-    if (!prices.length) return '📡 Click "Fetch Live Prices" in the 💰 Market tab!';
+    if (!prices.length) return '📡 Click "Fetch Live Prices" in 💰 Market tab!';
     const list = prices.map(p => `• ${p.name}: ₹${p.price} ${p.trend === 'up' ? '📈' : p.trend === 'down' ? '📉' : '➡️'}`).join('\n');
-    return { en:`Current mandi prices:\n${list}\n\nCheck 💰 Market tab for all!`, kn:`ಬೆಲೆಗಳು:\n${list}`, hi:`बाजार भाव:\n${list}`, ml:`വിലകൾ:\n${list}`, ta:`விலைகள்:\n${list}`, te:`ధరలు:\n${list}` }[l] || list;
+    return { en:`Market prices:\n${list}`, kn:`ಬೆಲೆಗಳು:\n${list}`, hi:`बाजार भाव:\n${list}`, ml:`വിലകൾ:\n${list}`, ta:`விலைகள்:\n${list}`, te:`ధరలు:\n${list}` }[l] || list;
   }
-
-  if (/yield|harvest|production|output|ಇಳುವ|उपज|വിളവ்|விளைச்சல்|దిగుబడి/.test(m)) {
+  if (/yield|harvest|production|output|ಇಳುವ|उपज|വിളവ்|ವಿളೈச್ಛಲ್|దిగుబడి/.test(m)) {
     if (!ranked.length) return t('soil_empty');
     const top = ranked[0];
-    return { en:`Based on your soil, <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}% match) is your best bet! Go to 📊 Yield tab to predict detailed yield.`, kn:`ನಿಮ್ಮ ಮಣ್ಣಿಗೆ <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%) ಅತ್ಯುತ್ತಮ. 📊 Yield ಟ್ಯಾಬ್ ನೋಡಿ!`, hi:`आपकी मिट्टी के लिए <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%) सबसे अच्छा! 📊 Yield टैब देखें।`, ml:`നിങ്ങളുടെ മണ്ണിന് <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%) ഏറ്റവും നല്ലത്! 📊 Yield ടാബ് കാണുക.`, ta:`உங்கள் மண்ணுக்கு <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%) சிறந்தது! 📊 Yield tab பாருங்கள்.`, te:`మీ నేలకు <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%) ఉత్తమం! 📊 Yield tab చూడండి.` }[l] || '';
+    return { en:`Best crop for your soil: <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}% match). Go to 📊 Yield tab for detailed prediction!`, kn:`ನಿಮ್ಮ ಮಣ್ಣಿಗೆ <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%) ಅತ್ಯುತ್ತಮ. 📊 Yield tab ನೋಡಿ!`, hi:`आपकी मिट्टी के लिए <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%) सबसे अच्छा! 📊 Yield टैब देखें।`, ml:`നിങ്ങളുടെ മണ്ണിന് <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%) ഏറ്റവും നല്ലത്! 📊 Yield ടാബ് കാണുക.`, ta:`உங்கள் மண்ணுக்கு <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%) சிறந்தது! 📊 Yield tab பாருங்கள்.`, te:`మీ నేలకు <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%) ఉత్తమం! 📊 Yield tab చూడండి.` }[l] || '';
   }
-
   if (/hi|hello|namaste|ನಮಸ್|नमस्|வணக்க|నమస్/.test(m)) {
-    return { en:"Hello! 🌿 I'm <b>JeevanMitra AI</b> — your smart farming companion.\n\nI can help with:\n🌱 Crop recommendations (based on your soil)\n📊 Yield prediction\n🔬 Disease detection (upload a photo!)\n💰 Live market prices\n⛅ Weather forecast\n📢 Farming advisories\n\nJust ask me anything!", kn:'ನಮಸ್ಕಾರ! 🌿 ನಾನು <b>ಜೀವನಮಿತ್ರ AI</b>\n\nನಾನು ಸಹಾಯ ಮಾಡಬಲ್ಲೆ:\n🌱 ಬೆಳೆ ಶಿಫಾರಸು\n📊 ಇಳುವರಿ ಊಹೆ\n🔬 ರೋಗ ಪತ್ತೆ\n💰 ಮಾರುಕಟ್ಟೆ ಬೆಲೆ\n⛅ ಹವಾಮಾನ\n📢 ಸಲಹೆ\n\nಏನು ಬೇಕಾದರೂ ಕೇಳಿ!', hi:'नमस्ते! 🌿 मैं <b>जीवनमित्र AI</b>\n\nमैं मदद कर सकता हूं:\n🌱 फसल सिफारिश\n📊 उपज अनुमान\n🔬 रोग पहचान\n💰 बाजार मूल्य\n⛅ मौसम\n📢 सलाह\n\nकुछ भी पूछें!', ml:'നമസ്കാരം! 🌿 <b>ജീവൻമിത്ര AI</b>\n\nസഹായം: 🌱 വിള ശുപാർശ 📊 വിളവ് 🔬 രോഗം 💰 വില ⛅ കാലാവസ്ഥ 📢 ഉപദേശം', ta:'வணக்கம்! 🌿 <b>ஜீவன்மித்ரா AI</b>\n\nஉதவி: 🌱 பயிர் 📊 விளைச்சல் 🔬 நோய் 💰 விலை ⛅ வானிலை 📢 ஆலோசனை', te:'నమస్కారం! 🌿 <b>జీవన్‌మిత్ర AI</b>\n\nసహాయం: 🌱 పంట 📊 దిగుబడి 🔬 వ్యాధి 💰 ధరలు ⛅ వాతావరణం 📢 సలహాలు' }[l] || '';
+    return { en:"Hello! 🌿 I'm <b>JeevanMitra AI</b>.\n\nI help with:\n🌱 Crop recommendations\n📊 Yield prediction\n🔬 Disease detection\n💰 Market prices\n⛅ Weather\n📢 Advisories\n\nAsk anything!", kn:'ನಮಸ್ಕಾರ! 🌿 <b>ಜೀವನಮಿತ್ರ AI</b>\n\n🌱 ಬೆಳೆ ಶಿಫಾರಸು 📊 ಇಳುವರಿ 🔬 ರೋಗ 💰 ಬೆಲೆ ⛅ ಹವಾಮಾನ 📢 ಸಲಹೆ\n\nಏನು ಬೇಕಾದರೂ ಕೇಳಿ!', hi:'नमस्ते! 🌿 <b>जीवनमित्र AI</b>\n\n🌱 फसल 📊 उपज 🔬 रोग 💰 भाव ⛅ मौसम 📢 सलाह\n\nकुछ भी पूछें!', ml:'നമസ്കാരം! 🌿 <b>ജീവൻമിത്ര AI</b>\n\n🌱 വിള 📊 വിളവ് 🔬 രോഗം 💰 വില ⛅ കാലാവസ്ഥ 📢 ഉപദേശം', ta:'வணக்கம்! 🌿 <b>ஜீவன்மித்ரா AI</b>\n\n🌱 பயிர் 📊 விளைச்சல் 🔬 நோய் 💰 விலை ⛅ வானிலை 📢 ஆலோசனை', te:'నమస్కారం! 🌿 <b>జీవన్‌మిత్ర AI</b>\n\n🌱 పంట 📊 దిగుబడి 🔬 వ్యాధి 💰 ధరలు ⛅ వాతావరణం 📢 సలహాలు' }[l] || '';
   }
-
-  return { en:"Ask me about 🌱 crops, 📊 yield, 🔬 diseases, 💰 prices, ⛅ weather, or 📢 advisories. I'm here to help!", kn:'🌿 ಬೆಳೆ, ಇಳುವರಿ, ರೋಗ, ಬೆಲೆ, ಹವಾಮಾನ ಬಗ್ಗೆ ಕೇಳಿ!', hi:'🌿 फसल, उपज, रोग, भाव, मौसम या सलाह के बारे में पूछें!', ml:'🌿 വിള, വിളവ്, രോഗം, വില, കാലാവസ്ഥ, ഉപദേശം — എന്തും ചോദിക്കൂ!', ta:'🌿 பயிர், விளைச்சல், நோய், விலை, வானிலை — எதையும் கேளுங்கள்!', te:'🌿 పంట, దిగుబడి, వ్యాధి, ధర, వాతావరణం — ఏదైనా అడగండి!' }[l] || '';
+  return { en:"Ask about 🌱 crops, 📊 yield, 🔬 diseases, 💰 prices, ⛅ weather, or 📢 advisories!", kn:'🌿 ಬೆಳೆ, ಇಳುವರಿ, ರೋಗ, ಬೆಲೆ ಬಗ್ಗೆ ಕೇಳಿ!', hi:'🌿 फसल, उपज, रोग, भाव, मौसम के बारे में पूछें!', ml:'🌿 വിള, വിളവ്, രോഗം, വില — എന്തും ചോദിക്കൂ!', ta:'🌿 பயிர், விளைச்சல், நோய், விலை — எதையும் கேளுங்கள்!', te:'🌿 పంట, దిగుబడి, వ్యాధి, ధర — ఏదైనా అడగండి!' }[l] || '';
 }
 
 function addMsg(text, sender) {
