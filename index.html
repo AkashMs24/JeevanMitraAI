@@ -3,302 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌿 JeevanMitra AI — Smart Farming Companion 2.0</title>
-    <link rel="stylesheet" href="css/main.css">
-    <meta name="theme-color" content="#10b981">
+    <title>🌿 JeevanMitra AI — Smart Farming 2.0</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-<!-- ═══════════ HEADER ═══════════ -->
+
 <header class="header">
     <div class="header-content">
         <div class="brand">
             <div class="brand-logo">🌿</div>
-            <div class="brand-info">
-                <h1>JeevanMitra <span class="brand-ai">AI</span></h1>
-                <p>Smart Farming Companion 2.0</p>
-            </div>
+            <div class="brand-info"><h1>JeevanMitra <span class="brand-ai">AI</span></h1><p>Smart Farming 2.0</p></div>
         </div>
         <div class="header-controls">
-            <div class="api-badge" id="apiStatus">
-                <span class="pulse-dot"></span>
-                <span>Initializing…</span>
-            </div>
+            <div class="api-badge" id="apiStatus"><span class="pulse-dot"></span><span data-i18n="ai_connecting">Connecting…</span></div>
+            <button class="icon-btn" id="voiceToggle" onclick="toggleAutoVoice()" title="Toggle voice">🔊</button>
             <select id="languageSelect" class="lang-select" onchange="changeLanguage(this.value)">
-                <option value="en">🇬🇧 English</option>
-                <option value="kn">🇮🇳 ಕನ್ನಡ</option>
-                <option value="hi">🇮🇳 हिंदी</option>
-                <option value="ml">🇮🇳 മലയാളം</option>
-                <option value="ta">🇮🇳 தமிழ்</option>
-                <option value="te">🇮🇳 తెలుగు</option>
+                <option value="en">🇬🇧 English</option><option value="kn">🇮🇳 ಕನ್ನಡ</option><option value="hi">🇮🇳 हिंदी</option>
+                <option value="ml">🇮🇳 മലയാളം</option><option value="ta">🇮🇳 தமிழ்</option><option value="te">🇮🇳 తెలుగు</option>
             </select>
-            <button class="icon-btn" onclick="openSettings()" title="Settings">⚙️</button>
+            <button class="icon-btn" onclick="openSettings()">⚙️</button>
         </div>
     </div>
 </header>
-<!-- ═══════════ LIVE DASHBOARD ═══════════ -->
+
 <div class="dashboard">
-    <div class="dash-card">
-        <div class="dash-icon">🌍</div>
-        <div class="dash-label">Weather</div>
-        <div class="dash-value" id="weatherStatus">Loading…</div>
-    </div>
-    <div class="dash-card">
-        <div class="dash-icon">📍</div>
-        <div class="dash-label">Location</div>
-        <div class="dash-value" id="locationStatus">Detecting…</div>
-    </div>
-    <div class="dash-card">
-        <div class="dash-icon">🤖</div>
-        <div class="dash-label">AI Status</div>
-        <div class="dash-value" id="aiStatus">Connecting…</div>
-    </div>
-    <div class="dash-card">
-        <div class="dash-icon">📡</div>
-        <div class="dash-label">Live Data</div>
-        <div class="dash-value" id="dataStatus">Syncing…</div>
-    </div>
+    <div class="dash-card"><div class="dash-icon">🌍</div><div class="dash-label" data-i18n="dash_weather">Weather</div><div class="dash-value" id="weatherStatus" data-i18n="weather_loading">Loading…</div></div>
+    <div class="dash-card"><div class="dash-icon">📍</div><div class="dash-label" data-i18n="dash_location">Location</div><div class="dash-value" id="locationStatus" data-i18n="location_detecting">Detecting…</div></div>
+    <div class="dash-card"><div class="dash-icon">🤖</div><div class="dash-label" data-i18n="dash_ai">AI Status</div><div class="dash-value" id="aiStatus" data-i18n="ai_connecting">Connecting…</div></div>
+    <div class="dash-card"><div class="dash-icon">📡</div><div class="dash-label" data-i18n="dash_data">Live Data</div><div class="dash-value" id="dataStatus" data-i18n="data_syncing">Syncing…</div></div>
 </div>
-<!-- ═══════════ MAIN LAYOUT ═══════════ -->
+
 <div class="app-layout" id="mainContainer">
-<!-- ═══════════ CONTENT ═══════════ -->
 <main class="content">
-    <!-- NAV TABS -->
     <nav class="tabs">
-        <button class="tab active" data-tab="advisor" onclick="switchTab('advisor')">
-            <span class="tab-icon">🌱</span>Crop Advisor
-        </button>
-        <button class="tab" data-tab="disease" onclick="switchTab('disease')">
-            <span class="tab-icon">🔬</span>Disease
-        </button>
-        <button class="tab" data-tab="soil" onclick="switchTab('soil')">
-            <span class="tab-icon">🧪</span>Soil
-        </button>
-        <button class="tab" data-tab="yield" onclick="switchTab('yield')">
-            <span class="tab-icon">📊</span>Yield
-        </button>
-        <button class="tab" data-tab="market" onclick="switchTab('market')">
-            <span class="tab-icon">💰</span>Market
-        </button>
-        <button class="tab" data-tab="weather" onclick="switchTab('weather')">
-            <span class="tab-icon">⛅</span>Weather
-        </button>
-        <button class="tab" data-tab="advisory" onclick="switchTab('advisory')">
-            <span class="tab-icon">📢</span>Advisories
-        </button>
+        <button class="tab active" data-tab="advisor" onclick="switchTab('advisor')"><span data-i18n="tab_advisor">🌱 Crop Advisor</span></button>
+        <button class="tab" data-tab="disease" onclick="switchTab('disease')"><span data-i18n="tab_disease">🔬 Disease</span></button>
+        <button class="tab" data-tab="soil" onclick="switchTab('soil')"><span data-i18n="tab_soil">🧪 Soil</span></button>
+        <button class="tab" data-tab="yield" onclick="switchTab('yield')"><span data-i18n="tab_yield">📊 Yield</span></button>
+        <button class="tab" data-tab="market" onclick="switchTab('market')"><span data-i18n="tab_market">💰 Market</span></button>
+        <button class="tab" data-tab="weather" onclick="switchTab('weather')"><span data-i18n="tab_weather">⛅ Weather</span></button>
+        <button class="tab" data-tab="advisory" onclick="switchTab('advisory')"><span data-i18n="tab_advisory">📢 Advisories</span></button>
     </nav>
-    <!-- ═══ TAB 1: CROP ADVISOR ═══ -->
+
+    <!-- ═══ CROP ADVISOR ═══ -->
     <section class="tab-panel active" id="tab-advisor">
-        <div class="section-title">
-            <h2>🌱 Intelligent Crop Advisor</h2>
-            <p>AI-powered recommendations based on real-time soil & weather data</p>
-        </div>
+        <div class="section-title"><h2 data-i18n="advisor_title">Intelligent Crop Advisor</h2><p data-i18n="advisor_desc">AI-powered recommendations from real-time data</p></div>
         <div class="grid-2">
             <div class="glass-card">
-                <h3 class="card-title"><span class="card-icon">📡</span>Live Weather Auto-Fill</h3>
-                <button class="btn-glow" onclick="fetchLiveWeather()">📡 Get Live Weather & Soil Data</button>
-                <p class="card-hint">Automatically fetches real-time weather for your location</p>
+                <h3 class="card-title"><span class="card-icon">📡</span><span data-i18n="live_title">Live Weather Auto-Fill</span></h3>
+                <button class="btn-glow" onclick="fetchLiveWeather()"><span data-i18n="live_btn">📡 Get Live Weather</span></button>
+                <p class="card-hint" data-i18n="live_hint">Fetches real-time weather for your location</p>
                 <div class="live-data" id="liveDataDisplay" style="display:none;">
-                    <div class="ld-row"><span>Temperature</span><span id="liveTemp">—°C</span></div>
-                    <div class="ld-row"><span>Humidity</span><span id="liveHumidity">—%</span></div>
-                    <div class="ld-row"><span>Rainfall</span><span id="liveRainfall">—mm</span></div>
-                    <div class="ld-row"><span>Location</span><span id="liveLocation">—</span></div>
+                    <div class="ld-row"><span data-i18n="live_temp">Temperature</span><span id="liveTemp">—°C</span></div>
+                    <div class="ld-row"><span data-i18n="live_hum">Humidity</span><span id="liveHumidity">—%</span></div>
+                    <div class="ld-row"><span data-i18n="live_rain">Rainfall</span><span id="liveRainfall">—mm</span></div>
+                    <div class="ld-row"><span data-i18n="live_loc">Location</span><span id="liveLocation">—</span></div>
                 </div>
             </div>
             <div class="glass-card">
-                <h3 class="card-title"><span class="card-icon">🧪</span>Soil Parameters</h3>
-                <div class="slider-group">
-                    <label>Nitrogen (N) — mg/kg</label>
-                    <div class="slider-row"><input type="range" id="nitrogen" min="0" max="200" value="50" oninput="updatePreview()"><span class="sv" id="nitrogenVal">50</span></div>
-                </div>
-                <div class="slider-group">
-                    <label>Phosphorus (P) — mg/kg</label>
-                    <div class="slider-row"><input type="range" id="phosphorus" min="0" max="150" value="50" oninput="updatePreview()"><span class="sv" id="phosphorusVal">50</span></div>
-                </div>
-                <div class="slider-group">
-                    <label>Potassium (K) — mg/kg</label>
-                    <div class="slider-row"><input type="range" id="potassium" min="0" max="200" value="50" oninput="updatePreview()"><span class="sv" id="potassiumVal">50</span></div>
-                </div>
-                <div class="slider-group">
-                    <label>Soil pH</label>
-                    <div class="slider-row"><input type="range" id="soilPH" min="3.5" max="9.5" value="6.5" step="0.1" oninput="updatePreview()"><span class="sv" id="phVal">6.5</span></div>
-                </div>
-                <div class="slider-group">
-                    <label>Soil Type</label>
+                <h3 class="card-title"><span class="card-icon">🧪</span><span data-i18n="soil_title">Soil Parameters</span></h3>
+                <div class="slider-group"><label data-i18n="s_nitrogen">Nitrogen (N)</label><div class="slider-row"><input type="range" id="nitrogen" min="0" max="200" value="50" oninput="updatePreview()"><span class="sv" id="nitrogenVal">50</span></div></div>
+                <div class="slider-group"><label data-i18n="s_phosphorus">Phosphorus (P)</label><div class="slider-row"><input type="range" id="phosphorus" min="0" max="150" value="50" oninput="updatePreview()"><span class="sv" id="phosphorusVal">50</span></div></div>
+                <div class="slider-group"><label data-i18n="s_potassium">Potassium (K)</label><div class="slider-row"><input type="range" id="potassium" min="0" max="200" value="50" oninput="updatePreview()"><span class="sv" id="potassiumVal">50</span></div></div>
+                <div class="slider-group"><label data-i18n="s_ph">Soil pH</label><div class="slider-row"><input type="range" id="soilPH" min="3.5" max="9.5" value="6.5" step="0.1" oninput="updatePreview()"><span class="sv" id="phVal">6.5</span></div></div>
+                <div class="slider-group"><label data-i18n="s_type">Soil Type</label>
                     <select id="soilType" class="sel" onchange="updatePreview()">
-                        <option value="loamy">Loamy</option><option value="clay">Clay</option>
-                        <option value="sandy">Sandy</option><option value="black">Black</option>
-                        <option value="red">Red</option><option value="laterite">Laterite</option>
-                        <option value="alluvial">Alluvial</option><option value="hilly">Hilly</option>
+                        <option value="loamy" data-i18n="s_loamy">Loamy</option><option value="clay" data-i18n="s_clay">Clay</option>
+                        <option value="sandy" data-i18n="s_sandy">Sandy</option><option value="black" data-i18n="s_black">Black</option>
+                        <option value="red" data-i18n="s_red">Red</option><option value="laterite" data-i18n="s_laterite">Laterite</option>
+                        <option value="alluvial" data-i18n="s_alluvial">Alluvial</option><option value="hilly" data-i18n="s_hilly">Hilly</option>
                     </select>
                 </div>
             </div>
             <div class="glass-card span-2">
-                <h3 class="card-title"><span class="card-icon">🤖</span>AI-Powered Recommendations</h3>
-                <button class="btn-glow big" onclick="getCropRecommendations()">🔍 Get Personalized Recommendations</button>
+                <h3 class="card-title"><span class="card-icon">🤖</span><span data-i18n="ai_rec_title">AI Recommendations</span></h3>
+                <button class="btn-glow big" onclick="getCropRecommendations()"><span data-i18n="ai_rec_btn">🔍 Get Recommendations</span></button>
                 <div id="recommendationsContainer" class="rec-grid"></div>
             </div>
         </div>
     </section>
-    <!-- ═══ TAB 2: DISEASE DETECTION ═══ -->
+
+    <!-- ═══ DISEASE ═══ -->
     <section class="tab-panel" id="tab-disease">
-        <div class="section-title">
-            <h2>🔬 AI Disease Detection</h2>
-            <p>Upload crop images for instant AI diagnosis with treatment</p>
-        </div>
+        <div class="section-title"><h2 data-i18n="disease_title">AI Disease Detection</h2><p data-i18n="disease_desc">Upload crop images for AI diagnosis</p></div>
         <div class="glass-card">
             <div class="upload-zone" id="imageUploadArea" ondrop="handleDrop(event)" ondragover="event.preventDefault()">
                 <input type="file" id="diseaseImageInput" accept="image/*" onchange="handleImageUpload(event)" hidden>
                 <div class="upload-inner" onclick="document.getElementById('diseaseImageInput').click()">
                     <div class="upload-icon-big">📸</div>
-                    <h3>Upload Crop Leaf Image</h3>
-                    <p>Drag & drop or click to browse</p>
+                    <h3 data-i18n="upload_title">Upload Crop Leaf Image</h3>
+                    <p data-i18n="upload_hint">Click or drag to upload</p>
                 </div>
             </div>
             <div id="diseaseResultContainer" style="display:none;">
                 <div class="disease-result">
                     <div class="disease-name" id="diseaseName">—</div>
                     <div class="severity-badge" id="severityLevel">—</div>
-                    <div class="disease-detail"><h4>Symptoms</h4><p id="diseaseSymptoms">—</p></div>
-                    <div class="disease-detail"><h4>Treatment</h4><p id="diseaseTreatment">—</p></div>
-                    <div class="disease-detail"><h4>Prevention</h4><p id="diseasePrevention">—</p></div>
-                    <button class="btn-outline" onclick="resetDiseaseUpload()">🔄 Upload Another</button>
+                    <div class="disease-detail"><h4 data-i18n="disease_symptoms">Symptoms</h4><p id="diseaseSymptoms">—</p></div>
+                    <div class="disease-detail"><h4 data-i18n="disease_treatment">Treatment</h4><p id="diseaseTreatment">—</p></div>
+                    <div class="disease-detail"><h4 data-i18n="disease_prevention">Prevention</h4><p id="diseasePrevention">—</p></div>
+                    <button class="btn-outline" onclick="resetDiseaseUpload()"><span data-i18n="disease_upload_another">🔄 Upload Another</span></button>
                 </div>
             </div>
         </div>
     </section>
-    <!-- ═══ TAB 3: SOIL ANALYSIS ═══ -->
+
+    <!-- ═══ SOIL ═══ -->
     <section class="tab-panel" id="tab-soil">
-        <div class="section-title">
-            <h2>🧪 Soil Analysis & Health Report</h2>
-            <p>Comprehensive soil health scoring with actionable recommendations</p>
-        </div>
+        <div class="section-title"><h2 data-i18n="soil_tab_title">Soil Analysis</h2><p data-i18n="soil_tab_desc">Soil health scoring & recommendations</p></div>
         <div class="grid-2">
+            <div class="glass-card"><h3 class="card-title"><span class="card-icon">📊</span><span data-i18n="soil_nutrients">Nutrients</span></h3><div id="soilNutrientChart"></div></div>
             <div class="glass-card">
-                <h3 class="card-title"><span class="card-icon">📊</span>Nutrient Levels</h3>
-                <div id="soilNutrientChart"></div>
-            </div>
-            <div class="glass-card">
-                <h3 class="card-title"><span class="card-icon">🎯</span>Health Score</h3>
+                <h3 class="card-title"><span class="card-icon">🎯</span><span data-i18n="soil_score">Health Score</span></h3>
                 <div class="big-score" id="soilHealthScore">0/100</div>
                 <div class="score-track"><div class="score-fill" id="scoreBar"></div></div>
                 <p class="score-label" id="soilHealthDesc">—</p>
-                <button class="btn-glow" onclick="analyzeSoil()" style="width:100%;margin-top:15px;">🧪 Analyze Soil</button>
+                <button class="btn-glow" onclick="analyzeSoil()" style="width:100%;margin-top:15px;"><span data-i18n="soil_analyze_btn">🧪 Analyze Soil</span></button>
             </div>
-            <div class="glass-card span-2">
-                <h3 class="card-title"><span class="card-icon">💡</span>Recommendations</h3>
-                <div id="soilRecommendations"></div>
-            </div>
+            <div class="glass-card span-2"><h3 class="card-title"><span class="card-icon">💡</span><span data-i18n="soil_recs">Recommendations</span></h3><div id="soilRecommendations"></div></div>
         </div>
     </section>
-    <!-- ═══ TAB 4: YIELD PREDICTOR ═══ -->
+
+    <!-- ═══ YIELD ═══ -->
     <section class="tab-panel" id="tab-yield">
-        <div class="section-title">
-            <h2>📊 Yield Prediction</h2>
-            <p>ML-based forecasting with revenue estimation</p>
-        </div>
+        <div class="section-title"><h2 data-i18n="yield_tab_title">Yield Prediction</h2><p data-i18n="yield_tab_desc">ML forecasting with revenue estimation</p></div>
         <div class="grid-2">
-            <div class="glass-card">
-                <h3 class="card-title"><span class="card-icon">🌾</span>Select Crop</h3>
-                <select id="yieldCropSelect" class="sel" onchange="updateYieldPredictor()"><option value="">Choose crop…</option></select>
-            </div>
-            <div class="glass-card">
-                <h3 class="card-title"><span class="card-icon">🏞️</span>Farm Area (hectares)</h3>
-                <input type="number" id="farmArea" min="0.5" max="1000" step="0.5" value="1" class="text-input" oninput="updateYieldPredictor()">
-            </div>
-            <div class="glass-card span-2">
-                <h3 class="card-title"><span class="card-icon">📈</span>Prediction Results</h3>
-                <div id="yieldPredictionResults"><p class="empty-state">Select a crop above to see yield prediction</p></div>
-            </div>
+            <div class="glass-card"><h3 class="card-title"><span class="card-icon">🌾</span><span data-i18n="yield_select_crop">Select Crop</span></h3><select id="yieldCropSelect" class="sel" onchange="updateYieldPredictor()"><option value="">Select…</option></select></div>
+            <div class="glass-card"><h3 class="card-title"><span class="card-icon">🏞️</span><span data-i18n="yield_area">Farm Area (ha)</span></h3><input type="number" id="farmArea" min="0.5" max="1000" step="0.5" value="1" class="text-input" oninput="updateYieldPredictor()"></div>
+            <div class="glass-card span-2"><h3 class="card-title"><span class="card-icon">📈</span><span data-i18n="yield_results">Results</span></h3><div id="yieldPredictionResults"><p class="empty-state" data-i18n="yield_empty">Select a crop</p></div></div>
         </div>
     </section>
-    <!-- ═══ TAB 5: MARKET PRICES ═══ -->
+
+    <!-- ═══ MARKET ═══ -->
     <section class="tab-panel" id="tab-market">
-        <div class="section-title">
-            <h2>💰 Live Market Prices</h2>
-            <p>Real-time commodity prices with trend analysis</p>
-        </div>
-        <button class="btn-glow" onclick="fetchMarketPrices()" style="margin-bottom:20px;">📡 Fetch Live Prices</button>
+        <div class="section-title"><h2 data-i18n="market_title">Live Market Prices</h2><p data-i18n="market_desc">Real-time mandi prices</p></div>
+        <button class="btn-glow" onclick="fetchMarketPrices()" style="margin-bottom:20px;"><span data-i18n="market_fetch_btn">📡 Fetch Prices</span></button>
         <div id="marketPricesContainer" class="price-grid"></div>
     </section>
-    <!-- ═══ TAB 6: WEATHER ═══ -->
+
+    <!-- ═══ WEATHER ═══ -->
     <section class="tab-panel" id="tab-weather">
-        <div class="section-title">
-            <h2>⛅ 7-Day Forecast</h2>
-            <p>Agricultural weather outlook</p>
-        </div>
-        <button class="btn-glow" onclick="renderForecast()" style="margin-bottom:20px;">📡 Load Forecast</button>
+        <div class="section-title"><h2 data-i18n="weather_tab_title">7-Day Forecast</h2><p data-i18n="weather_tab_desc">Agricultural weather outlook</p></div>
+        <button class="btn-glow" onclick="renderForecast()" style="margin-bottom:20px;"><span data-i18n="weather_load_btn">📡 Load Forecast</span></button>
         <div id="weatherForecastContainer" class="forecast-grid"></div>
     </section>
-    <!-- ═══ TAB 7: ADVISORIES ═══ -->
+
+    <!-- ═══ ADVISORIES ═══ -->
     <section class="tab-panel" id="tab-advisory">
-        <div class="section-title">
-            <h2>📢 Crop Advisories</h2>
-            <p>Real-time farming alerts & seasonal guidance</p>
-        </div>
-        <button class="btn-glow" onclick="loadAdvisories()" style="margin-bottom:20px;">📡 Load Advisories</button>
+        <div class="section-title"><h2 data-i18n="advisory_tab_title">Crop Advisories</h2><p data-i18n="advisory_tab_desc">Farming alerts & guidance</p></div>
+        <button class="btn-glow" onclick="loadAdvisories()" style="margin-bottom:20px;"><span data-i18n="advisory_load_btn">📡 Load Advisories</span></button>
         <div id="advisoriesContainer"></div>
     </section>
 </main>
-<!-- ═══════════ CHAT SIDEBAR ═══════════ -->
+
+<!-- CHAT SIDEBAR -->
 <aside class="chat-sidebar" id="chatPanel" style="display:none;">
-    <div class="chat-top">
-        <span>🤖 JeevanMitra AI</span>
-        <button class="chat-close" onclick="toggleChat()">✕</button>
-    </div>
+    <div class="chat-top"><span data-i18n="chat_title">🤖 JeevanMitra AI</span><button class="chat-close" onclick="toggleChat()">✕</button></div>
     <div class="chat-body" id="chatMessages">
-        <div class="cmsg bot">
-            <div class="cavatar">🤖</div>
-            <div class="cbubble" id="welcome-message">Hello! I'm JeevanMitra AI — your smart farming companion. Ask me about crops, diseases, yield or prices! 🌿</div>
-        </div>
+        <div class="cmsg bot"><div class="cavatar">🤖</div><div class="cbubble" id="welcome-message" data-i18n="chat_welcome">Hello! I'm JeevanMitra AI 🌿</div></div>
     </div>
     <div class="chat-pills">
-        <button onclick="quickChat('crop')">🌱 Best crop?</button>
-        <button onclick="quickChat('yield')">📊 Yield</button>
-        <button onclick="quickChat('disease')">🔍 Disease</button>
-        <button onclick="quickChat('price')">💰 Prices</button>
+        <button onclick="quickChat('crop')"><span data-i18n="qa_crop">🌱 Best crop?</span></button>
+        <button onclick="quickChat('yield')"><span data-i18n="qa_yield">📊 Yield</span></button>
+        <button onclick="quickChat('disease')"><span data-i18n="qa_disease">🔍 Disease</span></button>
+        <button onclick="quickChat('price')"><span data-i18n="qa_price">💰 Prices</span></button>
     </div>
     <div class="chat-bar">
-        <input type="text" id="chatInput" placeholder="Ask about farming…" onkeypress="if(event.key==='Enter')sendChat()">
+        <input type="text" id="chatInput" data-i18n-placeholder="chat_placeholder" placeholder="Ask about farming…" onkeypress="if(event.key==='Enter')sendChat()">
         <button class="send-btn" onclick="sendChat()">➤</button>
         <button id="voiceBtn" onclick="startVoice()" class="mic-btn">🎤</button>
     </div>
 </aside>
-</div><!-- /app-layout -->
-<!-- CHAT FAB -->
+</div>
+
 <button class="fab" id="chatFab" onclick="toggleChat()">💬</button>
-<!-- ═══════════ SETTINGS MODAL ═══════════ -->
+
+<!-- SETTINGS MODAL -->
 <div id="settingsModal" class="modal-overlay" style="display:none;">
     <div class="modal-box">
-        <div class="modal-head"><h2>⚙️ Settings</h2><button class="modal-x" onclick="closeSettings()">✕</button></div>
+        <div class="modal-head"><h2 data-i18n="settings_title">⚙️ Settings</h2><button class="modal-x" onclick="closeSettings()">✕</button></div>
         <div class="modal-body">
             <div class="setting-block">
-                <label>📍 Location</label>
+                <label data-i18n="settings_location">📍 Location</label>
                 <div class="loc-display" id="locationDisplay">—</div>
-                <button class="btn-outline" onclick="getLocation()">🔄 Refresh</button>
+                <button class="btn-outline" onclick="getLocation()"><span data-i18n="settings_refresh">🔄 Refresh</span></button>
             </div>
             <div class="setting-block">
-                <label>🔑 Groq API Key</label>
+                <label data-i18n="settings_api_key">🔑 Groq API Key</label>
                 <input type="password" id="apiKeyInput" class="text-input" placeholder="gsk_…">
-                <p class="hint">Free key → <a href="https://console.groq.com" target="_blank">console.groq.com</a></p>
-                <div class="btn-row"><button class="btn-glow" onclick="saveApiKey()">Save</button><button class="btn-outline red" onclick="clearApiKey()">Clear</button></div>
+                <p class="hint"><span data-i18n="settings_api_hint">Free key at</span> <a href="https://console.groq.com" target="_blank">console.groq.com</a></p>
+                <div class="btn-row"><button class="btn-glow" onclick="saveApiKey()"><span data-i18n="settings_save">Save</span></button><button class="btn-outline red" onclick="clearApiKey()"><span data-i18n="settings_clear">Clear</span></button></div>
             </div>
             <div class="setting-block">
-                <label>💾 Data</label>
-                <div class="btn-row"><button class="btn-outline" onclick="clearCache()">Clear Cache</button><button class="btn-outline" onclick="exportData()">📥 Export</button></div>
+                <label data-i18n="settings_data">💾 Data</label>
+                <div class="btn-row"><button class="btn-outline" onclick="clearCache()"><span data-i18n="settings_clear_cache">Clear Cache</span></button><button class="btn-outline" onclick="exportData()"><span data-i18n="settings_export">📥 Export</span></button></div>
             </div>
         </div>
     </div>
 </div>
-<!-- LOADING -->
-<div id="loadingSpinner" class="overlay-loading" style="display:none;">
-    <div class="loader-ring"></div>
-    <p id="loadingText">Processing…</p>
-</div>
-<!-- TOAST -->
+
+<div id="loadingSpinner" class="overlay-loading" style="display:none;"><div class="loader-ring"></div><p id="loadingText">Processing…</p></div>
 <div id="notificationToast" class="toast"></div>
-<!-- ═══════════ SCRIPTS (correct order) ═══════════ -->
+
 <script src="data/cropsData.js"></script>
 <script src="js/config.js"></script>
 <script src="js/api.js"></script>
