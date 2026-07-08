@@ -1,35 +1,39 @@
 /**
- * Main Application Controller
+ * Main Application Controller — Fixed
+ * Initializes all features, loads saved state
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🌿 JeevanMitra AI v2.0 Starting...');
 
-    // Initialize
-    await cropAdvisor.loadCropData();
-    
+    // Restore saved language
+    const savedLang = localStorage.getItem('language');
+    if (savedLang && CONFIG.LANGUAGES[savedLang]) {
+        currentLanguage = savedLang;
+        const langSelect = document.getElementById('languageSelect');
+        if (langSelect) langSelect.value = savedLang;
+    }
+
     // Load API key if saved
     const savedKey = localStorage.getItem(CONFIG.STORAGE_KEYS.API_KEY);
     if (savedKey) {
-        document.getElementById('apiKeyInput').value = savedKey;
-        groqAPI.setApiKey(savedKey);
+        const input = document.getElementById('apiKeyInput');
+        if (input) input.value = savedKey;
+        groqAPI.apiKey = savedKey;
     } else {
         showToast('⚙️ Please configure Groq API key in Settings', 'info');
     }
+    updateApiStatus(groqAPI.isConfigured());
 
     // Load location
-    getLocation();
+    const stored = localStorage.getItem(CONFIG.STORAGE_KEYS.LOCATION);
+    if (stored) {
+        try {
+            const loc = JSON.parse(stored);
+            const display = document.getElementById('locationDisplay');
+            if (display) display.textContent = `${loc.latitude.toFixed(4)}, ${loc.longitude.toFixed(4)}`;
+        } catch {}
+    }
 
-    // Initialize weather
-    document.getElementById('weatherStatus').textContent = 'Click to fetch';
-    document.getElementById('dataStatus').textContent = 'Ready';
-
-    console.log('✅ App initialized successfully');
-});
-
-// Language change
-function changeLanguage(lang) {
-    localStorage.setItem('language', lang);
-    showToast(`📝 Language changed to ${lang}`, 'info');
-    // Implement i18n here
-}
+    // Populate dropdowns
+    populateYieldCropSelect();
