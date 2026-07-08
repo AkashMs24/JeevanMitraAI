@@ -11,14 +11,15 @@ class SoilAnalyzer {
     getRecommendations(soilData) {
         const recs = [];
         const { n, p, k, ph } = soilData;
-        recs.push(n < 40 ? { icon: '⚠️', text: 'Nitrogen low — apply Urea (46-0-0) at 50-80 kg/ha', type: 'warn' } : n > 100 ? { icon: 'ℹ️', text: 'Nitrogen high — reduce fertilizer', type: 'info' } : { icon: '✅', text: 'Nitrogen is optimal', type: 'ok' });
-        recs.push(p < 25 ? { icon: '⚠️', text: 'Phosphorus low — apply DAP/SSP at 40-60 kg/ha', type: 'warn' } : p > 60 ? { icon: 'ℹ️', text: 'Phosphorus adequate', type: 'info' } : { icon: '✅', text: 'Phosphorus is optimal', type: 'ok' });
-        recs.push(k < 30 ? { icon: '⚠️', text: 'Potassium low — apply MOP (0-0-60) at 40-60 kg/ha', type: 'warn' } : { icon: '✅', text: 'Potassium is adequate', type: 'ok' });
-        recs.push(ph < 5.5 ? { icon: '⚠️', text: 'Soil acidic — apply lime 2-4 tons/ha', type: 'warn' } : ph > 8.0 ? { icon: '⚠️', text: 'Soil alkaline — apply gypsum', type: 'warn' } : { icon: '✅', text: 'pH is optimal', type: 'ok' });
+        recs.push(n < 40 ? { icon: '⚠️', text: 'Nitrogen low — apply Urea at 50-80 kg/ha', type: 'warn' } : n > 100 ? { icon: 'ℹ️', text: 'Nitrogen high — reduce fertilizer', type: 'info' } : { icon: '✅', text: 'Nitrogen optimal', type: 'ok' });
+        recs.push(p < 25 ? { icon: '⚠️', text: 'Phosphorus low — apply DAP at 40-60 kg/ha', type: 'warn' } : { icon: '✅', text: 'Phosphorus adequate', type: 'ok' });
+        recs.push(k < 30 ? { icon: '⚠️', text: 'Potassium low — apply MOP at 40-60 kg/ha', type: 'warn' } : { icon: '✅', text: 'Potassium adequate', type: 'ok' });
+        recs.push(ph < 5.5 ? { icon: '⚠️', text: 'Soil acidic — apply lime 2-4 tons/ha', type: 'warn' } : ph > 8.0 ? { icon: '⚠️', text: 'Soil alkaline — apply gypsum', type: 'warn' } : { icon: '✅', text: 'pH optimal', type: 'ok' });
         return recs;
     }
 }
 const soilAnalyzer = new SoilAnalyzer();
+
 function analyzeSoil() {
     const inputs = getInputs();
     const score = soilAnalyzer.calculateHealthScore(inputs);
@@ -27,27 +28,25 @@ function analyzeSoil() {
     const bar = document.getElementById('scoreBar'); if (bar) bar.style.width = `${score}%`;
     const desc = score >= 80 ? 'Excellent' : score >= 60 ? 'Good' : score >= 40 ? 'Fair' : 'Needs Improvement';
     setSafeText('soilHealthDesc', desc);
+    // 🔊 VOICE: speak soil health
+    speakText(`Soil health score is ${score} out of 100. Status: ${desc}`);
+
     // Nutrient bars
     const chart = document.getElementById('soilNutrientChart');
     if (chart) {
-        const nutrients = [
+        const ns = [
             { name: 'Nitrogen (N)', value: inputs.n, max: 200, opt: [40, 80] },
             { name: 'Phosphorus (P)', value: inputs.p, max: 150, opt: [25, 50] },
             { name: 'Potassium (K)', value: inputs.k, max: 200, opt: [30, 60] },
             { name: 'pH Level', value: inputs.ph, max: 9.5, opt: [6.0, 7.5] }
         ];
-        let html = '';
-        nutrients.forEach(n => {
+        chart.innerHTML = ns.map(n => {
             const pct = (n.value / n.max) * 100;
             const ok = n.value >= n.opt[0] && n.value <= n.opt[1];
             const color = ok ? 'var(--primary)' : n.value < n.opt[0] ? 'var(--danger)' : 'var(--accent)';
-            html += `<div class="nutrient-bar"><div class="nutrient-header"><span>${n.name}</span><span style="color:${color}">${n.value}${n.name.includes('pH') ? '' : ' mg/kg'}</span></div><div class="nutrient-track"><div class="nutrient-fill" style="width:${pct}%;background:${color}"></div></div><div class="nutrient-hint">Optimal: ${n.opt[0]}–${n.opt[1]}${n.name.includes('pH') ? '' : ' mg/kg'}</div></div>`;
-        });
-        chart.innerHTML = html;
+            return `<div class="nutrient-bar"><div class="nutrient-header"><span>${n.name}</span><span style="color:${color}">${n.value}${n.name.includes('pH') ? '' : ' mg/kg'}</span></div><div class="nutrient-track"><div class="nutrient-fill" style="width:${pct}%;background:${color}"></div></div></div>`;
+        }).join('');
     }
-    // Recs
     const rc = document.getElementById('soilRecommendations');
-    if (rc) {
-        rc.innerHTML = recs.map(r => `<div class="rec-item rec-${r.type}"><span style="font-size:20px">${r.icon}</span><span>${r.text}</span></div>`).join('');
-    }
+    if (rc) rc.innerHTML = recs.map(r => `<div class="rec-item rec-${r.type}"><span style="font-size:20px">${r.icon}</span><span>${r.text}</span></div>`).join('');
 }
