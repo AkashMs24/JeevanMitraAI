@@ -1,18 +1,22 @@
 class GroqAIAPI {
     constructor() {
-        this.apiKey = localStorage.getItem(CONFIG.STORAGE_KEYS.API_KEY) || '';
-        this.endpoint = CONFIG.API.GROQ_ENDPOINT;
-        this.models = CONFIG.API.MODELS;
-        this.visionModels = CONFIG.API.VISION_MODELS;
+        // Try env variable first, then localStorage fallback
+        this.apiKey = window.GROQ_API_KEY || localStorage.getItem('GROQ_API_KEY') || '';
+        this.endpoint = 'https://api.groq.com/openai/v1/chat/completions';
+        this.models = ['mixtral-8x7b-32768', 'llama2-70b-4096', 'gemma-7b-it'];
+        this.visionModels = ['llava-15b-preview'];
     }
+
     setApiKey(key) {
         if (!key.startsWith('gsk_')) throw new Error('Invalid key — must start with gsk_');
         this.apiKey = key;
-        localStorage.setItem(CONFIG.STORAGE_KEYS.API_KEY, key);
+        localStorage.setItem('GROQ_API_KEY', key);
         updateApiStatus(true);
     }
+
     getApiKey() { return this.apiKey; }
     isConfigured() { return !!this.apiKey; }
+
     async chat(prompt, systemPrompt = null) {
         if (!this.isConfigured()) throw new Error('API key not configured. Open Settings.');
         const messages = [];
@@ -20,6 +24,7 @@ class GroqAIAPI {
         messages.push({ role: 'user', content: prompt });
         return await this._callWithFallback(messages, this.models, { temperature: 0.7, max_tokens: 2048 });
     }
+
     async analyzeImage(base64Image, prompt, mimeType = 'image/jpeg') {
         if (!this.isConfigured()) throw new Error('API key not configured');
         const messages = [
@@ -31,6 +36,7 @@ class GroqAIAPI {
         ];
         return await this._callWithFallback(messages, this.visionModels, { temperature: 0.2, max_tokens: 1024 });
     }
+
     async _callWithFallback(messages, models, params) {
         for (const model of models) {
             try { return await this._callAPI(messages, model, params); }
@@ -38,9 +44,10 @@ class GroqAIAPI {
         }
         throw new Error('All AI models failed. Wait 30s and try again.');
     }
+
     async _callAPI(messages, model, params = {}) {
         const controller = new AbortController();
-        const tid = setTimeout(() => controller.abort(), CONFIG.API.TIMEOUT);
+        const tid = setTimeout(() => controller.abort(), 30000);
         try {
             const res = await fetch(this.endpoint, {
                 method: 'POST',
@@ -55,7 +62,9 @@ class GroqAIAPI {
         } finally { clearTimeout(tid); }
     }
 }
+
 const groqAPI = new GroqAIAPI();
+
 function updateApiStatus(connected) {
     const badge = document.getElementById('apiStatus');
     const ai = document.getElementById('aiStatus');
@@ -65,4 +74,5 @@ function updateApiStatus(connected) {
     }
     if (ai) ai.textContent = connected && groqAPI.isConfigured() ? '✅ Connected' : '⚠️ Configure Key';
 }
+
 window.addEventListener('load', () => updateApiStatus(groqAPI.isConfigured()));
