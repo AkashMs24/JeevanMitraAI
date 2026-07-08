@@ -3,30 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌿 JeevanMitra AI - Smart Farming Companion 2.0</title>
+    <title>🌿 JeevanMitra AI — Smart Farming Companion 2.0</title>
     <link rel="stylesheet" href="css/main.css">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2ecc71">
-    <meta name="description" content="AI-Powered Smart Farming Assistant with Real-Time Analysis">
+    <meta name="theme-color" content="#10b981">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
-
-<!-- HEADER WITH REAL-TIME STATUS -->
+<!-- ═══════════ HEADER ═══════════ -->
 <header class="header">
     <div class="header-content">
         <div class="brand">
-            <span class="brand-emoji">🌿</span>
+            <div class="brand-logo">🌿</div>
             <div class="brand-info">
-                <h1>JeevanMitra AI</h1>
+                <h1>JeevanMitra <span class="brand-ai">AI</span></h1>
                 <p>Smart Farming Companion 2.0</p>
             </div>
         </div>
         <div class="header-controls">
-            <div class="api-status" id="apiStatus">
-                <span class="status-dot disconnected"></span>
-                <span class="status-text">Initializing...</span>
+            <div class="api-badge" id="apiStatus">
+                <span class="pulse-dot"></span>
+                <span>Initializing…</span>
             </div>
-            <select id="languageSelect" class="language-select" onchange="changeLanguage(this.value)">
+            <select id="languageSelect" class="lang-select" onchange="changeLanguage(this.value)">
                 <option value="en">🇬🇧 English</option>
                 <option value="kn">🇮🇳 ಕನ್ನಡ</option>
                 <option value="hi">🇮🇳 हिंदी</option>
@@ -34,319 +33,277 @@
                 <option value="ta">🇮🇳 தமிழ்</option>
                 <option value="te">🇮🇳 తెలుగు</option>
             </select>
-            <button class="btn-icon" id="settingsBtn" onclick="openSettings()">⚙️</button>
+            <button class="icon-btn" onclick="openSettings()" title="Settings">⚙️</button>
         </div>
     </div>
 </header>
-
-<!-- LIVE DATA DASHBOARD -->
-<div class="dashboard-strip">
-    <div class="dashboard-item">
-        <span class="label">🌍 Weather</span>
-        <span class="value" id="weatherStatus">Loading...</span>
+<!-- ═══════════ LIVE DASHBOARD ═══════════ -->
+<div class="dashboard">
+    <div class="dash-card">
+        <div class="dash-icon">🌍</div>
+        <div class="dash-label">Weather</div>
+        <div class="dash-value" id="weatherStatus">Loading…</div>
     </div>
-    <div class="dashboard-item">
-        <span class="label">📍 Location</span>
-        <span class="value" id="locationStatus">Detecting...</span>
+    <div class="dash-card">
+        <div class="dash-icon">📍</div>
+        <div class="dash-label">Location</div>
+        <div class="dash-value" id="locationStatus">Detecting…</div>
     </div>
-    <div class="dashboard-item">
-        <span class="label">🤖 AI Ready</span>
-        <span class="value" id="aiStatus">Connecting...</span>
+    <div class="dash-card">
+        <div class="dash-icon">🤖</div>
+        <div class="dash-label">AI Status</div>
+        <div class="dash-value" id="aiStatus">Connecting…</div>
     </div>
-    <div class="dashboard-item">
-        <span class="label">📡 Live Data</span>
-        <span class="value" id="dataStatus">Syncing...</span>
+    <div class="dash-card">
+        <div class="dash-icon">📡</div>
+        <div class="dash-label">Live Data</div>
+        <div class="dash-value" id="dataStatus">Syncing…</div>
     </div>
 </div>
-
-<!-- MAIN CONTENT -->
-<main class="container">
-    
-    <!-- NAVIGATION TABS -->
-    <nav class="nav-tabs">
-        <button class="tab-btn active" data-tab="advisor" onclick="switchTab('advisor')">
-            <span class="icon">🌱</span>
-            <span class="label">Crop Advisor</span>
+<!-- ═══════════ MAIN LAYOUT ═══════════ -->
+<div class="app-layout" id="mainContainer">
+<!-- ═══════════ CONTENT ═══════════ -->
+<main class="content">
+    <!-- NAV TABS -->
+    <nav class="tabs">
+        <button class="tab active" data-tab="advisor" onclick="switchTab('advisor')">
+            <span class="tab-icon">🌱</span>Crop Advisor
         </button>
-        <button class="tab-btn" data-tab="disease" onclick="switchTab('disease')">
-            <span class="icon">🔬</span>
-            <span class="label">Disease Detection</span>
+        <button class="tab" data-tab="disease" onclick="switchTab('disease')">
+            <span class="tab-icon">🔬</span>Disease
         </button>
-        <button class="tab-btn" data-tab="soil" onclick="switchTab('soil')">
-            <span class="icon">🧪</span>
-            <span class="label">Soil Analysis</span>
+        <button class="tab" data-tab="soil" onclick="switchTab('soil')">
+            <span class="tab-icon">🧪</span>Soil
         </button>
-        <button class="tab-btn" data-tab="yield" onclick="switchTab('yield')">
-            <span class="icon">📊</span>
-            <span class="label">Yield Predictor</span>
+        <button class="tab" data-tab="yield" onclick="switchTab('yield')">
+            <span class="tab-icon">📊</span>Yield
         </button>
-        <button class="tab-btn" data-tab="market" onclick="switchTab('market')">
-            <span class="icon">💰</span>
-            <span class="label">Market Prices</span>
+        <button class="tab" data-tab="market" onclick="switchTab('market')">
+            <span class="tab-icon">💰</span>Market
         </button>
-        <button class="tab-btn" data-tab="weather" onclick="switchTab('weather')">
-            <span class="icon">⛅</span>
-            <span class="label">Weather</span>
+        <button class="tab" data-tab="weather" onclick="switchTab('weather')">
+            <span class="tab-icon">⛅</span>Weather
         </button>
-        <button class="tab-btn" data-tab="advisory" onclick="switchTab('advisory')">
-            <span class="icon">📢</span>
-            <span class="label">Advisories</span>
+        <button class="tab" data-tab="advisory" onclick="switchTab('advisory')">
+            <span class="tab-icon">📢</span>Advisories
         </button>
     </nav>
-
-    <!-- ==================== TAB 1: CROP ADVISOR ==================== -->
-    <section class="tab-content active" id="tab-advisor">
-        <div class="section-header">
+    <!-- ═══ TAB 1: CROP ADVISOR ═══ -->
+    <section class="tab-panel active" id="tab-advisor">
+        <div class="section-title">
             <h2>🌱 Intelligent Crop Advisor</h2>
-            <p>Get AI-powered crop recommendations based on real-time soil & weather data</p>
+            <p>AI-powered recommendations based on real-time soil & weather data</p>
         </div>
-
-        <div class="advisor-grid">
-            <!-- LIVE WEATHER AUTO-FILL -->
-            <div class="card">
-                <h3>📍 Your Location Data (Auto-Detected)</h3>
-                <div class="auto-fill-section">
-                    <button class="btn-primary" id="fetchWeatherBtn" onclick="fetchLiveWeather()">
-                        📡 Get Live Weather & Soil Data
-                    </button>
-                    <p class="info-text">Automatically fetches real-time weather for your location</p>
-                </div>
-                <div class="live-data-display" id="liveDataDisplay" style="display: none;">
-                    <div class="data-row">
-                        <span>Temperature:</span>
-                        <span id="liveTemp">--°C</span>
-                    </div>
-                    <div class="data-row">
-                        <span>Humidity:</span>
-                        <span id="liveHumidity">--%</span>
-                    </div>
-                    <div class="data-row">
-                        <span>Rainfall:</span>
-                        <span id="liveRainfall">--mm</span>
-                    </div>
-                    <div class="data-row">
-                        <span>Location:</span>
-                        <span id="liveLocation">--</span>
-                    </div>
+        <div class="grid-2">
+            <div class="glass-card">
+                <h3 class="card-title"><span class="card-icon">📡</span>Live Weather Auto-Fill</h3>
+                <button class="btn-glow" onclick="fetchLiveWeather()">📡 Get Live Weather & Soil Data</button>
+                <p class="card-hint">Automatically fetches real-time weather for your location</p>
+                <div class="live-data" id="liveDataDisplay" style="display:none;">
+                    <div class="ld-row"><span>Temperature</span><span id="liveTemp">—°C</span></div>
+                    <div class="ld-row"><span>Humidity</span><span id="liveHumidity">—%</span></div>
+                    <div class="ld-row"><span>Rainfall</span><span id="liveRainfall">—mm</span></div>
+                    <div class="ld-row"><span>Location</span><span id="liveLocation">—</span></div>
                 </div>
             </div>
-
-            <!-- MANUAL SOIL PARAMETERS -->
-            <div class="card">
-                <h3>🧪 Soil Parameters (Manual Entry)</h3>
-                <div class="param-group">
-                    <label>Nitrogen (N) - mg/kg</label>
-                    <input type="range" id="nitrogen" min="0" max="200" value="50" class="slider" oninput="updatePreview()">
-                    <span class="param-value" id="nitrogenVal">50</span>
+            <div class="glass-card">
+                <h3 class="card-title"><span class="card-icon">🧪</span>Soil Parameters</h3>
+                <div class="slider-group">
+                    <label>Nitrogen (N) — mg/kg</label>
+                    <div class="slider-row"><input type="range" id="nitrogen" min="0" max="200" value="50" oninput="updatePreview()"><span class="sv" id="nitrogenVal">50</span></div>
                 </div>
-                <div class="param-group">
-                    <label>Phosphorus (P) - mg/kg</label>
-                    <input type="range" id="phosphorus" min="0" max="150" value="50" class="slider" oninput="updatePreview()">
-                    <span class="param-value" id="phosphorusVal">50</span>
+                <div class="slider-group">
+                    <label>Phosphorus (P) — mg/kg</label>
+                    <div class="slider-row"><input type="range" id="phosphorus" min="0" max="150" value="50" oninput="updatePreview()"><span class="sv" id="phosphorusVal">50</span></div>
                 </div>
-                <div class="param-group">
-                    <label>Potassium (K) - mg/kg</label>
-                    <input type="range" id="potassium" min="0" max="200" value="50" class="slider" oninput="updatePreview()">
-                    <span class="param-value" id="potassiumVal">50</span>
+                <div class="slider-group">
+                    <label>Potassium (K) — mg/kg</label>
+                    <div class="slider-row"><input type="range" id="potassium" min="0" max="200" value="50" oninput="updatePreview()"><span class="sv" id="potassiumVal">50</span></div>
                 </div>
-                <div class="param-group">
+                <div class="slider-group">
                     <label>Soil pH</label>
-                    <input type="range" id="soilPH" min="3.5" max="9.5" value="6.5" step="0.1" class="slider" oninput="updatePreview()">
-                    <span class="param-value" id="phVal">6.5</span>
+                    <div class="slider-row"><input type="range" id="soilPH" min="3.5" max="9.5" value="6.5" step="0.1" oninput="updatePreview()"><span class="sv" id="phVal">6.5</span></div>
                 </div>
-                <div class="param-group">
+                <div class="slider-group">
                     <label>Soil Type</label>
-                    <select id="soilType" class="select-input" onchange="updatePreview()">
-                        <option value="loamy">Loamy Soil</option>
-                        <option value="clay">Clay Soil</option>
-                        <option value="sandy">Sandy Soil</option>
-                        <option value="black">Black Soil</option>
-                        <option value="red">Red Soil</option>
-                        <option value="laterite">Laterite Soil</option>
+                    <select id="soilType" class="sel" onchange="updatePreview()">
+                        <option value="loamy">Loamy</option><option value="clay">Clay</option>
+                        <option value="sandy">Sandy</option><option value="black">Black</option>
+                        <option value="red">Red</option><option value="laterite">Laterite</option>
+                        <option value="alluvial">Alluvial</option><option value="hilly">Hilly</option>
                     </select>
                 </div>
             </div>
-
-            <!-- AI RECOMMENDATIONS -->
-            <div class="card full-width">
-                <h3>🤖 AI-Powered Recommendations</h3>
-                <button class="btn-primary large" id="getRecommendationsBtn" onclick="getCropRecommendations()">
-                    🔍 Get Personalized Recommendations (AI-Powered)
-                </button>
-                <div id="recommendationsContainer" class="recommendations-grid"></div>
+            <div class="glass-card span-2">
+                <h3 class="card-title"><span class="card-icon">🤖</span>AI-Powered Recommendations</h3>
+                <button class="btn-glow big" onclick="getCropRecommendations()">🔍 Get Personalized Recommendations</button>
+                <div id="recommendationsContainer" class="rec-grid"></div>
             </div>
         </div>
     </section>
-
-    <!-- ==================== TAB 2: DISEASE DETECTION ==================== -->
-    <section class="tab-content" id="tab-disease">
-        <div class="section-header">
+    <!-- ═══ TAB 2: DISEASE DETECTION ═══ -->
+    <section class="tab-panel" id="tab-disease">
+        <div class="section-title">
             <h2>🔬 AI Disease Detection</h2>
-            <p>Upload crop images for instant AI diagnosis with treatment recommendations</p>
+            <p>Upload crop images for instant AI diagnosis with treatment</p>
         </div>
-
-        <div class="card">
-            <div class="image-upload-area" id="imageUploadArea" ondrop="handleDrop(event)" ondragover="event.preventDefault()">
-                <input type="file" id="diseaseImageInput" accept="image/*" onchange="handleImageUpload(event)" style="display: none;">
-                <div class="upload-content">
-                    <span class="upload-icon">📸</span>
-                    <h3>Upload Crop Image</h3>
-                    <p>Drag & drop or click to upload</p>
-                    <button class="btn-secondary" onclick="document.getElementById('diseaseImageInput').click()">Choose Image</button>
+        <div class="glass-card">
+            <div class="upload-zone" id="imageUploadArea" ondrop="handleDrop(event)" ondragover="event.preventDefault()">
+                <input type="file" id="diseaseImageInput" accept="image/*" onchange="handleImageUpload(event)" hidden>
+                <div class="upload-inner" onclick="document.getElementById('diseaseImageInput').click()">
+                    <div class="upload-icon-big">📸</div>
+                    <h3>Upload Crop Leaf Image</h3>
+                    <p>Drag & drop or click to browse</p>
                 </div>
             </div>
-            <div id="diseaseResultContainer" style="display: none;">
+            <div id="diseaseResultContainer" style="display:none;">
                 <div class="disease-result">
-                    <h3 id="diseaseName">Disease Name</h3>
-                    <div class="severity-indicator" id="severityLevel">Low Risk</div>
-                    <div class="disease-details">
-                        <h4>Symptoms:</h4>
-                        <p id="diseaseSymptoms"></p>
-                        <h4>Treatment:</h4>
-                        <p id="diseaseTreatment"></p>
-                        <h4>Prevention:</h4>
-                        <p id="diseasePrevention"></p>
-                    </div>
+                    <div class="disease-name" id="diseaseName">—</div>
+                    <div class="severity-badge" id="severityLevel">—</div>
+                    <div class="disease-detail"><h4>Symptoms</h4><p id="diseaseSymptoms">—</p></div>
+                    <div class="disease-detail"><h4>Treatment</h4><p id="diseaseTreatment">—</p></div>
+                    <div class="disease-detail"><h4>Prevention</h4><p id="diseasePrevention">—</p></div>
+                    <button class="btn-outline" onclick="resetDiseaseUpload()">🔄 Upload Another</button>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- ==================== TAB 3: SOIL ANALYSIS ==================== -->
-    <section class="tab-content" id="tab-soil">
-        <div class="section-header">
-            <h2>🧪 Soil Analysis & Report</h2>
-            <p>Comprehensive soil health analysis with recommendations</p>
+    <!-- ═══ TAB 3: SOIL ANALYSIS ═══ -->
+    <section class="tab-panel" id="tab-soil">
+        <div class="section-title">
+            <h2>🧪 Soil Analysis & Health Report</h2>
+            <p>Comprehensive soil health scoring with actionable recommendations</p>
         </div>
-
-        <div class="soil-analyzer-grid">
-            <div class="card">
-                <h3>📊 Soil Nutrients</h3>
-                <div id="soilNutrientChart" class="chart-container"></div>
+        <div class="grid-2">
+            <div class="glass-card">
+                <h3 class="card-title"><span class="card-icon">📊</span>Nutrient Levels</h3>
+                <div id="soilNutrientChart"></div>
             </div>
-            <div class="card">
-                <h3>🎯 Health Score</h3>
-                <div class="score-display" id="soilHealthScore">0/100</div>
-                <div class="score-bar">
-                    <div class="score-fill" id="scoreBar" style="width: 0%"></div>
-                </div>
-                <p id="soilHealthDesc" class="score-description">Poor</p>
+            <div class="glass-card">
+                <h3 class="card-title"><span class="card-icon">🎯</span>Health Score</h3>
+                <div class="big-score" id="soilHealthScore">0/100</div>
+                <div class="score-track"><div class="score-fill" id="scoreBar"></div></div>
+                <p class="score-label" id="soilHealthDesc">—</p>
+                <button class="btn-glow" onclick="analyzeSoil()" style="width:100%;margin-top:15px;">🧪 Analyze Soil</button>
             </div>
-            <div class="card full-width">
-                <h3>💡 AI Recommendations</h3>
-                <div id="soilRecommendations" class="recommendations-list"></div>
+            <div class="glass-card span-2">
+                <h3 class="card-title"><span class="card-icon">💡</span>Recommendations</h3>
+                <div id="soilRecommendations"></div>
             </div>
         </div>
     </section>
-
-    <!-- ==================== TAB 4: YIELD PREDICTOR ==================== -->
-    <section class="tab-content" id="tab-yield">
-        <div class="section-header">
+    <!-- ═══ TAB 4: YIELD PREDICTOR ═══ -->
+    <section class="tab-panel" id="tab-yield">
+        <div class="section-title">
             <h2>📊 Yield Prediction</h2>
-            <p>ML-based yield forecasting with market value estimation</p>
+            <p>ML-based forecasting with revenue estimation</p>
         </div>
-
-        <div class="yield-grid">
-            <div class="card">
-                <h3>🌾 Crop Selection</h3>
-                <select id="yieldCropSelect" class="select-input" onchange="updateYieldPredictor()">
-                    <option value="">Select Crop...</option>
-                </select>
+        <div class="grid-2">
+            <div class="glass-card">
+                <h3 class="card-title"><span class="card-icon">🌾</span>Select Crop</h3>
+                <select id="yieldCropSelect" class="sel" onchange="updateYieldPredictor()"><option value="">Choose crop…</option></select>
             </div>
-            <div class="card">
-                <h3>🏞️ Farm Area</h3>
-                <input type="number" id="farmArea" min="0.5" max="1000" step="0.5" value="1" placeholder="Hectares" class="input-field" oninput="updateYieldPredictor()">
+            <div class="glass-card">
+                <h3 class="card-title"><span class="card-icon">🏞️</span>Farm Area (hectares)</h3>
+                <input type="number" id="farmArea" min="0.5" max="1000" step="0.5" value="1" class="text-input" oninput="updateYieldPredictor()">
             </div>
-            <div class="card full-width">
-                <h3>📈 Prediction Results</h3>
-                <div id="yieldPredictionResults" class="prediction-container"></div>
+            <div class="glass-card span-2">
+                <h3 class="card-title"><span class="card-icon">📈</span>Prediction Results</h3>
+                <div id="yieldPredictionResults"><p class="empty-state">Select a crop above to see yield prediction</p></div>
             </div>
         </div>
     </section>
-
-    <!-- ==================== TAB 5: MARKET PRICES ==================== -->
-    <section class="tab-content" id="tab-market">
-        <div class="section-header">
+    <!-- ═══ TAB 5: MARKET PRICES ═══ -->
+    <section class="tab-panel" id="tab-market">
+        <div class="section-title">
             <h2>💰 Live Market Prices</h2>
             <p>Real-time commodity prices with trend analysis</p>
         </div>
-
-        <div class="market-grid">
-            <div class="card">
-                <h3>🏪 Select Market</h3>
-                <select id="marketSelect" class="select-input" onchange="fetchMarketPrices()">
-                    <option value="">Fetching markets...</option>
-                </select>
-            </div>
-            <button class="btn-primary" onclick="fetchMarketPrices()">📡 Fetch Live Prices</button>
-            <div id="marketPricesContainer" class="market-grid full-width"></div>
-        </div>
+        <button class="btn-glow" onclick="fetchMarketPrices()" style="margin-bottom:20px;">📡 Fetch Live Prices</button>
+        <div id="marketPricesContainer" class="price-grid"></div>
     </section>
-
-    <!-- ==================== TAB 6: WEATHER FORECAST ==================== -->
-    <section class="tab-content" id="tab-weather">
-        <div class="section-header">
-            <h2>⛅ Weather Forecast</h2>
-            <p>7-day forecast with agricultural insights</p>
+    <!-- ═══ TAB 6: WEATHER ═══ -->
+    <section class="tab-panel" id="tab-weather">
+        <div class="section-title">
+            <h2>⛅ 7-Day Forecast</h2>
+            <p>Agricultural weather outlook</p>
         </div>
-
-        <div class="weather-grid" id="weatherForecastContainer"></div>
+        <button class="btn-glow" onclick="renderForecast()" style="margin-bottom:20px;">📡 Load Forecast</button>
+        <div id="weatherForecastContainer" class="forecast-grid"></div>
     </section>
-
-    <!-- ==================== TAB 7: ADVISORIES ==================== -->
-    <section class="tab-content" id="tab-advisory">
-        <div class="section-header">
+    <!-- ═══ TAB 7: ADVISORIES ═══ -->
+    <section class="tab-panel" id="tab-advisory">
+        <div class="section-title">
             <h2>📢 Crop Advisories</h2>
-            <p>Real-time farming advisories and alerts</p>
+            <p>Real-time farming alerts & seasonal guidance</p>
         </div>
-
-        <div id="advisoriesContainer" class="advisories-list"></div>
+        <button class="btn-glow" onclick="loadAdvisories()" style="margin-bottom:20px;">📡 Load Advisories</button>
+        <div id="advisoriesContainer"></div>
     </section>
-
 </main>
-
-<!-- SETTINGS MODAL -->
-<div id="settingsModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>⚙️ Settings</h2>
-            <button class="btn-close" onclick="closeSettings()">&times;</button>
+<!-- ═══════════ CHAT SIDEBAR ═══════════ -->
+<aside class="chat-sidebar" id="chatPanel" style="display:none;">
+    <div class="chat-top">
+        <span>🤖 JeevanMitra AI</span>
+        <button class="chat-close" onclick="toggleChat()">✕</button>
+    </div>
+    <div class="chat-body" id="chatMessages">
+        <div class="cmsg bot">
+            <div class="cavatar">🤖</div>
+            <div class="cbubble" id="welcome-message">Hello! I'm JeevanMitra AI — your smart farming companion. Ask me about crops, diseases, yield or prices! 🌿</div>
         </div>
+    </div>
+    <div class="chat-pills">
+        <button onclick="quickChat('crop')">🌱 Best crop?</button>
+        <button onclick="quickChat('yield')">📊 Yield</button>
+        <button onclick="quickChat('disease')">🔍 Disease</button>
+        <button onclick="quickChat('price')">💰 Prices</button>
+    </div>
+    <div class="chat-bar">
+        <input type="text" id="chatInput" placeholder="Ask about farming…" onkeypress="if(event.key==='Enter')sendChat()">
+        <button class="send-btn" onclick="sendChat()">➤</button>
+        <button id="voiceBtn" onclick="startVoice()" class="mic-btn">🎤</button>
+    </div>
+</aside>
+</div><!-- /app-layout -->
+<!-- CHAT FAB -->
+<button class="fab" id="chatFab" onclick="toggleChat()">💬</button>
+<!-- ═══════════ SETTINGS MODAL ═══════════ -->
+<div id="settingsModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+        <div class="modal-head"><h2>⚙️ Settings</h2><button class="modal-x" onclick="closeSettings()">✕</button></div>
         <div class="modal-body">
-            <div class="setting-group">
-                <label>📌 Location (Auto-Detected)</label>
-                <div id="locationDisplay" class="location-info">--</div>
-                <button class="btn-secondary" onclick="getLocation()">🔄 Refresh Location</button>
+            <div class="setting-block">
+                <label>📍 Location</label>
+                <div class="loc-display" id="locationDisplay">—</div>
+                <button class="btn-outline" onclick="getLocation()">🔄 Refresh</button>
             </div>
-            <div class="setting-group">
+            <div class="setting-block">
                 <label>🔑 Groq API Key</label>
-                <input type="password" id="apiKeyInput" placeholder="gsk_..." class="input-field" value="">
-                <p class="info-text">Your API key is stored locally. Never sent to servers.</p>
-                <button class="btn-secondary" onclick="saveApiKey()">Save API Key</button>
-                <button class="btn-warning" onclick="clearApiKey()">Clear API Key</button>
+                <input type="password" id="apiKeyInput" class="text-input" placeholder="gsk_…">
+                <p class="hint">Free key → <a href="https://console.groq.com" target="_blank">console.groq.com</a></p>
+                <div class="btn-row"><button class="btn-glow" onclick="saveApiKey()">Save</button><button class="btn-outline red" onclick="clearApiKey()">Clear</button></div>
             </div>
-            <div class="setting-group">
-                <label>💾 Cache Management</label>
-                <button class="btn-secondary" onclick="clearCache()">Clear Cached Data</button>
-                <button class="btn-secondary" onclick="exportData()">📥 Export Data</button>
+            <div class="setting-block">
+                <label>💾 Data</label>
+                <div class="btn-row"><button class="btn-outline" onclick="clearCache()">Clear Cache</button><button class="btn-outline" onclick="exportData()">📥 Export</button></div>
             </div>
         </div>
     </div>
 </div>
-
-<!-- LOADING SPINNER -->
-<div id="loadingSpinner" class="loading-spinner" style="display: none;">
-    <div class="spinner"></div>
-    <p id="loadingText">Processing with AI...</p>
+<!-- LOADING -->
+<div id="loadingSpinner" class="overlay-loading" style="display:none;">
+    <div class="loader-ring"></div>
+    <p id="loadingText">Processing…</p>
 </div>
-
-<!-- NOTIFICATION TOAST -->
+<!-- TOAST -->
 <div id="notificationToast" class="toast"></div>
-
-<!-- SCRIPTS -->
+<!-- ═══════════ SCRIPTS (correct order) ═══════════ -->
+<script src="data/cropsData.js"></script>
 <script src="js/config.js"></script>
 <script src="js/api.js"></script>
 <script src="js/utils.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/weather.js"></script>
 <script src="js/crop-advisor.js"></script>
 <script src="js/disease-detection.js"></script>
@@ -354,371 +311,7 @@
 <script src="js/yield-predictor.js"></script>
 <script src="js/market-prices.js"></script>
 <script src="js/advisories.js"></script>
+<script src="js/chat.js"></script>
 <script src="js/app.js"></script>
-
-</body>
-</html>
-HTMLEOF
-cat /tmp/index.html
-Output
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌿 JeevanMitra AI - Smart Farming Companion 2.0</title>
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2ecc71">
-    <meta name="description" content="AI-Powered Smart Farming Assistant with Real-Time Analysis">
-</head>
-<body>
-
-<!-- HEADER WITH REAL-TIME STATUS -->
-<header class="header">
-    <div class="header-content">
-        <div class="brand">
-            <span class="brand-emoji">🌿</span>
-            <div class="brand-info">
-                <h1>JeevanMitra AI</h1>
-                <p>Smart Farming Companion 2.0</p>
-            </div>
-        </div>
-        <div class="header-controls">
-            <div class="api-status" id="apiStatus">
-                <span class="status-dot disconnected"></span>
-                <span class="status-text">Initializing...</span>
-            </div>
-            <select id="languageSelect" class="language-select" onchange="changeLanguage(this.value)">
-                <option value="en">🇬🇧 English</option>
-                <option value="kn">🇮🇳 ಕನ್ನಡ</option>
-                <option value="hi">🇮🇳 हिंदी</option>
-                <option value="ml">🇮🇳 മലയാളം</option>
-                <option value="ta">🇮🇳 தமிழ்</option>
-                <option value="te">🇮🇳 తెలుగు</option>
-            </select>
-            <button class="btn-icon" id="settingsBtn" onclick="openSettings()">⚙️</button>
-        </div>
-    </div>
-</header>
-
-<!-- LIVE DATA DASHBOARD -->
-<div class="dashboard-strip">
-    <div class="dashboard-item">
-        <span class="label">🌍 Weather</span>
-        <span class="value" id="weatherStatus">Loading...</span>
-    </div>
-    <div class="dashboard-item">
-        <span class="label">📍 Location</span>
-        <span class="value" id="locationStatus">Detecting...</span>
-    </div>
-    <div class="dashboard-item">
-        <span class="label">🤖 AI Ready</span>
-        <span class="value" id="aiStatus">Connecting...</span>
-    </div>
-    <div class="dashboard-item">
-        <span class="label">📡 Live Data</span>
-        <span class="value" id="dataStatus">Syncing...</span>
-    </div>
-</div>
-
-<!-- MAIN CONTENT -->
-<main class="container">
-    
-    <!-- NAVIGATION TABS -->
-    <nav class="nav-tabs">
-        <button class="tab-btn active" data-tab="advisor" onclick="switchTab('advisor')">
-            <span class="icon">🌱</span>
-            <span class="label">Crop Advisor</span>
-        </button>
-        <button class="tab-btn" data-tab="disease" onclick="switchTab('disease')">
-            <span class="icon">🔬</span>
-            <span class="label">Disease Detection</span>
-        </button>
-        <button class="tab-btn" data-tab="soil" onclick="switchTab('soil')">
-            <span class="icon">🧪</span>
-            <span class="label">Soil Analysis</span>
-        </button>
-        <button class="tab-btn" data-tab="yield" onclick="switchTab('yield')">
-            <span class="icon">📊</span>
-            <span class="label">Yield Predictor</span>
-        </button>
-        <button class="tab-btn" data-tab="market" onclick="switchTab('market')">
-            <span class="icon">💰</span>
-            <span class="label">Market Prices</span>
-        </button>
-        <button class="tab-btn" data-tab="weather" onclick="switchTab('weather')">
-            <span class="icon">⛅</span>
-            <span class="label">Weather</span>
-        </button>
-        <button class="tab-btn" data-tab="advisory" onclick="switchTab('advisory')">
-            <span class="icon">📢</span>
-            <span class="label">Advisories</span>
-        </button>
-    </nav>
-
-    <!-- ==================== TAB 1: CROP ADVISOR ==================== -->
-    <section class="tab-content active" id="tab-advisor">
-        <div class="section-header">
-            <h2>🌱 Intelligent Crop Advisor</h2>
-            <p>Get AI-powered crop recommendations based on real-time soil & weather data</p>
-        </div>
-
-        <div class="advisor-grid">
-            <!-- LIVE WEATHER AUTO-FILL -->
-            <div class="card">
-                <h3>📍 Your Location Data (Auto-Detected)</h3>
-                <div class="auto-fill-section">
-                    <button class="btn-primary" id="fetchWeatherBtn" onclick="fetchLiveWeather()">
-                        📡 Get Live Weather & Soil Data
-                    </button>
-                    <p class="info-text">Automatically fetches real-time weather for your location</p>
-                </div>
-                <div class="live-data-display" id="liveDataDisplay" style="display: none;">
-                    <div class="data-row">
-                        <span>Temperature:</span>
-                        <span id="liveTemp">--°C</span>
-                    </div>
-                    <div class="data-row">
-                        <span>Humidity:</span>
-                        <span id="liveHumidity">--%</span>
-                    </div>
-                    <div class="data-row">
-                        <span>Rainfall:</span>
-                        <span id="liveRainfall">--mm</span>
-                    </div>
-                    <div class="data-row">
-                        <span>Location:</span>
-                        <span id="liveLocation">--</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- MANUAL SOIL PARAMETERS -->
-            <div class="card">
-                <h3>🧪 Soil Parameters (Manual Entry)</h3>
-                <div class="param-group">
-                    <label>Nitrogen (N) - mg/kg</label>
-                    <input type="range" id="nitrogen" min="0" max="200" value="50" class="slider" oninput="updatePreview()">
-                    <span class="param-value" id="nitrogenVal">50</span>
-                </div>
-                <div class="param-group">
-                    <label>Phosphorus (P) - mg/kg</label>
-                    <input type="range" id="phosphorus" min="0" max="150" value="50" class="slider" oninput="updatePreview()">
-                    <span class="param-value" id="phosphorusVal">50</span>
-                </div>
-                <div class="param-group">
-                    <label>Potassium (K) - mg/kg</label>
-                    <input type="range" id="potassium" min="0" max="200" value="50" class="slider" oninput="updatePreview()">
-                    <span class="param-value" id="potassiumVal">50</span>
-                </div>
-                <div class="param-group">
-                    <label>Soil pH</label>
-                    <input type="range" id="soilPH" min="3.5" max="9.5" value="6.5" step="0.1" class="slider" oninput="updatePreview()">
-                    <span class="param-value" id="phVal">6.5</span>
-                </div>
-                <div class="param-group">
-                    <label>Soil Type</label>
-                    <select id="soilType" class="select-input" onchange="updatePreview()">
-                        <option value="loamy">Loamy Soil</option>
-                        <option value="clay">Clay Soil</option>
-                        <option value="sandy">Sandy Soil</option>
-                        <option value="black">Black Soil</option>
-                        <option value="red">Red Soil</option>
-                        <option value="laterite">Laterite Soil</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- AI RECOMMENDATIONS -->
-            <div class="card full-width">
-                <h3>🤖 AI-Powered Recommendations</h3>
-                <button class="btn-primary large" id="getRecommendationsBtn" onclick="getCropRecommendations()">
-                    🔍 Get Personalized Recommendations (AI-Powered)
-                </button>
-                <div id="recommendationsContainer" class="recommendations-grid"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==================== TAB 2: DISEASE DETECTION ==================== -->
-    <section class="tab-content" id="tab-disease">
-        <div class="section-header">
-            <h2>🔬 AI Disease Detection</h2>
-            <p>Upload crop images for instant AI diagnosis with treatment recommendations</p>
-        </div>
-
-        <div class="card">
-            <div class="image-upload-area" id="imageUploadArea" ondrop="handleDrop(event)" ondragover="event.preventDefault()">
-                <input type="file" id="diseaseImageInput" accept="image/*" onchange="handleImageUpload(event)" style="display: none;">
-                <div class="upload-content">
-                    <span class="upload-icon">📸</span>
-                    <h3>Upload Crop Image</h3>
-                    <p>Drag & drop or click to upload</p>
-                    <button class="btn-secondary" onclick="document.getElementById('diseaseImageInput').click()">Choose Image</button>
-                </div>
-            </div>
-            <div id="diseaseResultContainer" style="display: none;">
-                <div class="disease-result">
-                    <h3 id="diseaseName">Disease Name</h3>
-                    <div class="severity-indicator" id="severityLevel">Low Risk</div>
-                    <div class="disease-details">
-                        <h4>Symptoms:</h4>
-                        <p id="diseaseSymptoms"></p>
-                        <h4>Treatment:</h4>
-                        <p id="diseaseTreatment"></p>
-                        <h4>Prevention:</h4>
-                        <p id="diseasePrevention"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==================== TAB 3: SOIL ANALYSIS ==================== -->
-    <section class="tab-content" id="tab-soil">
-        <div class="section-header">
-            <h2>🧪 Soil Analysis & Report</h2>
-            <p>Comprehensive soil health analysis with recommendations</p>
-        </div>
-
-        <div class="soil-analyzer-grid">
-            <div class="card">
-                <h3>📊 Soil Nutrients</h3>
-                <div id="soilNutrientChart" class="chart-container"></div>
-            </div>
-            <div class="card">
-                <h3>🎯 Health Score</h3>
-                <div class="score-display" id="soilHealthScore">0/100</div>
-                <div class="score-bar">
-                    <div class="score-fill" id="scoreBar" style="width: 0%"></div>
-                </div>
-                <p id="soilHealthDesc" class="score-description">Poor</p>
-            </div>
-            <div class="card full-width">
-                <h3>💡 AI Recommendations</h3>
-                <div id="soilRecommendations" class="recommendations-list"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==================== TAB 4: YIELD PREDICTOR ==================== -->
-    <section class="tab-content" id="tab-yield">
-        <div class="section-header">
-            <h2>📊 Yield Prediction</h2>
-            <p>ML-based yield forecasting with market value estimation</p>
-        </div>
-
-        <div class="yield-grid">
-            <div class="card">
-                <h3>🌾 Crop Selection</h3>
-                <select id="yieldCropSelect" class="select-input" onchange="updateYieldPredictor()">
-                    <option value="">Select Crop...</option>
-                </select>
-            </div>
-            <div class="card">
-                <h3>🏞️ Farm Area</h3>
-                <input type="number" id="farmArea" min="0.5" max="1000" step="0.5" value="1" placeholder="Hectares" class="input-field" oninput="updateYieldPredictor()">
-            </div>
-            <div class="card full-width">
-                <h3>📈 Prediction Results</h3>
-                <div id="yieldPredictionResults" class="prediction-container"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==================== TAB 5: MARKET PRICES ==================== -->
-    <section class="tab-content" id="tab-market">
-        <div class="section-header">
-            <h2>💰 Live Market Prices</h2>
-            <p>Real-time commodity prices with trend analysis</p>
-        </div>
-
-        <div class="market-grid">
-            <div class="card">
-                <h3>🏪 Select Market</h3>
-                <select id="marketSelect" class="select-input" onchange="fetchMarketPrices()">
-                    <option value="">Fetching markets...</option>
-                </select>
-            </div>
-            <button class="btn-primary" onclick="fetchMarketPrices()">📡 Fetch Live Prices</button>
-            <div id="marketPricesContainer" class="market-grid full-width"></div>
-        </div>
-    </section>
-
-    <!-- ==================== TAB 6: WEATHER FORECAST ==================== -->
-    <section class="tab-content" id="tab-weather">
-        <div class="section-header">
-            <h2>⛅ Weather Forecast</h2>
-            <p>7-day forecast with agricultural insights</p>
-        </div>
-
-        <div class="weather-grid" id="weatherForecastContainer"></div>
-    </section>
-
-    <!-- ==================== TAB 7: ADVISORIES ==================== -->
-    <section class="tab-content" id="tab-advisory">
-        <div class="section-header">
-            <h2>📢 Crop Advisories</h2>
-            <p>Real-time farming advisories and alerts</p>
-        </div>
-
-        <div id="advisoriesContainer" class="advisories-list"></div>
-    </section>
-
-</main>
-
-<!-- SETTINGS MODAL -->
-<div id="settingsModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>⚙️ Settings</h2>
-            <button class="btn-close" onclick="closeSettings()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div class="setting-group">
-                <label>📌 Location (Auto-Detected)</label>
-                <div id="locationDisplay" class="location-info">--</div>
-                <button class="btn-secondary" onclick="getLocation()">🔄 Refresh Location</button>
-            </div>
-            <div class="setting-group">
-                <label>🔑 Groq API Key</label>
-                <input type="password" id="apiKeyInput" placeholder="gsk_..." class="input-field" value="">
-                <p class="info-text">Your API key is stored locally. Never sent to servers.</p>
-                <button class="btn-secondary" onclick="saveApiKey()">Save API Key</button>
-                <button class="btn-warning" onclick="clearApiKey()">Clear API Key</button>
-            </div>
-            <div class="setting-group">
-                <label>💾 Cache Management</label>
-                <button class="btn-secondary" onclick="clearCache()">Clear Cached Data</button>
-                <button class="btn-secondary" onclick="exportData()">📥 Export Data</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- LOADING SPINNER -->
-<div id="loadingSpinner" class="loading-spinner" style="display: none;">
-    <div class="spinner"></div>
-    <p id="loadingText">Processing with AI...</p>
-</div>
-
-<!-- NOTIFICATION TOAST -->
-<div id="notificationToast" class="toast"></div>
-
-<!-- SCRIPTS -->
-<script src="js/config.js"></script>
-<script src="js/api.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/weather.js"></script>
-<script src="js/crop-advisor.js"></script>
-<script src="js/disease-detection.js"></script>
-<script src="js/soil-analysis.js"></script>
-<script src="js/yield-predictor.js"></script>
-<script src="js/market-prices.js"></script>
-<script src="js/advisories.js"></script>
-<script src="js/app.js"></script>
-
 </body>
 </html>
