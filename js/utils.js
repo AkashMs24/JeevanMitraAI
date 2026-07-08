@@ -1,35 +1,38 @@
 /* ═══ CACHE ═══ */
 class CacheManager {
-    static set(key, value, ttl) {
-        localStorage.setItem(CONFIG.STORAGE_KEYS.CACHE_PREFIX + key, JSON.stringify({ value, expires: Date.now() + ttl }));
-    }
+    static set(key, value, ttl) { localStorage.setItem(CONFIG.STORAGE_KEYS.CACHE_PREFIX + key, JSON.stringify({ value, expires: Date.now() + ttl })); }
     static get(key) {
         const item = localStorage.getItem(CONFIG.STORAGE_KEYS.CACHE_PREFIX + key);
         if (!item) return null;
-        try {
-            const data = JSON.parse(item);
-            if (Date.now() > data.expires) { localStorage.removeItem(CONFIG.STORAGE_KEYS.CACHE_PREFIX + key); return null; }
-            return data.value;
-        } catch { return null; }
+        try { const d = JSON.parse(item); if (Date.now() > d.expires) { localStorage.removeItem(CONFIG.STORAGE_KEYS.CACHE_PREFIX + key); return null; } return d.value; } catch { return null; }
     }
-    static clear() {
-        Object.keys(localStorage).forEach(k => { if (k.startsWith(CONFIG.STORAGE_KEYS.CACHE_PREFIX)) localStorage.removeItem(k); });
-    }
+    static clear() { Object.keys(localStorage).forEach(k => { if (k.startsWith(CONFIG.STORAGE_KEYS.CACHE_PREFIX)) localStorage.removeItem(k); }); }
 }
 window.CacheManager = CacheManager;
-/* ═══ LOADING ═══ */
+
+/* ═══ LOADING — always auto-hide after 15s max ═══ */
+let _loadingTimer = null;
 function showLoading(text) {
     const s = document.getElementById('loadingSpinner'), t = document.getElementById('loadingText');
     if (s) s.style.display = 'flex';
     if (t) t.textContent = text || 'Processing…';
+    // Safety: auto-hide after 15 seconds so UI never stays stuck
+    clearTimeout(_loadingTimer);
+    _loadingTimer = setTimeout(() => { hideLoading(); }, 15000);
 }
-function hideLoading() { const s = document.getElementById('loadingSpinner'); if (s) s.style.display = 'none'; }
+function hideLoading() {
+    clearTimeout(_loadingTimer);
+    const s = document.getElementById('loadingSpinner');
+    if (s) s.style.display = 'none';
+}
+
 /* ═══ TOAST ═══ */
 function showToast(message, type) {
     const t = document.getElementById('notificationToast');
-    if (t) { t.textContent = message; t.className = `toast show ${type || 'info'}`; setTimeout(() => t.classList.remove('show'), 3000); }
+    if (t) { t.textContent = message; t.className = `toast show ${type || 'info'}`; setTimeout(() => t.classList.remove('show'), 3500); }
 }
 window.toast = showToast;
+
 /* ═══ TABS ═══ */
 function switchTab(name) {
     document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
@@ -37,9 +40,11 @@ function switchTab(name) {
     const p = document.getElementById(`tab-${name}`); if (p) p.classList.add('active');
     const b = document.querySelector(`[data-tab="${name}"]`); if (b) b.classList.add('active');
 }
+
 /* ═══ MODAL ═══ */
 function openSettings() { const m = document.getElementById('settingsModal'); if (m) m.style.display = 'flex'; }
 function closeSettings() { const m = document.getElementById('settingsModal'); if (m) m.style.display = 'none'; }
+
 /* ═══ API KEY ═══ */
 function saveApiKey() {
     const inp = document.getElementById('apiKeyInput'); if (!inp) return;
@@ -55,10 +60,11 @@ function clearApiKey() {
 }
 function clearCache() { CacheManager.clear(); showToast('✅ Cache cleared', 'success'); }
 function exportData() {
-    const d = { preferences: localStorage.getItem(CONFIG.STORAGE_KEYS.PREFERENCES), location: localStorage.getItem(CONFIG.STORAGE_KEYS.LOCATION), ts: new Date().toISOString() };
+    const d = { prefs: localStorage.getItem(CONFIG.STORAGE_KEYS.PREFERENCES), loc: localStorage.getItem(CONFIG.STORAGE_KEYS.LOCATION), ts: new Date().toISOString() };
     const b = new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'jeevanmitra-data.json'; a.click();
 }
+
 /* ═══ GEOLOCATION ═══ */
 function getLocation() {
     if (!navigator.geolocation) { showToast('❌ Not supported', 'error'); return; }
@@ -70,15 +76,18 @@ function getLocation() {
             setSafeText('locationStatus', `${lat.toFixed(2)}, ${lng.toFixed(2)}`);
             showToast('✅ Location updated', 'success');
         },
-        () => showToast('❌ Location denied', 'error')
+        () => showToast('❌ Location denied — using default', 'error')
     );
 }
+
 /* ═══ HELPERS ═══ */
 function setSafeText(id, text) { const el = document.getElementById(id); if (el) el.textContent = text; }
 function formatValue(v, u) { return `${parseFloat(v).toFixed(1)} ${u}`; }
+
 async function imageToBase64(file) {
     return new Promise((resolve, reject) => { const r = new FileReader(); r.onload = () => resolve(r.result.split(',')[1]); r.onerror = reject; r.readAsDataURL(file); });
 }
+
 async function fetchWithRetry(url, opts = {}, retries = 3) {
     for (let i = 0; i < retries; i++) {
         try { const res = await fetch(url, opts); if (res.ok) return res; if (i < retries - 1) await new Promise(r => setTimeout(r, 1000)); }
@@ -86,7 +95,9 @@ async function fetchWithRetry(url, opts = {}, retries = 3) {
     }
     throw new Error('Request failed after retries');
 }
+
 function getDefaultLocation() { return { latitude: 12.9716, longitude: 77.5946 }; }
+
 /* ═══ GET INPUTS ═══ */
 function getInputs() {
     return {
@@ -101,6 +112,7 @@ function getInputs() {
     };
 }
 window.getInputs = getInputs;
+
 /* ═══ SCORING ═══ */
 function scoreCrop(crop, val, range) {
     const [optMin, optMax, absMin, absMax] = range;
@@ -109,6 +121,7 @@ function scoreCrop(crop, val, range) {
     if (val > optMax && val <= absMax) return 0.5 + 0.5 * ((absMax - val) / (absMax - optMax));
     return Math.max(0, 0.3 - Math.abs(val - (optMin + optMax) / 2) / (absMax * 0.5));
 }
+
 function getAllRanked(inputs) {
     if (typeof CROP_DB === 'undefined') return [];
     const { n, p, k, ph, temp, hum, rain, soilType } = inputs;
