@@ -1,48 +1,40 @@
-class CropAdvisor {
-    async getRecommendations(soilData) {
-        if (!groqAPI.isConfigured()) { showToast('❌ Configure API key in Settings', 'error'); return { ranked: [], aiInsights: '' }; }
-        showLoading('🤖 AI recommendations…');
-        try {
-            const ranked = getAllRanked(soilData);
-            const aiInsights = await this.getAIInsights(soilData, ranked.slice(0, 5));
-            hideLoading();
-            return { ranked, aiInsights };
-        } catch (e) { hideLoading(); showToast(`❌ ${e.message}`, 'error'); return { ranked: [], aiInsights: '' }; }
+class AdvisoryService {
+    generateLocal(weatherData, soilData) {
+        const advs = [];
+        const temp = weatherData?.temperature || soilData?.temp || 25;
+        const hum = weatherData?.humidity || soilData?.hum || 65;
+        const rain = weatherData?.rainfall || soilData?.rain || 0;
+        if (temp > 35) advs.push({ priority: 'high', icon: '🔥', title: 'Heat Alert', text: 'Temperature >35°C. Increase irrigation, provide shade.' });
+        else if (temp < 10) advs.push({ priority: 'high', icon: '❄️', title: 'Frost Warning', text: 'Low temps may damage crops. Cover sensitive plants.' });
+        if (hum > 85) advs.push({ priority: 'med', icon: '💧', title: 'High Humidity', text: 'Disease risk elevated. Monitor for fungal infections.' });
+        if (rain > 50) advs.push({ priority: 'high', icon: '🌧️', title: 'Heavy Rain', text: 'Ensure drainage. Delay spraying operations.' });
+        else if (rain === 0 && temp > 30) advs.push({ priority: 'med', icon: '🏜️', title: 'Irrigation Needed', text: 'No rain + high heat. Schedule immediate irrigation.' });
+        const sd = soilData || getInputs();
+        if (sd.ph < 5.5) advs.push({ priority: 'med', icon: '🧪', title: 'Soil pH Low', text: 'Apply agricultural lime (2-4 tons/ha).' });
+        if (sd.n < 30) advs.push({ priority: 'med', icon: '🌱', title: 'Low Nitrogen', text: 'Apply urea top-dress immediately.' });
+        const month = new Date().getMonth();
+        if (month >= 5 && month <= 9) advs.push({ priority: 'low', icon: '📅', title: 'Kharif Season', text: 'Monsoon active — prepare for sowing.' });
+        else if (month >= 10 || month <= 2) advs.push({ priority: 'low', icon: '📅', title: 'Rabi Season', text: 'Time for wheat, mustard, rabi crops.' });
+        else advs.push({ priority: 'low', icon: '📅', title: 'Summer', text: 'Cotton, millet, pulses — ensure water.' });
+        return advs;
     }
-    async getAIInsights(soilData, top) {
-        const names = top.map(c => `${lcn(c.k)} (${c.score.toFixed(0)}%)`).join(', ');
-        const prompt = `Soil: N=${soilData.n} P=${soilData.p} K=${soilData.k} pH=${soilData.ph} Temp=${soilData.temp}°C Hum=${soilData.hum}% Rain=${soilData.rain}mm Soil=${soilData.soilType}\nTop crops: ${names}\n\nProvide 4 concise paragraphs:\n1. Why these suit this soil\n2. Fertilizer schedule (NPK per ha)\n3. Irrigation tips\n4. Yield & risk outlook\nPractical for Indian farmer.`;
-        return await groqAPI.chat(prompt);
+    async getAIAdvisories(location, weatherData) {
+        if (!groqAPI.isConfigured()) return null;
+        return await groqAPI.chat(`3-4 concise farming advisories for ${location || 'India'}. Temp: ${weatherData?.temperature || 'N/A'}°C, Humidity: ${weatherData?.humidity || 'N/A'}%, Rain: ${weatherData?.rainfall || 'N/A'}mm. Include pest alerts, irrigation, spraying, market tips. 1-2 sentences each.`);
     }
 }
-const cropAdvisor = new CropAdvisor();
-async function getCropRecommendations() {
-    const inputs = getInputs();
-    const result = await cropAdvisor.getRecommendations(inputs);
-    if (result.ranked?.length > 0) displayRecommendations(result.ranked, result.aiInsights);
-}
-function displayRecommendations(crops, aiInsights) {
-    const c = document.getElementById('recommendationsContainer'); if (!c) return;
-    let html = '';
-    if (aiInsights) {
-        html += `<div class="ai-box"><h4>🤖 AI Analysis</h4><p>${aiInsights.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>')}</p></div>`;
-    }
-    const medals = ['🥇','🥈','🥉','4️⃣','5️⃣'];
-    html += '<div class="rec-grid">';
-    crops.slice(0, 5).forEach((crop, i) => {
-        const emoji = crop.crop?.emoji || '🌾';
-        const name = lcn(crop.k);
-        const season = crop.crop?.seasons?.join(', ') || '';
-        const market = crop.crop?.market ? `₹${crop.crop.market}/qtl` : '';
-        const marketLoc = crop.crop?.marketLoc || '';
-        html += `<div class="rec-card"><div class="rec-head"><span class="rec-medal">${medals[i]}</span><span class="rec-emoji">${emoji}</span><h3>${name}</h3></div><div class="rec-badge">${crop.score.toFixed(0)}% Match</div><div class="rec-info">${season ? `<strong>Season:</strong> ${season}<br>` : ''}${market ? `<strong>Market:</strong> ${market} (${marketLoc})` : ''}</div></div>`;
-    });
-    html += '</div>';
-    c.innerHTML = html;
-}
-function updatePreview() {
-    setSafeText('nitrogenVal', document.getElementById('nitrogen')?.value || 0);
-    setSafeText('phosphorusVal', document.getElementById('phosphorus')?.value || 0);
-    setSafeText('potassiumVal', document.getElementById('potassium')?.value || 0);
-    setSafeText('phVal', parseFloat(document.getElementById('soilPH')?.value || 6.5).toFixed(1));
+const advisoryService = new AdvisoryService();
+async function loadAdvisories() {
+    const container = document.getElementById('advisoriesContainer'); if (!container) return;
+    showLoading('📢 Loading…');
+    let weatherData = null;
+    try { const c = await weatherService.getCoordinates(); const w = await weatherService.fetchWeather(c.latitude, c.longitude); weatherData = w?.current; } catch {}
+    const soilData = getInputs();
+    const local = advisoryService.generateLocal(weatherData, soilData);
+    let aiText = null;
+    try { const loc = document.getElementById('locationStatus')?.textContent || 'India'; aiText = await advisoryService.getAIAdvisories(loc, weatherData); } catch {}
+    hideLoading();
+    let html = local.map(a => `<div class="adv-card adv-${a.priority}"><span class="adv-icon">${a.icon}</span><div><div class="adv-title">${a.title}<span class="adv-badge">${a.priority.toUpperCase()}</span></div><div class="adv-text">${a.text}</div></div></div>`).join('');
+    if (aiText) html += `<div class="ai-box" style="margin-top:16px"><h4>🤖 AI Advisories</h4><p>${aiText.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>')}</p></div>`;
+    container.innerHTML = html || '<p class="empty-state">No advisories</p>';
 }
