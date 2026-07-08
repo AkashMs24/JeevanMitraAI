@@ -37,3 +37,40 @@ const CONFIG = {
         YIELD_PREDICTION: 'llama-3.3-70b-versatile',
         SOIL_ANALYSIS: 'llama-3.3-70b-versatile'
     },
+
+    CACHE: {
+        WEATHER_TTL: 3600000,
+        MARKET_TTL: 1800000,
+        CROP_DATA_TTL: 86400000,
+        FORECAST_TTL: 3600000
+    },
+
+    STORAGE_KEYS: {
+        API_KEY: 'jeevanmitra_groq_key_v2',
+        LOCATION: 'user_location',
+        PREFERENCES: 'app_preferences',
+        CACHE_PREFIX: 'cache_'
+    },
+
+    LANGUAGES: {
+        'en': { name: 'English', flag: '🇬🇧' },
+        'kn': { name: 'ಕನ್ನಡ', flag: '🇮🇳' },
+        'hi': { name: 'हिंदी', flag: '🇮🇳' },
+        'ml': { name: 'മലയാളം', flag: '🇮🇳' },
+        'ta': { name: 'தமிழ்', flag: '🇮🇳' },
+        'te': { name: 'తెలుగు', flag: '🇮🇳' }
+    },
+
+    FEATURES: {
+        DISEASE_DETECTION: true,
+        YIELD_PREDICTION: true,
+        MARKET_PRICES: true,
+        WEATHER_FORECAST: true,
+        SOIL_ANALYSIS: true,
+        CROP_CALENDAR: true,
+        ADVISORIES: true,
+        CHAT: true
+    }
+};
+
+window.CONFIG = CONFIG;
