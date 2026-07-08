@@ -125,14 +125,14 @@ async function sendToGroq(userMsg) {
     const html = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
     addMsg(html, 'bot');
     
-    // ✅ AUTO-SPEAK immediately
+    // ✅ AUTO-SPEAK on every response
     speakText(text, currentLanguage);
   } catch (err) {
     removeTyping(tid);
     const reply = localReply(userMsg);
-    addMsg(reply + '<br><small style="opacity:0.4">Demo — add Groq key</small>', 'bot');
+    addMsg(reply + '<br><small style="opacity:0.4">Demo — Groq key may not be configured</small>', 'bot');
     
-    // ✅ AUTO-SPEAK fallback too
+    // ✅ AUTO-SPEAK fallback
     speakText(reply, currentLanguage);
   }
 }
@@ -149,8 +149,8 @@ function localReply(msg) {
     const fmt = (a, b, c) => `🥇 <b>${lcn(a.k)}</b> (${a.score.toFixed(0)}%) → 🥈 <b>${lcn(b.k)}</b> (${b.score.toFixed(0)}%) → 🥉 <b>${lcn(c.k)}</b> (${c.score.toFixed(0)}%)`;
     return fmt(a, b, c);
   }
-  if (/disease|sick|spot|blight|rust|ರೋग|रोग|ரோگ|వ్యాధ/.test(m)) {
-    return { en:'Upload a leaf photo in 🔬 Disease Detection tab — AI identifies diseases!', kn:'🔬 ರೋಗ ಟ್ಯಾಬ್‌ನಲ್ಲಿ ಎಲೆ ಚಿತ್ರ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ!', hi:'🔬 ರോग ট্যাবে पत्ते की फोटो अपलोड करें!', ml:'🔬 രോഗം ടാബിൽ ഇല ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യൂ!', ta:'🔬 நோய় tab-ல் இலை படம் பதிவேற்றம் செய்யுங்கள்!', te:'🔬 వ్యాధి tab లో ఆకు ఫోటో అప్‌లోడ్ చేయండి!' }[l] || '';
+  if (/disease|sick|spot|blight|rust|ರೋग|रोग|ரோग|వ్యాధ/.test(m)) {
+    return { en:'Upload a leaf photo in 🔬 Disease Detection tab — AI identifies diseases!', kn:'🔬 Disease Detection ಟ್ಯಾಬ್‌ನಲ್ಲಿ ಎಲೆ ಚಿತ್ರ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ!', hi:'🔬 Disease Detection टैब में पत्ते की फोटो अपलोड करें!', ml:'🔬 Disease Detection ടാബിൽ ഇല ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യൂ!', ta:'🔬 Disease Detection tab-ல் இலை படம் பதிவேற്றம் செய்யുங்கள்!', te:'🔬 Disease Detection tab లో ఆకు ఫోటో అప్‌లోడ్ చేయండి!' }[l] || '';
   }
   if (/price|market|cost|sell|ಬೆಲ|मूल्य|വിപണി|விலை|ధర/.test(m)) {
     const prices = (typeof marketPricesService !== 'undefined' ? marketPricesService.getAllPrices() : []).slice(0, 6);
@@ -161,12 +161,12 @@ function localReply(msg) {
   if (/yield|harvest|production|output|ಇಳುವ|उपज|വിളവ്|దిగుబడి/.test(m)) {
     if (!ranked.length) return t('soil_empty');
     const top = ranked[0];
-    return { en:`Best crop: <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}% match). 📊 Check Yield tab!`, kn:`ಅತ್ಯುತ್ತಮ: <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%)`, hi:`सर्वश्रेष्ठ: <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%)`, ml:`ഏറ്റവും നല്ലത്: <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%)`, ta:`சிறந்தது: <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%)`, te:`ఉత్తమం: <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}%)` }[l] || '';
+    return { en:`Best crop: <b>${lcn(top.k)}</b> (${top.score.toFixed(0)}% match)`, kn:`ಅತ್ಯುತ್ತಮ: <b>${lcn(top.k)}</b>`, hi:`सर्वश्रेष्ठ: <b>${lcn(top.k)}</b>`, ml:`ഏറ്റവും നല്ലത്: <b>${lcn(top.k)}</b>`, ta:`சிறந்தது: <b>${lcn(top.k)}</b>`, te:`ఉత్తమం: <b>${lcn(top.k)}</b>` }[l] || '';
   }
   if (/hi|hello|namaste|ನಮಸ್|नमस्|வணக்க|నమస్/.test(m)) {
-    return { en:"Hello! 🌿 I'm JeevanMitra AI. Ask about 🌱 crops, 📊 yield, 🔬 disease, 💰 prices, ⛅ weather!", kn:'ನಮಸ್ಕಾರ! 🌿 ನನ್ನ ಬಗ್ಗೆ ಏನು ಬೇಕಾದರೂ ಕೇಳಿ!', hi:'नमस्ते! 🌿 मेरी मदद की जरूरत है तो कहें!', ml:'നമസ്കാരം! 🌿 എന്നോട് ചോദിക്കൂ!', ta:'வணக்கம்! 🌿 എന്നോട് സൂചിപ്പിക്കുക!', te:'నమస్కారం! 🌿 నన్ను అడగండి!' }[l] || '';
+    return { en:"Hello! 🌿 I'm JeevanMitra AI. Ask me anything!", kn:'ನಮಸ್ಕಾರ! 🌿 ನನ್ನಂತೆ!', hi:'नमस्ते! 🌿 मुझसे पूछें!', ml:'നമസ്കാരം! 🌿 എന്നോട് ചോദിക്കൂ!', ta:'வணக்கம்! 🌿 എന്നോട് സൂചിപ്പിക്കുക!', te:'నమస్కారం! 🌿 నన్ను అడగండి!' }[l] || '';
   }
-  return { en:"Ask about 🌱 crops, 📊 yield, 🔬 diseases, 💰 prices!", kn:'🌿 ಬೆಳೆ, ಇಳುವರಿ, ರೋಗ ಬಗ್ಗೆ ಕೇಳಿ!', hi:'🌿 फसल, उपज, रोग के बारे में पूछें!', ml:'🌿 വിള, വിളവ്, രോഗം ആയി ചോദിക്കൂ!', ta:'🌿 பயிர், விளைச്சல், நോய് கேளுங்கள்!', te:'🌿 పంట, దిగుబడి, వ్యాధి అడగండి!' }[l] || '';
+  return { en:"Ask about 🌱 crops, 📊 yield, 🔬 diseases, 💰 prices!", kn:'🌿 ಬೆಳೆ, ಇಳುವರಿ, ರೋಗ ಬಗ್ಗೆ ಕೇಳಿ!', hi:'🌿 फसल, उपज, रोग के बारे में पूछें!', ml:'🌿 വിള, വിളവ്, രോഗം ആയി ചോദിക്കൂ!', ta:'🌿 பயிர், விளைச్చල், நോய় கேളுங்கள்!', te:'🌿 పంట, దిగుబడి, వ్యాధి అడగండి!' }[l] || '';
 }
 
 function addMsg(text, sender) {
@@ -203,5 +203,5 @@ function toggleChat() {
   if (fb) fb.innerHTML = isChatVisible ? '✕' : '💬';
 }
 
-// ✅ Init voices on page load
+// ✅ Init voices on load
 window.addEventListener('load', initVoices);
