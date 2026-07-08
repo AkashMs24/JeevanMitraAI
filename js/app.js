@@ -37,3 +37,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Populate dropdowns
     populateYieldCropSelect();
+
+    // Initialize default values
+    document.getElementById('weatherStatus').textContent = 'Click to fetch';
+    document.getElementById('dataStatus').textContent = 'Ready';
+
+    // Apply saved language translations
+    applyTranslations();
+
+    console.log('✅ App initialized successfully');
+});
