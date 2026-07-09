@@ -2,16 +2,12 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
 
 permissions:
   contents: read
   pages: write
   id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -19,14 +15,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Create env config
+      - name: Inject API Key
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
           mkdir -p js
-          cat > js/env-config.js << 'EOF'
-          window.GROQ_API_KEY = '${{ secrets.GROQ_API_KEY }}';
-          EOF
+          echo "window.GROQ_API_KEY = '${{ secrets.GROQ_API_KEY }}';" > js/env-config.js
       
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v3
