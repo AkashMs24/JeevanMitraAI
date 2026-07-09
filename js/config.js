@@ -1,50 +1,23 @@
+// CONFIGURATION
 const CONFIG = {
-    API: {
-        GROQ_ENDPOINT: 'https://api.groq.com/openai/v1/chat/completions',
-        MODELS: [
-            'llama-3.3-70b-versatile',
-            'llama-3.1-8b-instant',
-            'gemma2-9b-it',
-            'llama3-8b-8192'
-        ],
-        VISION_MODELS: [
-            'meta-llama/llama-4-scout-17b-16e-instruct',
-            'llama-3.2-11b-vision-preview',
-            'llama-3.2-90b-vision-preview'
-        ],
-        DEFAULT_MODEL: 'llama-3.3-70b-versatile',
-        TIMEOUT: 30000,
-        RETRY_ATTEMPTS: 3
+    GROQ_API: {
+        endpoint: 'https://api.groq.com/openai/v1/chat/completions',
+        models: ['mixtral-8x7b-32768', 'llama2-70b-4096'],
+        timeout: 30000
     },
-    WEATHER: {
-        ENDPOINT: 'https://api.open-meteo.com/v1/forecast',
-        REVERSE_GEOCODE: 'https://nominatim.openstreetmap.org/reverse'
+    WEATHER_API: {
+        endpoint: 'https://api.weatherapi.com/v1',
+        fallbackLat: 13.1939,
+        fallbackLng: 77.5941
     },
-    AI_MODELS: {
-        CROP_RECOMMENDATION: 'llama-3.3-70b-versatile',
-        DISEASE_DETECTION: 'meta-llama/llama-4-scout-17b-16e-instruct',
-        YIELD_PREDICTION: 'llama-3.3-70b-versatile',
-        SOIL_ANALYSIS: 'llama-3.3-70b-versatile'
-    },
-    CACHE: {
-        WEATHER_TTL: 3600000,
-        MARKET_TTL: 1800000,
-        CROP_DATA_TTL: 86400000,
-        FORECAST_TTL: 3600000
-    },
-    STORAGE_KEYS: {
-        API_KEY: 'jeevanmitra_groq_key_v2',
-        LOCATION: 'user_location',
-        PREFERENCES: 'app_preferences',
-        CACHE_PREFIX: 'cache_'
-    },
-    LANGUAGES: {
-        'en': { name: 'English', flag: '🇬🇧' },
-        'kn': { name: 'ಕನ್ನಡ', flag: '🇮🇳' },
-        'hi': { name: 'हिंदी', flag: '🇮🇳' },
-        'ml': { name: 'മലയാളം', flag: '🇮🇳' },
-        'ta': { name: 'தமிழ்', flag: '🇮🇳' },
-        'te': { name: 'తెలుగు', flag: '🇮🇳' }
+    STORAGE: {
+        location: 'jeevanimitra_location',
+        language: 'jeevanimitra_language'
     }
 };
-window.CONFIG = CONFIG;
+
+// Check API Key on load
+function validateApiKey() {
+    const hasKey = window.GROQ_API_KEY && window.GROQ_API_KEY.length > 0;
+    return hasKey;
+}
