@@ -1,17 +1,30 @@
 let currentLanguage = 'en';
 let autoVoice = true;
-
-const CROPS = {
-    wheat: { name: 'Wheat', yield: 45, price: 2100 },
-    rice: { name: 'Rice', yield: 52, price: 2900 },
-    corn: { name: 'Corn', yield: 60, price: 1800 }
-};
+let userLocation = getLocation();
 
 // INIT
 window.addEventListener('load', () => {
     checkApiStatus();
     initVoices();
+    loadLanguage();
+    updateRecommendations();
 });
+
+function checkApiStatus() {
+    const statusEl = document.getElementById('statusText');
+    const apiDisplay = document.getElementById('apiDisplay');
+    const hasKey = groqAPI.isConfigured();
+    
+    if (hasKey) {
+        statusEl.textContent = '🤖 AI Ready';
+        statusEl.parentElement.style.color = '#10b981';
+        if (apiDisplay) apiDisplay.textContent = '✅ Connected';
+    } else {
+        statusEl.textContent = '⚠️ Setup Needed';
+        statusEl.parentElement.style.color = '#ef4444';
+        if (apiDisplay) apiDisplay.textContent = '❌ Add GROQ_API_KEY to GitHub Secret';
+    }
+}
 
 // TAB SWITCHING
 function switchTab(tabName) {
@@ -22,32 +35,21 @@ function switchTab(tabName) {
     event.target.closest('.nav-item').classList.add('active');
 }
 
-// API STATUS
-function checkApiStatus() {
-    const hasKey = !!window.GROQ_API_KEY;
-    const statusEl = document.getElementById('statusText');
-    const apiDisplay = document.getElementById('apiDisplay');
-    
-    if (hasKey) {
-        statusEl.textContent = '🤖 AI Ready';
-        if (apiDisplay) apiDisplay.textContent = '✅ Connected';
-    } else {
-        statusEl.textContent = '⚠️ Setup Needed';
-        if (apiDisplay) apiDisplay.textContent = '❌ Add Groq key';
-    }
-}
-
 // LOCATION
-function getLocation() {
-    showLoading('Getting location...');
+async function getLocationCoords() {
+    showLoading(t('detectingLocation'));
     if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(pos => {
-            const lat = pos.coords.latitude.toFixed(2);
-            const lng = pos.coords.longitude.toFixed(2);
-            document.getElementById('locText').textContent = `📍 ${lat}, ${lng}`;
-            document.getElementById('locDisplay').textContent = `${lat}, ${lng}`;
+            userLocation = {
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude
+            };
+            saveLocation(userLocation.lat, userLocation.lng);
+            document.getElementById('locText').textContent = `📍 ${userLocation.lat.toFixed(2)}, ${userLocation.lng.toFixed(2)}`;
+            document.getElementById('locDisplay').textContent = `${userLocation.lat.toFixed(2)}, ${userLocation.lng.toFixed(2)}`;
             hideLoading();
             toast('✅ Location updated!');
+            getWeatherData();
         }, err => {
             hideLoading();
             toast('❌ Location failed');
@@ -56,25 +58,24 @@ function getLocation() {
 }
 
 // WEATHER
-function getWeather() {
-    showLoading('Fetching weather...');
-    setTimeout(() => {
-        const temp = Math.floor(Math.random() * 15 + 20);
-        const humidity = Math.floor(Math.random() * 30 + 50);
-        const rainfall = Math.floor(Math.random() * 30);
-        
-        document.getElementById('tempVal').textContent = temp + '°C';
-        document.getElementById('humVal').textContent = humidity + '%';
-        document.getElementById('rainVal').textContent = rainfall + 'mm';
-        
+async function getWeatherData() {
+    showLoading(t('fetchingWeather'));
+    try {
+        const weather = await weatherAPI.getWeather(userLocation.lat, userLocation.lng);
+        document.getElementById('tempVal').textContent = weather.temp + '°C';
+        document.getElementById('humVal').textContent = weather.humidity + '%';
+        document.getElementById('rainVal').textContent = Math.round(weather.rainfall) + 'mm';
         hideLoading();
         toast('✅ Weather updated!');
-        updateRec();
-    }, 1000);
+        updateRecommendations();
+    } catch (error) {
+        hideLoading();
+        toast('❌ Weather fetch failed');
+    }
 }
 
 // SOIL & RECOMMENDATIONS
-function updateRec() {
+function updateRecommendations() {
     const n = parseInt(document.getElementById('nitrogen').value);
     const p = parseInt(document.getElementById('phosphorus').value);
     const k = parseInt(document.getElementById('potassium').value);
@@ -86,17 +87,26 @@ function updateRec() {
     document.getElementById('phVal').textContent = ph;
     
     let html = '';
-    for (const [key, crop] of Object.entries(CROPS)) {
-        const score = Math.min(100, Math.round((n + p + k) / 6 + Math.random() * 20));
+    const scores = [];
+    
+    for (const [key, crop] of Object.entries(CROPS_DATA)) {
+        const score = getCropScore(key, n, p, k, ph);
+        scores.push({ key, crop, score });
+    }
+    
+    scores.sort((a, b) => b.score - a.score);
+    
+    scores.forEach(({ crop, score }) => {
         html += `
             <div class="rec-item">
                 <strong>${crop.name} - ${score}% Match</strong>
                 <p>Yield: ${crop.yield}q/ha | Price: ₹${crop.price}</p>
             </div>
         `;
-    }
+    });
+    
     document.getElementById('recContainer').innerHTML = html;
-    speakText('Crop recommendations updated');
+    speakText('Recommendations updated', currentLanguage);
 }
 
 // DISEASE DETECTION
@@ -104,25 +114,42 @@ function handleImageUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
     
-    showLoading('Analyzing...');
-    setTimeout(() => {
-        const diseases = [
-            { name: 'Leaf Blight', severity: 'High', symptoms: 'Brown spots', treatment: 'Fungicide spray' },
-            { name: 'Powdery Mildew', severity: 'Medium', symptoms: 'White powder', treatment: 'Sulfur spray' },
-            { name: 'Healthy', severity: 'None', symptoms: 'No disease', treatment: 'Continue care' }
-        ];
-        const disease = diseases[Math.floor(Math.random() * diseases.length)];
-        
-        document.getElementById('diseaseResult').style.display = 'block';
-        document.getElementById('diseaseName').textContent = disease.name;
-        document.getElementById('severityBadge').textContent = disease.severity;
-        document.getElementById('diseaseSymptoms').textContent = disease.symptoms;
-        document.getElementById('diseaseTreatment').textContent = disease.treatment;
-        
-        hideLoading();
-        toast('✅ Analysis done!');
-        speakText(disease.name);
-    }, 2000);
+    showLoading(t('analyzing'));
+    const reader = new FileReader();
+    reader.onload = async () => {
+        try {
+            if (groqAPI.isConfigured()) {
+                const result = await groqAPI.diseaseAnalysis(reader.result);
+                displayDisease(result);
+            } else {
+                displayDisease(getMockDisease());
+            }
+        } catch (error) {
+            hideLoading();
+            toast('❌ Analysis failed');
+        }
+    };
+    reader.readAsDataURL(file);
+}
+
+function displayDisease(data) {
+    document.getElementById('diseaseResult').style.display = 'block';
+    document.getElementById('diseaseName').textContent = data.disease || 'Unknown';
+    document.getElementById('severityBadge').textContent = data.severity || 'Low';
+    document.getElementById('diseaseSymptoms').textContent = data.symptoms || '—';
+    document.getElementById('diseaseTreatment').textContent = data.treatment || '—';
+    hideLoading();
+    toast('✅ Analysis complete!');
+    speakText(data.disease, currentLanguage);
+}
+
+function getMockDisease() {
+    const diseases = [
+        { disease: 'Leaf Blight', severity: 'High', symptoms: 'Brown spots on leaves', treatment: 'Apply fungicide' },
+        { disease: 'Powdery Mildew', severity: 'Medium', symptoms: 'White powder coating', treatment: 'Sulfur spray' },
+        { disease: 'Healthy Leaf', severity: 'None', symptoms: 'No disease detected', treatment: 'Continue care' }
+    ];
+    return diseases[Math.floor(Math.random() * diseases.length)];
 }
 
 function handleDrop(event) {
@@ -141,7 +168,7 @@ function resetDisease() {
 
 // SOIL ANALYSIS
 function analyzeSoil() {
-    showLoading('Analyzing...');
+    showLoading(t('analyzing'));
     setTimeout(() => {
         const n = parseInt(document.getElementById('nitrogen').value);
         const p = parseInt(document.getElementById('phosphorus').value);
@@ -153,20 +180,20 @@ function analyzeSoil() {
         
         let desc = '';
         if (score < 30) desc = '⚠️ Poor - needs fertilization';
-        else if (score < 60) desc = '🟡 Average - balanced needed';
+        else if (score < 60) desc = '🟡 Average - balanced nutrients needed';
         else if (score < 80) desc = '🟢 Good - well-balanced';
-        else desc = '✅ Excellent - optimal';
+        else desc = '✅ Excellent - optimal conditions';
         
         document.getElementById('scoreDesc').textContent = desc;
         document.getElementById('soilRec').innerHTML = `
             <div class="rec-item">
-                <strong>🧪 Recommendation</strong>
+                <strong>🧪 Soil Health Assessment</strong>
                 <p>${desc}</p>
             </div>
         `;
         
         hideLoading();
-        toast('✅ Analysis done!');
+        toast('✅ Analysis complete!');
     }, 1500);
 }
 
@@ -180,39 +207,36 @@ function predictYield() {
         return;
     }
     
-    const cropData = CROPS[crop];
-    const yield_val = cropData.yield * area;
-    const revenue = yield_val * cropData.price;
+    const cropData = CROPS_DATA[crop];
+    const yieldVal = cropData.yield * area;
+    const revenue = yieldVal * cropData.price;
     
     document.getElementById('yieldResult').innerHTML = `
         <div class="rec-item">
-            <strong>📊 ${cropData.name}</strong>
-            <p>Yield: <strong>${yield_val} quintals</strong></p>
+            <strong>📊 ${cropData.name} Yield Prediction</strong>
+            <p>Expected Yield: <strong>${yieldVal} quintals</strong></p>
             <p>Revenue: <strong>₹${(revenue / 100000).toFixed(2)} lakhs</strong></p>
+            <p>Season: ${cropData.season}</p>
         </div>
     `;
     
-    speakText(`${cropData.name}: ${yield_val} quintals`);
+    speakText(`${cropData.name}: ${yieldVal} quintals`, currentLanguage);
 }
 
 // MARKET PRICES
-function fetchMarkets() {
+async function fetchMarkets() {
     showLoading('Fetching prices...');
-    setTimeout(() => {
-        const markets = [
-            { name: 'Wheat', price: 2100, trend: '📈' },
-            { name: 'Rice', price: 2900, trend: '📉' },
-            { name: 'Cotton', price: 5500, trend: '📈' },
-            { name: 'Corn', price: 1800, trend: '📈' }
-        ];
-        
+    try {
+        const prices = await marketAPI.getPrices();
         let html = '';
-        markets.forEach(m => {
+        
+        prices.forEach(p => {
+            const trendIcon = p.trend === 'up' ? '📈' : p.trend === 'down' ? '📉' : '➡️';
             html += `
                 <div class="market-card">
-                    <div class="name">${m.name}</div>
-                    <div class="price">₹${m.price}</div>
-                    <div class="trend">${m.trend}</div>
+                    <div class="name">${p.name}</div>
+                    <div class="price">₹${p.price}</div>
+                    <div class="trend">${trendIcon} ${p.change > 0 ? '+' : ''}${p.change}%</div>
                 </div>
             `;
         });
@@ -220,26 +244,25 @@ function fetchMarkets() {
         document.getElementById('marketGrid').innerHTML = html;
         hideLoading();
         toast('✅ Prices updated!');
-    }, 1500);
+    } catch (error) {
+        hideLoading();
+        toast('❌ Failed to fetch prices');
+    }
 }
 
 // FORECAST
-function loadForecast() {
-    showLoading('Loading...');
-    setTimeout(() => {
-        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+async function loadForecast() {
+    showLoading('Loading forecast...');
+    try {
+        const forecast = await weatherAPI.getForecast(userLocation.lat, userLocation.lng);
         let html = '';
         
-        days.forEach(day => {
-            const temp = Math.floor(Math.random() * 10 + 24);
-            const conditions = ['☀️ Sunny', '⛅ Cloudy', '🌧️ Rainy'];
-            const condition = conditions[Math.floor(Math.random() * 3)];
-            
+        forecast.forEach(day => {
             html += `
                 <div class="market-card">
-                    <div class="name">${day}</div>
-                    <div class="price">${temp}°C</div>
-                    <div class="trend">${condition}</div>
+                    <div class="name">${day.date}</div>
+                    <div class="price">${day.maxTemp}°C</div>
+                    <div class="trend">${day.condition}</div>
                 </div>
             `;
         });
@@ -247,7 +270,10 @@ function loadForecast() {
         document.getElementById('forecastGrid').innerHTML = html;
         hideLoading();
         toast('✅ Forecast loaded!');
-    }, 1500);
+    } catch (error) {
+        hideLoading();
+        toast('❌ Failed to load forecast');
+    }
 }
 
 // ADVISORY
@@ -255,10 +281,10 @@ function loadAdvisory() {
     showLoading('Loading...');
     setTimeout(() => {
         const advisories = [
-            '🚨 Pest alert in nearby regions',
-            '💧 Irrigation scheduled',
-            '🌾 Best harvest time is 9-10 AM',
-            '📢 Subsidy available'
+            '🚨 Pest alert: Army worms detected in nearby regions',
+            '💧 Irrigation: Schedule irrigation for this week',
+            '🌾 Harvest: Best time is 9-10 AM for quality grains',
+            '📢 Subsidy: Government scheme available for organic farming'
         ];
         
         let html = '';
@@ -268,8 +294,8 @@ function loadAdvisory() {
         
         document.getElementById('advisoryContainer').innerHTML = html;
         hideLoading();
-        toast('✅ Loaded!');
-    }, 1500);
+        toast('✅ Advisories loaded!');
+    }, 1000);
 }
 
 // CHAT
@@ -278,7 +304,7 @@ function toggleChat() {
     panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
 }
 
-function sendMessage() {
+async function sendMessage() {
     const input = document.getElementById('chatInput');
     const msg = input.value.trim();
     if (!msg) return;
@@ -286,17 +312,18 @@ function sendMessage() {
     addMessage(msg, 'user');
     input.value = '';
     
-    setTimeout(() => {
-        const responses = [
-            '🌾 Wheat would be perfect for your soil!',
-            '💡 Your soil looks great. Add more potassium.',
-            '🌤️ Weather is favorable. Irrigate regularly.',
-            '🚨 Pest risk detected. Apply preventive measures.'
-        ];
-        const response = responses[Math.floor(Math.random() * responses.length)];
+    showLoading('Thinking...');
+    try {
+        const response = await chatManager.sendMessage(msg);
+        hideLoading();
         addMessage(response, 'bot');
-        speakText(response);
-    }, 500);
+        speakText(response, currentLanguage);
+    } catch (error) {
+        hideLoading();
+        const fallback = chatManager.getFallbackResponse(msg);
+        addMessage(fallback, 'bot');
+        speakText(fallback, currentLanguage);
+    }
 }
 
 function addMessage(text, sender) {
@@ -324,16 +351,18 @@ function toggleVoice() {
     toast(autoVoice ? '🔊 Voice ON' : '🔇 Voice OFF');
 }
 
-function speakText(text) {
-    if (!autoVoice || !('speechSynthesis' in window)) return;
-    const clean = text.replace(/<[^>]+>/g, '').replace(/[*#_`]/g, '');
-    const utterance = new SpeechSynthesisUtterance(clean);
-    utterance.rate = 0.9;
-    try {
-        speechSynthesis.speak(utterance);
-    } catch (e) {
-        console.warn('Speech failed:', e);
-    }
+// LANGUAGE
+function changeLanguage(lang) {
+    currentLanguage = lang;
+    saveLanguage(lang);
+    document.getElementById('langSelect').value = lang;
+    toast('Language changed!');
+}
+
+function loadLanguage() {
+    const saved = getLanguage();
+    currentLanguage = saved;
+    document.getElementById('langSelect').value = saved;
 }
 
 // SETTINGS
@@ -344,11 +373,6 @@ function openSettings() {
 
 function closeSettings() {
     document.getElementById('settingsModal').classList.remove('show');
-}
-
-function changeLanguage(lang) {
-    currentLanguage = lang;
-    toast('Language changed!');
 }
 
 // HELPERS
