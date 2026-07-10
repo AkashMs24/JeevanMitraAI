@@ -9,17 +9,15 @@ class SoilAnalyzer {
         return Math.min(score, 100);
     }
     getRecommendations(soilData) {
-        const recs = [];
-        const { n, p, k, ph } = soilData;
-        recs.push(n < 40 ? { icon: '⚠️', text: 'Nitrogen low — apply Urea at 50-80 kg/ha', type: 'warn' } : n > 100 ? { icon: 'ℹ️', text: 'Nitrogen high — reduce fertilizer', type: 'info' } : { icon: '✅', text: 'Nitrogen optimal', type: 'ok' });
-        recs.push(p < 25 ? { icon: '⚠️', text: 'Phosphorus low — apply DAP at 40-60 kg/ha', type: 'warn' } : { icon: '✅', text: 'Phosphorus adequate', type: 'ok' });
-        recs.push(k < 30 ? { icon: '⚠️', text: 'Potassium low — apply MOP at 40-60 kg/ha', type: 'warn' } : { icon: '✅', text: 'Potassium adequate', type: 'ok' });
-        recs.push(ph < 5.5 ? { icon: '⚠️', text: 'Soil acidic — apply lime 2-4 tons/ha', type: 'warn' } : ph > 8.0 ? { icon: '⚠️', text: 'Soil alkaline — apply gypsum', type: 'warn' } : { icon: '✅', text: 'pH optimal', type: 'ok' });
+        const recs = []; const { n, p, k, ph } = soilData;
+        recs.push(n < 40 ? { icon:'⚠️', text:'Nitrogen low — apply Urea at 50-80 kg/ha', type:'warn' } : n > 100 ? { icon:'ℹ️', text:'Nitrogen high — reduce fertilizer', type:'info' } : { icon:'✅', text:'Nitrogen optimal', type:'ok' });
+        recs.push(p < 25 ? { icon:'⚠️', text:'Phosphorus low — apply DAP at 40-60 kg/ha', type:'warn' } : { icon:'✅', text:'Phosphorus adequate', type:'ok' });
+        recs.push(k < 30 ? { icon:'⚠️', text:'Potassium low — apply MOP at 40-60 kg/ha', type:'warn' } : { icon:'✅', text:'Potassium adequate', type:'ok' });
+        recs.push(ph < 5.5 ? { icon:'⚠️', text:'Soil acidic — apply lime 2-4 tons/ha', type:'warn' } : ph > 8.0 ? { icon:'⚠️', text:'Soil alkaline — apply gypsum', type:'warn' } : { icon:'✅', text:'pH optimal', type:'ok' });
         return recs;
     }
 }
 const soilAnalyzer = new SoilAnalyzer();
-
 function analyzeSoil() {
     const inputs = getInputs();
     const score = soilAnalyzer.calculateHealthScore(inputs);
@@ -28,17 +26,14 @@ function analyzeSoil() {
     const bar = document.getElementById('scoreBar'); if (bar) bar.style.width = `${score}%`;
     const desc = score >= 80 ? 'Excellent' : score >= 60 ? 'Good' : score >= 40 ? 'Fair' : 'Needs Improvement';
     setSafeText('soilHealthDesc', desc);
-    // 🔊 VOICE: speak soil health
-    speakText(`Soil health score is ${score} out of 100. Status: ${desc}`);
-
-    // Nutrient bars
+    speakText(`Soil health score is ${score} out of 100. Status: ${desc}`, currentLanguage);
     const chart = document.getElementById('soilNutrientChart');
     if (chart) {
         const ns = [
-            { name: 'Nitrogen (N)', value: inputs.n, max: 200, opt: [40, 80] },
-            { name: 'Phosphorus (P)', value: inputs.p, max: 150, opt: [25, 50] },
-            { name: 'Potassium (K)', value: inputs.k, max: 200, opt: [30, 60] },
-            { name: 'pH Level', value: inputs.ph, max: 9.5, opt: [6.0, 7.5] }
+            { name:'Nitrogen (N)', value:inputs.n, max:200, opt:[40,80] },
+            { name:'Phosphorus (P)', value:inputs.p, max:150, opt:[25,50] },
+            { name:'Potassium (K)', value:inputs.k, max:200, opt:[30,60] },
+            { name:'pH Level', value:inputs.ph, max:9.5, opt:[6.0,7.5] }
         ];
         chart.innerHTML = ns.map(n => {
             const pct = (n.value / n.max) * 100;
