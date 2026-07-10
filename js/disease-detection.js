@@ -41,6 +41,7 @@ function displayDiseaseResult(data) {
         sev.textContent = `Severity: ${(data.severity || '—').toUpperCase()}`;
         sev.className = `severity-badge ${s === 'high' ? 'sev-high' : s === 'medium' ? 'sev-med' : 'sev-low'}`;
     }
+    speakText(data.disease, currentLanguage);
 }
 function resetDiseaseUpload() {
     const up = document.getElementById('imageUploadArea'), res = document.getElementById('diseaseResultContainer');
