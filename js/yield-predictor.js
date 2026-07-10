@@ -21,13 +21,11 @@ class YieldPredictor {
     }
 }
 const yieldPredictorInst = new YieldPredictor();
-
 function populateYieldCropSelect() {
     const sel = document.getElementById('yieldCropSelect'); if (!sel || typeof CROP_DB === 'undefined') return;
     sel.innerHTML = '<option value="">Select…</option>';
     Object.entries(CROP_DB).forEach(([k, c]) => { sel.innerHTML += `<option value="${k}">${c.emoji} ${lcn(k)}</option>`; });
 }
-
 async function updateYieldPredictor() {
     const cropKey = document.getElementById('yieldCropSelect')?.value;
     const area = parseFloat(document.getElementById('farmArea')?.value || 1);
@@ -40,8 +38,7 @@ async function updateYieldPredictor() {
     let aiTips = null;
     try { aiTips = await yieldPredictorInst.getAIPrediction(cropKey, area, soilData, result); } catch {}
     hideLoading();
-    // 🔊 VOICE: speak yield result
-    speakText(`${lcn(cropKey)}: expected yield ${result.yieldPerHa} ${result.unit} per hectare. Total ${result.totalYield} ${result.unit} for ${result.area} hectares. Market price ${result.marketPrice} rupees per quintal.`);
+    speakText(`${lcn(cropKey)}: expected yield ${result.yieldPerHa} ${result.unit} per hectare. Total ${result.totalYield} ${result.unit} for ${result.area} hectares. Market price ${result.marketPrice} rupees per quintal.`, currentLanguage);
     const crop = CROP_DB[cropKey];
     let html = `<div class="yield-card"><div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:20px"><span style="font-size:40px">${crop.emoji}</span><h3>${lcn(cropKey)}</h3></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
         <div class="yield-stat green"><div class="yield-label">${t('yield_per_ha')}</div><div class="yield-number green">${result.yieldPerHa}</div><div class="yield-unit">${result.unit}</div></div>
