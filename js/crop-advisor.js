@@ -22,9 +22,8 @@ async function getCropRecommendations() {
     const result = await cropAdvisor.getRecommendations(inputs);
     if (result.ranked?.length > 0) {
         displayRecommendations(result.ranked, result.aiInsights);
-        // 🔊 VOICE: speak top crop recommendation
         const top3 = result.ranked.slice(0, 3).map(c => `${lcn(c.k)} ${c.score.toFixed(0)} percent`).join(', ');
-        speakText(`Your top crops are: ${top3}`);
+        speakText(`Your top crops are: ${top3}`, currentLanguage);
     }
 }
 
