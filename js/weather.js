@@ -1,76 +1,50 @@
-class WeatherAPI {
-    constructor() {
-        this.endpoint = CONFIG.WEATHER_API.endpoint;
-    }
-
-    async getWeather(lat, lng) {
-        try {
-            // Using weatherapi.com free tier
-            const response = await fetch(
-                `https://api.weatherapi.com/v1/current.json?key=demo&q=${lat},${lng}`
+=class WeatherService {
+    async getCoordinates(forceFresh = false) {
+        if (!forceFresh) { const saved = getSavedLocation(); if (saved) return { latitude: saved.lat, longitude: saved.lng }; }
+        return new Promise(resolve => {
+            if (!('geolocation' in navigator)) return resolve(this.fallback());
+            navigator.geolocation.getCurrentPosition(
+                pos => { const c = { latitude: pos.coords.latitude, longitude: pos.coords.longitude }; saveLocation(c.latitude, c.longitude); resolve(c); },
+                () => resolve(this.fallback()),
+                { timeout: 8000 }
             );
+        });
+    }
+    fallback() { return { latitude: CONFIG.WEATHER_API.fallbackLat, longitude: CONFIG.WEATHER_API.fallbackLng }; }
 
-            if (!response.ok) {
-                // Return mock data if API fails
-                return this.getMockWeather();
-            }
-
-            const data = await response.json();
+    async fetchWeather(lat, lng) {
+        try {
+            const url = `${CONFIG.WEATHER_API.endpoint}?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code&timezone=auto`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('weather fetch failed');
+            const data = await res.json();
             return {
-                temp: Math.round(data.current.temp_c),
-                humidity: data.current.humidity,
-                rainfall: data.current.precip_mm,
-                condition: data.current.condition.text
+                current: {
+                    temperature: Math.round(data.current.temperature_2m),
+                    humidity: data.current.relative_humidity_2m,
+                    rainfall: data.current.precipitation,
+                    condition: this.codeToCondition(data.current.weather_code)
+                },
+                forecast: data.daily.time.map((date, i) => ({
+                    date,
+                    maxTemp: Math.round(data.daily.temperature_2m_max[i]),
+                    minTemp: Math.round(data.daily.temperature_2m_min[i]),
+                    rainfall: data.daily.precipitation_sum[i],
+                    condition: this.codeToCondition(data.daily.weather_code[i])
+                }))
             };
-        } catch (error) {
-            console.warn('Weather API failed, using mock data:', error);
-            return this.getMockWeather();
-        }
+        } catch (e) { console.warn('Weather API failed, using mock:', e); return this.mock(); }
     }
-
-    async getForecast(lat, lng) {
-        try {
-            const response = await fetch(
-                `https://api.weatherapi.com/v1/forecast.json?key=demo&q=${lat},${lng}&days=7`
-            );
-
-            if (!response.ok) {
-                return this.getMockForecast();
-            }
-
-            const data = await response.json();
-            return data.forecast.forecastday.map(day => ({
-                date: day.date,
-                maxTemp: Math.round(day.day.maxtemp_c),
-                minTemp: Math.round(day.day.mintemp_c),
-                condition: day.day.condition.text,
-                rainfall: day.day.totalprecip_mm
-            }));
-        } catch (error) {
-            console.warn('Forecast API failed, using mock data:', error);
-            return this.getMockForecast();
-        }
+    codeToCondition(code) {
+        const map = { 0:'☀️ Clear',1:'🌤️ Mostly Clear',2:'⛅ Partly Cloudy',3:'☁️ Cloudy',45:'🌫️ Fog',48:'🌫️ Fog',
+            51:'🌦️ Drizzle',61:'🌧️ Rain',63:'🌧️ Rain',65:'🌧️ Heavy Rain',71:'🌨️ Snow',80:'🌦️ Showers',95:'⛈️ Storm' };
+        return map[code] || '⛅ Variable';
     }
-
-    getMockWeather() {
+    mock() {
         return {
-            temp: Math.floor(Math.random() * 15 + 20),
-            humidity: Math.floor(Math.random() * 30 + 50),
-            rainfall: Math.floor(Math.random() * 30),
-            condition: 'Partly Cloudy'
+            current: { temperature: Math.floor(Math.random()*15+20), humidity: Math.floor(Math.random()*30+50), rainfall: Math.floor(Math.random()*10), condition: '⛅ Partly Cloudy' },
+            forecast: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => ({ date: d, maxTemp: Math.floor(Math.random()*10+28), minTemp: Math.floor(Math.random()*10+18), rainfall: Math.floor(Math.random()*15), condition: '🌤️ Mostly Clear' }))
         };
     }
-
-    getMockForecast() {
-        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-        return days.map((day, i) => ({
-            date: day,
-            maxTemp: Math.floor(Math.random() * 10 + 28),
-            minTemp: Math.floor(Math.random() * 10 + 18),
-            condition: ['Sunny', 'Cloudy', 'Rainy'][Math.floor(Math.random() * 3)],
-            rainfall: Math.floor(Math.random() * 20)
-        }));
-    }
 }
-
-const weatherAPI = new WeatherAPI();
+const weatherService = new WeatherService();
