@@ -103,4 +103,181 @@ const i18n = {
     advisor_title:'AI വിള ഉപദേശകൻ',advisor_desc:'മണ്ണ് & കാലാവസ്ഥ ഡാറ്റയിൽ നിന്ന് AI',
     live_btn:'📡 ലൈവ് ഡാറ്റ നേടുക',soil_title:'🧪 മണ്ണ് പാരാമീറ്ററുകൾ',
     ai_rec_title:'🤖 AI ശുപാർശകൾ',ai_rec_btn:'🔍 ശുപാർശ നേടുക',
-    disease_title:'🔬 AI രോഗ
+    disease_title:'🔬 AI രോഗ കണ്ടെത്തൽ',upload_title:'ഇല ചിത്രം അപ്‌ലോഡ്',
+    soil_tab_title:'🧪 മണ്ണ് വിശകലനം',yield_tab_title:'📊 വിളവ് പ്രവചനം',yield_select_crop:'🌾 വിള തിരഞ്ഞെടുക്കുക',
+    market_title:'💰 വിപണി വില',market_desc:'യഥാർത്ഥ മണ്ഡി വിലകൾ',market_fetch_btn:'📡 വില നേടുക',
+    weather_tab_title:'⛅ 7-ദിവസ പ്രവചനം',weather_load_btn:'📡 പ്രവചനം',
+    advisory_tab_title:'📢 വിള ഉപദേശം',advisory_load_btn:'📡 ഉപദേശം',
+    chat_title:'🤖 ജീവൻമിത്ര AI',chat_welcome:'നമസ്കാരം! ഞാൻ ജീവൻമിത്ര AI 🌿',
+    qa_crop:'🌱 വിള?',qa_yield:'📊 വിളവ്',qa_disease:'🔍 രോഗം',qa_price:'💰 വില',
+    voice_listening:'🎤 കേൾക്കുന്നു…',voice_not_supported:'❌ വോയ്സ് ഇല്ല',lang_changed:'ഭാഷ മാറ്റി',
+    weather_loaded:'✅ കാലാവസ്ഥ!',market_loaded:'✅ വില ലഭിച്ചു!',soil_empty:'ഡാറ്റ നൽകുക',live_temp:'താപനില',live_hum:'ആർദ്രത',live_rain:'മഴ',live_loc:'സ്ഥലം',
+    market_fetching:'📡 വില നേടുന്നു…',weather_today:'ഇന്ന്',weather_low:'താഴ്ന്ന:',
+    yield_per_ha:'വിളവ്/ഹെ',yield_total:'മൊത്തം',yield_price:'വില',yield_confidence:'AI വിശ്വാസം',yield_empty:'വിള തിരഞ്ഞെടുക്കുക',
+    disease_symptoms:'ലക്ഷണങ്ങൾ',disease_treatment:'ചികിത്സ',disease_prevention:'തടയൽ',disease_upload_another:'🔄 മറ്റൊന്ന്',
+    soil_nutrients:'📊 പോഷകങ്ങൾ',soil_score:'🎯 ആരോഗ്യം',soil_analyze_btn:'🧪 വിശകലനം',soil_recs:'💡 ശുപാർശകൾ',
+    settings_title:'⚙️ സെറ്റിംഗ്സ്',voice_auto:'🔊 ഓട്ടോ',
+  },
+  ta: {
+    dash_weather:'வானிலை',dash_location:'இடம்',dash_ai:'AI நிலை',dash_data:'நேரலை தரவு',
+    tab_advisor:'பயிர்',tab_disease:'நோய்',tab_soil:'மண்',tab_yield:'விளைச்சல்',tab_market:'சந்தை',tab_weather:'வானிலை',tab_advisory:'ஆலோசனை',
+    advisor_title:'AI பயிர் ஆலோசகர்',advisor_desc:'மண் & வானிலை தரவிலிருந்து AI பரிந்துரைகள்',
+    live_btn:'📡 நேரலை தரவு பெறுங்கள்',soil_title:'🧪 மண் அளவுகோல்கள்',
+    ai_rec_title:'🤖 AI பரிந்துரைகள்',ai_rec_btn:'🔍 பரிந்துரை பெறுங்கள்',
+    disease_title:'🔬 AI நோய் கண்டறிதல்',upload_title:'இலை படம் பதிவேற்றம்',
+    soil_tab_title:'🧪 மண் பகுப்பாய்வு',yield_tab_title:'📊 விளைச்சல் கணிப்பு',yield_select_crop:'🌾 பயிர் தேர்வு',
+    market_title:'💰 சந்தை விலை',market_desc:'நிஜ மண்டி விலைகள்',market_fetch_btn:'📡 விலை பெறுங்கள்',
+    weather_tab_title:'⛅ 7 நாள் முன்னறிவிப்பு',weather_load_btn:'📡 முன்னறிவிப்பு',
+    advisory_tab_title:'📢 பயிர் ஆலோசனை',advisory_load_btn:'📡 ஆலோசனை',
+    chat_title:'🤖 ஜீவன்மித்ரா AI',chat_welcome:'வணக்கம்! நான் ஜீவன்மித்ரா AI 🌿',
+    qa_crop:'🌱 பயிர்?',qa_yield:'📊 விளைச்சல்',qa_disease:'🔍 நோய்',qa_price:'💰 விலை',
+    voice_listening:'🎤 கேட்கிறது…',voice_not_supported:'❌ குரல் இல்லை',lang_changed:'மொழி மாற்றப்பட்டது',
+    weather_loaded:'✅ வானிலை!',market_loaded:'✅ விலை!',soil_empty:'தரவு உள்ளிடவும்',live_temp:'வெப்பம்',live_hum:'ஈரம்',live_rain:'மழை',live_loc:'இடம்',
+    market_fetching:'📡 விலை பெறுகிறது…',weather_today:'இன்று',weather_low:'குறைந்தபட்சம்:',
+    yield_per_ha:'விளைச்சல்/ஹெ',yield_total:'மொத்தம்',yield_price:'விலை',yield_confidence:'AI நம்பிக்கை',yield_empty:'பயிர் தேர்ந்தெடுக்கவும்',
+    disease_symptoms:'லக்ஷணங்கள்',disease_treatment:'சிகிச்சை',disease_prevention:'தடுப்பு',disease_upload_another:'🔄 வேறொன்று',
+    soil_nutrients:'📊 போஷகங்கள்',soil_score:'🎯 ஆரோக்கியம்',soil_analyze_btn:'🧪 பகுப்பாய்வு',soil_recs:'💡 பரிந்துரைகள்',
+    settings_title:'⚙️ அமைப்புகள்',voice_auto:'🔊 ஆட்டோ',
+  },
+  te: {
+    dash_weather:'వాతావరణం',dash_location:'ప్రదేశం',dash_ai:'AI స్థితి',dash_data:'లైవ్ డేటా',
+    tab_advisor:'పంట',tab_disease:'వ్యాధి',tab_soil:'నేల',tab_yield:'దిగుబడి',tab_market:'ధరలు',tab_weather:'వాతావరణం',tab_advisory:'సలహాలు',
+    advisor_title:'AI పంట సలహాదారు',advisor_desc:'నేల & వాతావరణ డేటా నుండి AI సిఫార్సులు',
+    live_btn:'📡 లైవ్ డేటా పొందండి',soil_title:'🧪 నేల పారామితులు',
+    ai_rec_title:'🤖 AI సిఫార్సులు',ai_rec_btn:'🔍 సిఫార్సులు పొందండి',
+    disease_title:'🔬 AI వ్యాధి గుర్తింపు',upload_title:'ఆకు చిత్రం అప్‌లోడ్',
+    soil_tab_title:'🧪 నేల విశ్లేషణ',yield_tab_title:'📊 దిగుబడి అంచనా',yield_select_crop:'🌾 పంట ఎంపిక',
+    market_title:'💰 మార్కెట్ ధరలు',market_desc:'నిజమైన మండీ ధరలు',market_fetch_btn:'📡 ధరలు పొందండి',
+    weather_tab_title:'⛅ 7 రోజుల అంచనా',weather_load_btn:'📡 అంచనా',
+    advisory_tab_title:'📢 పంట సలహాలు',advisory_load_btn:'📡 సలహాలు',
+    chat_title:'🤖 జీవన్‌మిత్ర AI',chat_welcome:'నమస్కారం! నేను జీవన్‌మిత్ర AI 🌿',
+    qa_crop:'🌱 పంట?',qa_yield:'📊 దిగుబడి',qa_disease:'🔍 వ్యాధి',qa_price:'💰 ధరలు',
+    voice_listening:'🎤 వింటోంది…',voice_not_supported:'❌ వాయిస్ లేదు',lang_changed:'భాష మార్చారు',
+    weather_loaded:'✅ వాతావరణం!',market_loaded:'✅ ధరలు!',soil_empty:'డేటా నమోదు చేయండి',live_temp:'ఉష్ణోగ్రత',live_hum:'తేమ',live_rain:'వర్షం',live_loc:'ప్రదేశం',
+    market_fetching:'📡 ధరలు పొందుతోంది…',weather_today:'ఈ రోజు',weather_low:'తక్కువ:',
+    yield_per_ha:'దిగుబడి/హె',yield_total:'మొత్తం',yield_price:'ధర',yield_confidence:'AI నమ్మకం',yield_empty:'పంట ఎంచుకోండి',
+    disease_symptoms:'లక్షణాలు',disease_treatment:'చికిత్స',disease_prevention:'నివారణ',disease_upload_another:'🔄 మరొకటి',
+    soil_nutrients:'📊 పోషకాలు',soil_score:'🎯 ఆరోగ్యం',soil_analyze_btn:'🧪 విశ్లేషణ',soil_recs:'💡 సిఫార్సులు',
+    settings_title:'⚙️ సెట్టింగ్స్',voice_auto:'🔊 ఆటో',
+  }
+};
+
+function t(k) { return i18n[currentLanguage]?.[k] || i18n.en[k] || k; }
+
+function applyTranslations() {
+  // Only update elements with data-i18n that are NOT dynamic dashboard values
+  // Dynamic IDs (weatherStatus, locationStatus, aiStatus, dataStatus) are set by JS — skip them
+  const skipIds = new Set(['weatherStatus','locationStatus','aiStatus','dataStatus','welcome-message']);
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    if (el.id && skipIds.has(el.id)) return; // Skip dynamic elements
+    el.textContent = t(el.getAttribute('data-i18n'));
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+  });
+}
+
+// ------------------------------------------------------------------
+// AI-POWERED "ANY LANGUAGE" SUPPORT
+// The dashboard ships with full hand-written translations for 6 languages.
+// For every other language, Groq translates the whole UI dictionary
+// on first use and caches the result in localStorage, so the *entire*
+// dashboard — not just the chat — can switch to literally any language.
+// ------------------------------------------------------------------
+
+function getLanguagePackCacheKey(code) { return `${CONFIG.STORAGE.i18nPrefix}${code}`; }
+function getLanguageMetaCacheKey(code) { return `${CONFIG.STORAGE.langMetaPrefix}${code}`; }
+
+function saveLanguageMeta(code, meta) {
+  localStorage.setItem(getLanguageMetaCacheKey(code), JSON.stringify(meta));
+  if (meta.bcp47) langBcp47[code] = meta.bcp47;
+}
+function loadLanguageMeta(code) {
+  try { return JSON.parse(localStorage.getItem(getLanguageMetaCacheKey(code)) || 'null'); } catch { return null; }
+}
+
+// Ensures i18n[code] exists, translating on demand via Groq if needed.
+// Returns true if a full/partial pack is available, false if we had to fall
+// back to English (e.g. no API key configured yet).
+async function ensureLanguagePack(code, label) {
+  if (i18n[code]) return true;
+  const cached = localStorage.getItem(getLanguagePackCacheKey(code));
+  if (cached) {
+    try { i18n[code] = JSON.parse(cached); const meta = loadLanguageMeta(code); if (meta?.bcp47) langBcp47[code] = meta.bcp47; return true; } catch {}
+  }
+  if (!groqAPI.isConfigured()) return false;
+  showLoading(t('lang_translating') || '🌐 Translating dashboard with AI…');
+  try {
+    const prompt = `Translate every value in this JSON object into the language "${label || code}". ` +
+      `Keep the exact same keys. Keep emojis where present. Output ONLY a valid JSON object with the ` +
+      `translated values, nothing else — no markdown, no commentary. Also include one extra key ` +
+      `"_bcp47" whose value is the best BCP-47 locale tag for speech recognition/synthesis in that ` +
+      `language (e.g. "bn-IN", "sw-KE", "fr-FR").\n\nJSON:\n${JSON.stringify(i18n.en)}`;
+    const raw = await groqAPI.chat(prompt, 'You are a precise UI translation engine. Respond with strict JSON only.', { json: true });
+    const match = raw.match(/\{[\s\S]*\}/);
+    const parsed = JSON.parse(match ? match[0] : raw);
+    const bcp47 = parsed._bcp47;
+    delete parsed._bcp47;
+    // Fill any gaps with English so nothing ever renders blank.
+    i18n[code] = { ...i18n.en, ...parsed };
+    localStorage.setItem(getLanguagePackCacheKey(code), JSON.stringify(i18n[code]));
+    saveLanguageMeta(code, { label: label || code, bcp47 });
+    hideLoading();
+    return true;
+  } catch (e) {
+    hideLoading();
+    console.error('Language translation failed:', e);
+    showToast(`❌ Could not translate to ${label || code}: ${e.message}`, 'error');
+    return false;
+  }
+}
+
+// Adds an option to the language <select> the first time a custom language is used.
+function registerLanguageOption(code, label) {
+  const sel = document.getElementById('langSelect');
+  if (!sel || sel.querySelector(`option[value="${code}"]`)) return;
+  const opt = document.createElement('option');
+  opt.value = code;
+  opt.textContent = `🌐 ${label}`;
+  sel.appendChild(opt);
+}
+
+async function changeLanguage(lang) {
+  const label = document.getElementById('langSelect')?.selectedOptions?.[0]?.textContent?.replace(/^[^\w]*\s*/, '') || lang;
+  const ok = await ensureLanguagePack(lang, label);
+  currentLanguage = lang;
+  saveLanguage(lang);
+  saveLanguageMeta(lang, { ...(loadLanguageMeta(lang) || {}), label });
+  applyTranslations();
+  if (typeof loadMarketPrices === 'function') loadMarketPrices();
+  if (typeof updateYieldPredictor === 'function') updateYieldPredictor();
+  if (typeof analyzeSoil === 'function') analyzeSoil();
+  if (typeof populateYieldCropSelect === 'function') populateYieldCropSelect();
+  if (!ok) showToast('⚠️ Add a Groq API key in Settings to fully translate this language — showing English for now.', 'info');
+  else showToast(t('lang_changed'), 'info');
+}
+
+// Lets a user type literally any language name (e.g. "Bengali", "Swahili",
+// "Bavarian German") and have the whole dashboard switch to it via AI translation.
+async function addCustomLanguage() {
+  const input = document.getElementById('customLangInput');
+  const name = input?.value.trim();
+  if (!name) { showToast('Type a language name first', 'info'); return; }
+  if (!groqAPI.isConfigured()) { showToast('❌ Add a Groq API key in Settings first', 'error'); return; }
+  showLoading(`🌐 Detecting language code for ${name}…`);
+  let code = name.toLowerCase().replace(/[^a-z]/g, '').slice(0, 2) || 'xx';
+  try {
+    const raw = await groqAPI.chat(
+      `What is the 2-letter ISO 639-1 language code for "${name}"? Respond with ONLY the 2-letter lowercase code, nothing else.`,
+      'You output only a 2-letter language code.'
+    );
+    const m = raw.trim().toLowerCase().match(/[a-z]{2}/);
+    if (m) code = m[0];
+  } catch {}
+  hideLoading();
+  registerLanguageOption(code, name);
+  const sel = document.getElementById('langSelect');
+  if (sel) sel.value = code;
+  if (input) input.value = '';
+  await changeLanguage(code);
+}
