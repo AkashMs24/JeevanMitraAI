@@ -1,5 +1,4 @@
-let autoVoice = true;
-
+window.autoVoice = true;
 window.addEventListener('load', async () => {
     currentLanguage = getLanguage();
     document.getElementById('langSelect').value = currentLanguage;
@@ -11,7 +10,6 @@ window.addEventListener('load', async () => {
     setSafeText('weatherStatus', '⛅ Not fetched');
     setSafeText('dataStatus', '—');
 });
-
 function checkApiStatus() {
     const hasKey = groqAPI.isConfigured();
     setSafeText('statusText', hasKey ? '🤖 AI Ready' : '⚠️ Setup Needed');
@@ -19,14 +17,12 @@ function checkApiStatus() {
     setSafeText('aiStatus', hasKey ? '✅ Connected' : '❌ Add a key in Settings');
     const apiDisplay = document.getElementById('apiDisplay'); if (apiDisplay) apiDisplay.textContent = hasKey ? '✅ Connected' : '❌ Not configured';
 }
-
 function switchTab(tabName, btn) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
     document.getElementById(`tab-${tabName}`)?.classList.add('active');
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
     btn?.classList.add('active');
 }
-
 async function fetchLiveData() {
     showLoading(t('detectingLocation') || 'Detecting...');
     try {
@@ -46,7 +42,6 @@ async function fetchLiveData() {
         showToast('❌ Could not fetch live data', 'error');
     }
 }
-
 async function loadForecast() {
     const grid = document.getElementById('forecastGrid'); if (!grid) return;
     showLoading('Loading forecast...');
@@ -61,14 +56,12 @@ async function loadForecast() {
         showToast('❌ Failed to load forecast', 'error');
     }
 }
-
 function toggleVoice() {
-    autoVoice = !autoVoice;
-    setSafeText('voiceToggle', autoVoice ? '🔊' : '🔇');
-    document.getElementById('voiceToggle').textContent = autoVoice ? '🔊' : '🔇';
-    showToast(autoVoice ? t('voice_auto') + ' ON' : t('voice_auto') + ' OFF', 'info');
+    window.autoVoice = !window.autoVoice;
+    setSafeText('voiceToggle', window.autoVoice ? '🔊' : '🔇');
+    document.getElementById('voiceToggle').textContent = window.autoVoice ? '🔊' : '🔇';
+    showToast(window.autoVoice ? t('voice_auto') + ' ON' : t('voice_auto') + ' OFF', 'info');
 }
-
 function openSettings() {
     document.getElementById('settingsModal').classList.add('show');
     checkApiStatus();
@@ -76,13 +69,11 @@ function openSettings() {
     const input = document.getElementById('apiKeyInput'); if (input && saved) input.value = saved;
 }
 function closeSettings() { document.getElementById('settingsModal').classList.remove('show'); }
-
 function clearCache() {
     if (!confirm('This clears all locally saved settings (API key, location, language). Continue?')) return;
     localStorage.clear();
     location.reload();
 }
-
 function exportData() {
     const data = {
         location: getSavedLocation(),
