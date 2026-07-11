@@ -1,109 +1,192 @@
-let autoVoice = true;
-
-window.addEventListener('load', async () => {
+class GroqAPI {
+    constructor() {
+        this._loadKey();
+    }
+    _loadKey() {
+        const saved = localStorage.getItem(CONFIG.STORAGE.apiKey);
+        if (saved) {
+            window.GROQ_API_KEY = saved;
+        }
+    }
+    isConfigured() {
+        return !!(window.GROQ_API_KEY && window.GROQ_API_KEY.length > 10);
+    }
+    _headers() {
+        return {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${window.GROQ_API_KEY}`
+        };
+    }
+    async _fetchWithTimeout(url, options, timeoutMs) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs || CONFIG.GROQ_API.timeout);
+        try {
+            const res = await fetch(url, { ...options, signal: controller.signal });
+            clearTimeout(timer);
+            return res;
+        } catch (e) {
+            clearTimeout(timer);
+            if (e.name === 'AbortError') {
+                throw new Error('Request timed out — check your internet connection');
+            }
+            throw e;
+        }
+    }
+    async chat(prompt, systemPrompt, options = {}) {
+        if (!this.isConfigured()) throw new Error('API key not configured');
+        const messages = [];
+        if (systemPrompt) {
+            messages.push({ role: 'system', content: systemPrompt });
+        }
+        messages.push({ role: 'user', content: prompt });
+        const body = {
+            model: CONFIG.GROQ_API.chatModel,
+            messages,
+            temperature: 0.7,
+            max_tokens: 1024
+        };
+        if (options.json) {
+            body.response_format = { type: 'json_object' };
+        }
+        const res = await this._fetchWithTimeout(CONFIG.GROQ_API.endpoint, {
+            method: 'POST',
+            headers: this._headers(),
+            body: JSON.stringify(body)
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            const msg = err.error?.message || `Groq API error (${res.status})`;
+            throw new Error(msg);
+        }
+        const data = await res.json();
+        return data.choices?.[0]?.message?.content || '';
+    }
+    async analyzeImage(base64DataUrl, prompt, mimeType) {
+        if (!this.isConfigured()) throw new Error('API key not configured');
+        const base64Content = base64DataUrl.includes(',')
+            ? base64DataUrl.split(',')[1]
+            : base64DataUrl;
+        const body = {
+            model: CONFIG.GROQ_API.visionModel,
+            messages: [
+                {
+                    role: 'user',
+                    content: [
+                        { type: 'text', text: prompt },
+                        {
+                            type: 'image_url',
+                            image_url: {
+                                url: `data:${mimeType};base64,${base64Content}`
+                            }
+                        }
+                    ]
+                }
+            ],
+            temperature: 0.3,
+            max_tokens: 1024
+        };
+        const res = await this._fetchWithTimeout(CONFIG.GROQ_API.endpoint, {
+            method: 'POST',
+            headers: this._headers(),
+            body: JSON.stringify(body)
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            const msg = err.error?.message || `Vision API error (${res.status})`;
+            throw new Error(msg);
+        }
+        const data = await res.json();
+        return data.choices?.[0]?.message?.content || '';
+    }
+    async transcribe(audioBlob) {
+        if (!this.isConfigured()) throw new Error('API key not configured');
+        const formData = new FormData();
+        formData.append('file', audioBlob, 'audio.webm');
+        formData.append('model', CONFIG.GROQ_API.whisperModel);
+        formData.append('response_format', 'verbose_json');
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), CONFIG.GROQ_API.timeout);
+        try {
+            const res = await fetch(CONFIG.GROQ_API.transcribeEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${window.GROQ_API_KEY}`
+                },
+                body: formData,
+                signal: controller.signal
+            });
+            clearTimeout(timer);
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                const msg = err.error?.message || `Transcription error (${res.status})`;
+                throw new Error(msg);
+            }
+            const data = await res.json();
+            const langCode = data.language
+                ? (whisperNameToCode[data.language.toLowerCase()] || data.language.toLowerCase().slice(0, 2))
+                : null;
+            return { text: data.text || '', language: langCode };
+        } catch (e) {
+            clearTimeout(timer);
+            if (e.name === 'AbortError') {
+                throw new Error('Transcription timed out');
+            }
+            throw e;
+        }
+    }
+    async testKey() {
+        if (!this.isConfigured()) return { ok: false, error: 'No API key set' };
+        try {
+            const res = await this._fetchWithTimeout(CONFIG.GROQ_API.modelsEndpoint, {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${window.GROQ_API_KEY}` }
+            }, 10000);
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                return { ok: false, error: err.error?.message || `HTTP ${res.status}` };
+            }
+            return { ok: true };
+        } catch (e) {
+            return { ok: false, error: e.message };
+        }
+    }
+}
+const groqAPI = new GroqAPI();
+function saveApiKey() {
+    const input = document.getElementById('apiKeyInput');
+    const key = input?.value?.trim();
+    if (!key) {
+        showToast('❌ Enter an API key first', 'error');
+        return;
+    }
+    if (!key.startsWith('gsk_')) {
+        showToast('❌ Invalid key format — Groq keys start with gsk_', 'error');
+        return;
+    }
+    localStorage.setItem(CONFIG.STORAGE.apiKey, key);
+    window.GROQ_API_KEY = key;
+    groqAPI._loadKey();
     checkApiStatus();
-    const savedLang = getLanguage();
-    // If the user previously added a custom (AI-translated) language, make
-    // sure it's registered as a <select> option and loaded from cache/AI
-    // before we apply translations.
-    if (!i18n[savedLang]) {
-        const meta = (typeof loadLanguageMeta === 'function') ? loadLanguageMeta(savedLang) : null;
-        registerLanguageOption(savedLang, meta?.label || savedLang);
-        await ensureLanguagePack(savedLang, meta?.label || savedLang);
-    }
-    currentLanguage = savedLang;
-    const sel = document.getElementById('langSelect');
-    if (sel) sel.value = currentLanguage;
-    applyTranslations();
-    populateYieldCropSelect();
-    updatePreview();
-    setSafeText('locationStatus', '📍 Not fetched');
-    setSafeText('weatherStatus', '⛅ Not fetched');
-    setSafeText('dataStatus', '—');
-});
-
-function checkApiStatus() {
-    const hasKey = groqAPI.isConfigured();
-    setSafeText('statusText', hasKey ? '🤖 AI Ready' : '⚠️ Setup Needed');
-    const dot = document.querySelector('.api-status'); if (dot) dot.style.color = hasKey ? '#10b981' : '#ef4444';
-    setSafeText('aiStatus', hasKey ? '✅ Connected' : '❌ Add a key in Settings');
-    const apiDisplay = document.getElementById('apiDisplay'); if (apiDisplay) apiDisplay.textContent = hasKey ? '✅ Connected' : '❌ Not configured';
+    showToast('✅ API key saved!', 'success');
 }
-
-function switchTab(tabName, btn) {
-    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-    document.getElementById(`tab-${tabName}`)?.classList.add('active');
-    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-    btn?.classList.add('active');
-}
-
-async function fetchLiveData() {
-    showLoading(t('detectingLocation') || 'Detecting...');
-    try {
-        const coords = await weatherService.getCoordinates(true);
-        setSafeText('locationStatus', `📍 ${coords.latitude.toFixed(2)}, ${coords.longitude.toFixed(2)}`);
-        setSafeText('locDisplay', `${coords.latitude.toFixed(2)}, ${coords.longitude.toFixed(2)}`);
-        const weather = await weatherService.fetchWeather(coords.latitude, coords.longitude);
-        const c = weather.current;
-        const tempEl = document.getElementById('liveTemp'); if (tempEl) { tempEl.textContent = c.temperature + '°C'; tempEl.dataset.raw = c.temperature; }
-        const humEl = document.getElementById('liveHum'); if (humEl) { humEl.textContent = c.humidity + '%'; humEl.dataset.raw = c.humidity; }
-        const rainEl = document.getElementById('liveRain'); if (rainEl) { rainEl.textContent = Math.round(c.rainfall) + 'mm'; rainEl.dataset.raw = c.rainfall; }
-        setSafeText('weatherStatus', `${c.condition} ${c.temperature}°C`);
-        hideLoading();
-        showToast(t('weather_loaded') || '✅ Weather updated!', 'success');
-    } catch (e) {
-        hideLoading();
-        showToast('❌ Could not fetch live data', 'error');
-    }
-}
-
-async function loadForecast() {
-    const grid = document.getElementById('forecastGrid'); if (!grid) return;
-    showLoading('Loading forecast...');
-    try {
-        const coords = await weatherService.getCoordinates();
-        const weather = await weatherService.fetchWeather(coords.latitude, coords.longitude);
-        grid.innerHTML = weather.forecast.map(day => `<div class="market-card"><div class="name">${day.date}</div><div class="price">${day.maxTemp}°C</div><div class="trend">${day.condition} · ${t('weather_low')} ${day.minTemp}°C</div></div>`).join('');
-        hideLoading();
-        showToast('✅ Forecast loaded!', 'success');
-    } catch (e) {
-        hideLoading();
-        showToast('❌ Failed to load forecast', 'error');
-    }
-}
-
-function toggleVoice() {
-    autoVoice = !autoVoice;
-    setSafeText('voiceToggle', autoVoice ? '🔊' : '🔇');
-    document.getElementById('voiceToggle').textContent = autoVoice ? '🔊' : '🔇';
-    showToast(autoVoice ? t('voice_auto') + ' ON' : t('voice_auto') + ' OFF', 'info');
-}
-
-function openSettings() {
-    document.getElementById('settingsModal').classList.add('show');
+function clearApiKey() {
+    localStorage.removeItem(CONFIG.STORAGE.apiKey);
+    window.GROQ_API_KEY = '';
     checkApiStatus();
-    const saved = localStorage.getItem(CONFIG.STORAGE.apiKey);
-    const input = document.getElementById('apiKeyInput'); if (input && saved) input.value = saved;
+    showToast('🗑️ API key cleared', 'info');
 }
-function closeSettings() { document.getElementById('settingsModal').classList.remove('show'); }
-
-function clearCache() {
-    if (!confirm('This clears all locally saved settings (API key, location, language). Continue?')) return;
-    localStorage.clear();
-    location.reload();
-}
-
-function exportData() {
-    const data = {
-        location: getSavedLocation(),
-        language: getLanguage(),
-        hasApiKey: groqAPI.isConfigured(),
-        exportedAt: new Date().toISOString()
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'jeevanmitra-settings.json';
-    a.click();
-    showToast(t('settings_export') + ' ✅', 'success');
+async function testApiKey() {
+    const btn = document.getElementById('testKeyBtn');
+    const resultEl = document.getElementById('testKeyResult');
+    if (btn) btn.disabled = true;
+    if (resultEl) resultEl.textContent = 'Testing…';
+    const result = await groqAPI.testKey();
+    if (btn) btn.disabled = false;
+    if (resultEl) {
+        resultEl.textContent = result.ok
+            ? '✅ Key is valid and working!'
+            : `❌ ${result.error}`;
+        resultEl.style.color = result.ok ? '#10b981' : '#ef4444';
+    }
+    showToast(result.ok ? '✅ Key works!' : `❌ ${result.error}`, result.ok ? 'success' : 'error');
 }
