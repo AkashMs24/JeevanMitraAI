@@ -47,14 +47,24 @@ function imageToBase64(file) {
     });
 }
 
-// VOICE OUTPUT
+// VOICE OUTPUT — speaks in ANY language the AI replied in, not just the 6
+// dashboard languages. `lang` can be a 2-letter code or a full BCP-47 tag.
 function speakText(text, lang = 'en') {
     if (!('speechSynthesis' in window) || !text) return;
     if (window.autoVoice === false) return;
     const clean = String(text).replace(/<[^>]*>/g, '').replace(/[*_#]/g, '');
     const utterance = new SpeechSynthesisUtterance(clean);
-    const langMap = { en:'en-IN', kn:'kn-IN', hi:'hi-IN', ml:'ml-IN', ta:'ta-IN', te:'te-IN' };
-    utterance.lang = langMap[lang] || 'en-IN';
+    const tag = (typeof bcp47For === 'function') ? bcp47For(String(lang).slice(0, 2)) : `${lang}-IN`;
+    utterance.lang = tag;
+    // Prefer an installed voice that actually matches the target language,
+    // since not every OS/browser ships a voice for every BCP-47 tag.
+    try {
+        const voices = speechSynthesis.getVoices();
+        const prefix = tag.split('-')[0];
+        const match = voices.find(v => v.lang?.toLowerCase().startsWith(prefix)) ||
+                      voices.find(v => v.lang?.toLowerCase().startsWith(prefix.slice(0, 2)));
+        if (match) utterance.voice = match;
+    } catch {}
     utterance.rate = 0.95;
     try { speechSynthesis.cancel(); speechSynthesis.speak(utterance); } catch (e) { console.warn('Speech failed:', e); }
 }
