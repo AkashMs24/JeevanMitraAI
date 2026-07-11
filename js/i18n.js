@@ -3,7 +3,7 @@ let currentLanguage = 'en';
 const i18n = {
   en: {
     dash_weather:'Weather',dash_location:'Location',dash_ai:'AI Status',dash_data:'Live Data',
-    tab_advisor:'🌱 Crop Advisor',tab_disease:'🔬 Disease',tab_soil:'🧪 Soil',tab_yield:'📊 Yield',tab_market:'💰 Market',tab_weather:'⛅ Weather',tab_advisory:'📢 Advisories',
+    tab_advisor:'Crop Advisor',tab_disease:'Disease',tab_soil:'Soil',tab_yield:'Yield',tab_market:'Market',tab_weather:'Weather',tab_advisory:'Advisories',
     advisor_title:'Intelligent Crop Advisor',advisor_desc:'AI-powered crop recommendations from your real-time soil & weather data',
     live_title:'📡 Live Weather Auto-Fill',live_btn:'📡 Get Live Weather & Soil Data',live_hint:'Fetches real-time weather for your GPS location',
     live_temp:'Temperature',live_hum:'Humidity',live_rain:'Rainfall',live_loc:'Location',
@@ -33,7 +33,7 @@ const i18n = {
   },
   kn: {
     dash_weather:'ಹವಾಮಾನ',dash_location:'ಸ್ಥಳ',dash_ai:'AI ಸ್ಥಿತಿ',dash_data:'ಲೈವ್ ಡೇಟಾ',
-    tab_advisor:'🌱 ಬೆಳೆ ಸಲಹೆ',tab_disease:'🔬 ರೋಗ',tab_soil:'🧪 ಮಣ್ಣು',tab_yield:'📊 ಇಳುವರಿ',tab_market:'💰 ಬೆಲೆ',tab_weather:'⛅ ಹವಾಮಾನ',tab_advisory:'📢 ಸಲಹೆ',
+    tab_advisor:'ಬೆಳೆ ಸಲಹೆ',tab_disease:'ರೋಗ',tab_soil:'ಮಣ್ಣು',tab_yield:'ಇಳುವರಿ',tab_market:'ಬೆಲೆ',tab_weather:'ಹವಾಮಾನ',tab_advisory:'ಸಲಹೆ',
     advisor_title:'ಬುದ್ಧಿವಂತ ಬೆಳೆ ಸಲಹೆ',advisor_desc:'ನಿಮ್ಮ ಹವಾಮಾನ ಮತ್ತು ಮಣ್ಣಿನ ಡೇಟಾದ ಆಧಾರದ ಮೇಲೆ AI ಶಿಫಾರಸುಗಳು',
     live_btn:'📡 ಲೈವ್ ಹವಾಮಾನ ಪಡೆಯಿರಿ',live_hint:'ನಿಮ್ಮ GPS ಸ್ಥಳಕ್ಕೆ ಲೈವ್ ಹವಾಮಾನ',
     soil_title:'🧪 ಮಣ್ಣಿನ ಪರಾಮೀಟರ್‌ಗಳು',
@@ -54,7 +54,7 @@ const i18n = {
   },
   hi: {
     dash_weather:'मौसम',dash_location:'स्थान',dash_ai:'AI स्थिति',dash_data:'लाइव डेटा',
-    tab_advisor:'🌱 फसल',tab_disease:'🔬 रोग',tab_soil:'🧪 मिट्टी',tab_yield:'📊 उपज',tab_market:'💰 बाजार',tab_weather:'⛅ मौसम',tab_advisory:'📢 सलाह',
+    tab_advisor:'फसल',tab_disease:'रोग',tab_soil:'मिट्टी',tab_yield:'उपज',tab_market:'बाजार',tab_weather:'मौसम',tab_advisory:'सलाह',
     advisor_title:'AI फसल सलाहकार',advisor_desc:'मिट्टी और मौसम डेटा से AI सिफारिशें',
     live_btn:'📡 लाइव मौसम प्राप्त करें',live_hint:'GPS स्थान से लाइव मौसम',
     soil_title:'🧪 मिट्टी पैरामीटर',ai_rec_title:'🤖 AI सिफारिशें',ai_rec_btn:'🔍 सिफारिशें पाएं',
@@ -75,7 +75,7 @@ const i18n = {
   },
   ml: {
     dash_weather:'കാലാവസ്ഥ',dash_location:'സ്ഥലം',dash_ai:'AI സ്ഥിതി',dash_data:'ലൈവ് ഡാറ്റ',
-    tab_advisor:'🌱 വിള',tab_disease:'🔬 രോഗം',tab_soil:'🧪 മണ്ണ്',tab_yield:'📊 വിളവ്',tab_market:'💰 വിപണി',tab_weather:'⛅ കാലാവസ്ഥ',tab_advisory:'📢 ഉപദേശം',
+    tab_advisor:'വിള',tab_disease:'രോഗം',tab_soil:'മണ്ണ്',tab_yield:'വിളവ്',tab_market:'വിപണി',tab_weather:'കാലാവസ്ഥ',tab_advisory:'ഉപദേശം',
     advisor_title:'AI വിള ഉപദേശകൻ',advisor_desc:'മണ്ണ് & കാലാവസ്ഥ ഡാറ്റയിൽ നിന്ന് AI',
     live_btn:'📡 ലൈവ് ഡാറ്റ നേടുക',soil_title:'🧪 മണ്ണ് പാരാമീറ്ററുകൾ',
     ai_rec_title:'🤖 AI ശുപാർശകൾ',ai_rec_btn:'🔍 ശുപാർശ നേടുക',
@@ -96,7 +96,7 @@ const i18n = {
   },
   ta: {
     dash_weather:'வானிலை',dash_location:'இடம்',dash_ai:'AI நிலை',dash_data:'நேரலை தரவு',
-    tab_advisor:'🌱 பயிர்',tab_disease:'🔬 நோய்',tab_soil:'🧪 மண்',tab_yield:'📊 விளைச்சல்',tab_market:'💰 சந்தை',tab_weather:'⛅ வானிலை',tab_advisory:'📢 ஆலோசனை',
+    tab_advisor:'பயிர்',tab_disease:'நோய்',tab_soil:'மண்',tab_yield:'விளைச்சல்',tab_market:'சந்தை',tab_weather:'வானிலை',tab_advisory:'ஆலோசனை',
     advisor_title:'AI பயிர் ஆலோசகர்',advisor_desc:'மண் & வானிலை தரவிலிருந்து AI பரிந்துரைகள்',
     live_btn:'📡 நேரலை தரவு பெறுங்கள்',soil_title:'🧪 மண் அளவுகோல்கள்',
     ai_rec_title:'🤖 AI பரிந்துரைகள்',ai_rec_btn:'🔍 பரிந்துரை பெறுங்கள்',
@@ -117,7 +117,7 @@ const i18n = {
   },
   te: {
     dash_weather:'వాతావరణం',dash_location:'ప్రదేశం',dash_ai:'AI స్థితి',dash_data:'లైవ్ డేటా',
-    tab_advisor:'🌱 పంట',tab_disease:'🔬 వ్యాధి',tab_soil:'🧪 నేల',tab_yield:'📊 దిగుబడి',tab_market:'💰 ధరలు',tab_weather:'⛅ వాతావరణం',tab_advisory:'📢 సలహాలు',
+    tab_advisor:'పంట',tab_disease:'వ్యాధి',tab_soil:'నేల',tab_yield:'దిగుబడి',tab_market:'ధరలు',tab_weather:'వాతావరణం',tab_advisory:'సలహాలు',
     advisor_title:'AI పంట సలహాదారు',advisor_desc:'నేల & వాతావరణ డేటా నుండి AI సిఫార్సులు',
     live_btn:'📡 లైవ్ డేటా పొందండి',soil_title:'🧪 నేల పారామితులు',
     ai_rec_title:'🤖 AI సిఫార్సులు',ai_rec_btn:'🔍 సిఫార్సులు పొందండి',
@@ -155,7 +155,7 @@ function applyTranslations() {
 
 function changeLanguage(lang) {
   currentLanguage = lang;
-  localStorage.setItem('language', lang);
+  saveLanguage(lang);
   applyTranslations();
   if (typeof loadMarketPrices === 'function') loadMarketPrices();
   if (typeof updateYieldPredictor === 'function') updateYieldPredictor();
