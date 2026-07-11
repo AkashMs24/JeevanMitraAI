@@ -1,4 +1,4 @@
-=class GroqAPI {
+class GroqAPI {
     get apiKey() {
         return localStorage.getItem(CONFIG.STORAGE.apiKey) || window.GROQ_API_KEY || '';
     }
@@ -12,7 +12,7 @@
         const res = await fetch(CONFIG.GROQ_API.endpoint, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${this.apiKey}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ model: CONFIG.GROQ_API.chatModel, messages, temperature: 0.7, max_tokens: 700 })
+            body: JSON.stringify({ model: CONFIG.GROQ_API.chatModel, messages, temperature: 0.7, max_completion_tokens: 700 })
         });
         if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.error?.message || 'API error'); }
         const data = await res.json();
@@ -31,7 +31,7 @@
         const res = await fetch(CONFIG.GROQ_API.endpoint, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${this.apiKey}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ model: CONFIG.GROQ_API.visionModel, messages, temperature: 0.3, max_tokens: 512 })
+            body: JSON.stringify({ model: CONFIG.GROQ_API.visionModel, messages, temperature: 0.3, max_completion_tokens: 512 })
         });
         if (!res.ok) throw new Error('Disease analysis failed');
         const data = await res.json();
