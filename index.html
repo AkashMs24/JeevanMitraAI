@@ -46,6 +46,16 @@
                     <option value="ml">മലയാളം</option>
                     <option value="ta">தமிழ்</option>
                     <option value="te">తెలుగు</option>
+                    <optgroup label="🌐 AI-translated">
+                        <option value="bn">বাংলা (Bengali)</option>
+                        <option value="mr">मराठी (Marathi)</option>
+                        <option value="gu">ગુજરાતી (Gujarati)</option>
+                        <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+                        <option value="ur">اردو (Urdu)</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                        <option value="ar">العربية</option>
+                    </optgroup>
                 </select>
                 <button class="icon-btn" id="voiceToggle" onclick="toggleVoice()">🔊</button>
                 <button class="icon-btn" onclick="openSettings()">⚙️</button>
@@ -313,8 +323,18 @@
                         <div class="setting-actions">
                             <button class="btn btn-primary" onclick="saveApiKey()" data-i18n="settings_save">Save Key</button>
                             <button class="btn btn-secondary" onclick="clearApiKey()" data-i18n="settings_clear">Clear Key</button>
+                            <button class="btn btn-secondary" id="testKeyBtn" onclick="testApiKey()" data-i18n="settings_test">🔌 Test Key</button>
                         </div>
+                        <p id="testKeyResult" class="text-muted hint"></p>
                         <p class="text-muted hint" data-i18n="settings_api_hint">Free key at <a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com/keys</a></p>
+                    </div>
+                    <div class="setting">
+                        <label>🌐 Add any language</label>
+                        <p class="text-muted hint">AI-translates the whole dashboard, chat replies, and voice to any language you type.</p>
+                        <input type="text" id="customLangInput" class="input" data-i18n-placeholder="lang_add_placeholder" placeholder="Type any language (e.g. Bengali, Swahili)…">
+                        <div class="setting-actions">
+                            <button class="btn btn-primary" onclick="addCustomLanguage()" data-i18n="lang_add_btn">➕ Add language</button>
+                        </div>
                     </div>
                     <div class="setting">
                         <label data-i18n="settings_data">💾 Data</label>
