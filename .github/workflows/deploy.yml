@@ -9,21 +9,34 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # This "environment" block is required. Your GROQ_API_KEY secret is saved as an
+    # ENVIRONMENT secret scoped to "github-pages" (see Settings → Environments), not a
+    # repository secret. Without this block, the job never enters that environment, so
+    # ${{ secrets.GROQ_API_KEY }} silently resolves to an empty string.
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Inject API Key
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
           mkdir -p js
-          echo "window.GROQ_API_KEY = '${{ secrets.GROQ_API_KEY }}';" > js/env-config.js
-      
+          echo "window.GROQ_API_KEY = '${GROQ_API_KEY}';" > js/env-config.js
+
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
-      - uses: actions/deploy-pages@v3
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v3
