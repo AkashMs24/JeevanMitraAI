@@ -2,10 +2,15 @@
 const CONFIG = {
     GROQ_API: {
         endpoint: 'https://api.groq.com/openai/v1/chat/completions',
-        // NOTE: Groq retires models fairly often. If chat/vision calls start failing,
-        // check https://console.groq.com/docs/models for current model IDs.
-        chatModel: 'openai/gpt-oss-120b',
-        visionModel: 'qwen/qwen3.6-27b',
+        transcribeEndpoint: 'https://api.groq.com/openai/v1/audio/transcriptions',
+        modelsEndpoint: 'https://api.groq.com/openai/v1/models',
+        // NOTE: Groq retires models fairly often. If chat/vision/voice calls start
+        // failing with a 404 "model not found" error, check
+        // https://console.groq.com/docs/models for the current model IDs and
+        // update the values below.
+        chatModel: 'openai/gpt-oss-120b',       // fast general-purpose text model
+        visionModel: 'qwen/qwen3.6-27b',        // multimodal (text + image) model
+        whisperModel: 'whisper-large-v3-turbo', // speech-to-text, auto language detection
         timeout: 30000
     },
     WEATHER_API: {
@@ -17,7 +22,9 @@ const CONFIG = {
     STORAGE: {
         location: 'jeevanimitra_location',
         language: 'jeevanimitra_language',
-        apiKey: 'jeevanimitra_api_key'
+        apiKey: 'jeevanimitra_api_key',
+        i18nPrefix: 'jeevanimitra_i18n_',
+        langMetaPrefix: 'jeevanimitra_langmeta_'
     }
 };
 
