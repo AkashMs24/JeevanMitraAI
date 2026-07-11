@@ -1,4 +1,4 @@
-=class WeatherService {
+class WeatherService {
     async getCoordinates(forceFresh = false) {
         if (!forceFresh) { const saved = getSavedLocation(); if (saved) return { latitude: saved.lat, longitude: saved.lng }; }
         return new Promise(resolve => {
