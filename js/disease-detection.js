@@ -4,7 +4,9 @@ class DiseaseDetector {
         try {
             const base64 = await imageToBase64(file);
             const mimeType = file.type || 'image/jpeg';
-            const prompt = 'Analyze this crop image. Return JSON: {"disease":"name","confidence":"%","severity":"low/medium/high","symptoms":"...","treatment":"...","prevention":"...","urgency":"immediate/soon/optional"}';
+            const langName = { en:'English', kn:'Kannada', hi:'Hindi', ml:'Malayalam', ta:'Tamil', te:'Telugu' }[currentLanguage] || currentLanguage;
+            const prompt = `Analyze this crop leaf image for disease/pest symptoms. Respond in ${langName} (keep the disease name recognizable). ` +
+                `Return ONLY this JSON, no extra text: {"disease":"name","confidence":"%","severity":"low/medium/high","symptoms":"...","treatment":"...","prevention":"...","urgency":"immediate/soon/optional"}`;
             const response = await groqAPI.analyzeImage(base64, prompt, mimeType);
             let data;
             try { const m = response.match(/\{[\s\S]*\}/); data = m ? JSON.parse(m[0]) : JSON.parse(response); }
