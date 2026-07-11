@@ -1,4 +1,3 @@
-let currentLanguage = 'en';
 let autoVoice = true;
 
 window.addEventListener('load', async () => {
