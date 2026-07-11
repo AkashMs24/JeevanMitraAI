@@ -16,9 +16,17 @@ class SoilAnalyzer {
         recs.push(ph < 5.5 ? { icon:'⚠️', text:'Soil acidic — apply lime 2-4 tons/ha', type:'warn' } : ph > 8.0 ? { icon:'⚠️', text:'Soil alkaline — apply gypsum', type:'warn' } : { icon:'✅', text:'pH optimal', type:'ok' });
         return recs;
     }
+    async getAIInsights(soilData, score) {
+        if (!groqAPI.isConfigured()) return null;
+        const langName = { en:'English', kn:'Kannada', hi:'Hindi', ml:'Malayalam', ta:'Tamil', te:'Telugu' }[currentLanguage] || currentLanguage;
+        return await groqAPI.chat(
+            `Soil report: N=${soilData.n}mg/kg P=${soilData.p}mg/kg K=${soilData.k}mg/kg pH=${soilData.ph}, health score ${score}/100.\n` +
+            `Respond in ${langName}. Write 2 short paragraphs: 1) what this soil profile is naturally best suited for and why 2) the single most impactful fix to raise the health score.`
+        );
+    }
 }
 const soilAnalyzer = new SoilAnalyzer();
-function analyzeSoil() {
+async function analyzeSoil() {
     const inputs = getInputs();
     const score = soilAnalyzer.calculateHealthScore(inputs);
     const recs = soilAnalyzer.getRecommendations(inputs);
@@ -43,5 +51,14 @@ function analyzeSoil() {
         }).join('');
     }
     const rc = document.getElementById('soilRecommendations');
-    if (rc) rc.innerHTML = recs.map(r => `<div class="rec-item rec-${r.type}"><span style="font-size:20px">${r.icon}</span><span>${r.text}</span></div>`).join('');
+    if (rc) {
+        const html = recs.map(r => `<div class="rec-item rec-${r.type}"><span style="font-size:20px">${r.icon}</span><span>${r.text}</span></div>`).join('');
+        rc.innerHTML = html;
+        try {
+            const aiText = await soilAnalyzer.getAIInsights(inputs, score);
+            if (aiText) {
+                rc.innerHTML = html + `<div class="ai-box" style="margin-top:16px"><h4>${t('soil_ai_title') || '🤖 AI Soil Insights'}</h4><p>${aiText.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>')}</p></div>`;
+            }
+        } catch (e) { console.warn('Soil AI insights failed:', e); }
+    }
 }
