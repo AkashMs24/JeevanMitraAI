@@ -4,7 +4,7 @@ const CONFIG = {
         transcribeEndpoint: 'https://api.groq.com/openai/v1/audio/transcriptions',
         modelsEndpoint: 'https://api.groq.com/openai/v1/models',
         chatModel: 'llama-3.3-70b-versatile',
-        visionModel: 'llama-3.2-11b-vision-preview',
+        visionModel: 'meta-llama/llama-4-scout-17b-16e-instruct',   // ← FIXED
         whisperModel: 'whisper-large-v3-turbo',
         timeout: 25000
     },
@@ -21,7 +21,3 @@ const CONFIG = {
         langMetaPrefix: 'jeevanimitra_langmeta_'
     }
 };
-function validateApiKey() {
-    const hasKey = window.GROQ_API_KEY && window.GROQ_API_KEY.length > 0;
-    return hasKey;
-}
