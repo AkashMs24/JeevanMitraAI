@@ -1,5 +1,28 @@
 let currentLanguage = 'en';
 
+// BCP-47 tags used for speech recognition / speech synthesis. Filled in with
+// good defaults for common languages; extended automatically at runtime for
+// any language the user adds (see ensureLanguagePack below).
+const langBcp47 = {
+  en:'en-IN', kn:'kn-IN', hi:'hi-IN', ml:'ml-IN', ta:'ta-IN', te:'te-IN',
+  bn:'bn-IN', mr:'mr-IN', gu:'gu-IN', pa:'pa-IN', or:'or-IN', as:'as-IN', ur:'ur-IN',
+  es:'es-ES', fr:'fr-FR', de:'de-DE', ar:'ar-SA', zh:'zh-CN', ja:'ja-JP',
+  pt:'pt-PT', ru:'ru-RU', it:'it-IT', ko:'ko-KR', nl:'nl-NL', sw:'sw-KE'
+};
+
+// Maps the full language *names* that Whisper's verbose_json returns
+// (e.g. "hindi", "kannada") back to our short codes, so voice input in any
+// spoken language can drive the right UI language / voice reply.
+const whisperNameToCode = {
+  english:'en', kannada:'kn', hindi:'hi', malayalam:'ml', tamil:'ta', telugu:'te',
+  bengali:'bn', marathi:'mr', gujarati:'gu', punjabi:'pa', odia:'or', oriya:'or',
+  assamese:'as', urdu:'ur', spanish:'es', french:'fr', german:'de', arabic:'ar',
+  chinese:'zh', japanese:'ja', portuguese:'pt', russian:'ru', italian:'it',
+  korean:'ko', dutch:'nl', swahili:'sw'
+};
+
+function bcp47For(code) { return langBcp47[code] || `${code}-IN`; }
+
 const i18n = {
   en: {
     dash_weather:'Weather',dash_location:'Location',dash_ai:'AI Status',dash_data:'Live Data',
@@ -19,17 +42,18 @@ const i18n = {
     yield_select_crop:'🌾 Select Crop',yield_area:'🏞️ Farm Area (hectares)',yield_results:'📈 Prediction Results',yield_empty:'Select a crop above to see yield prediction',
     yield_per_ha:'Yield / Ha',yield_total:'Total',yield_price:'Market Price',yield_confidence:'AI Confidence',yield_tips:'🤖 Yield Tips',
     market_title:'Live Market Prices',market_desc:'Real-time commodity prices from Indian mandi network',market_fetch_btn:'📡 Fetch Live Prices',
-    market_fetching:'📡 Fetching live mandi prices…',market_live:'📡 Live from data.gov.in mandi network',market_fallback:'⚠️ Reference prices — live API unavailable',
+    market_fetching:'📡 Fetching live mandi prices…',market_live:'🤖 AI-estimated from recent mandi trends',market_fallback:'⚠️ Reference prices — AI estimate unavailable',
     weather_tab_title:'7-Day Forecast',weather_tab_desc:'Agricultural weather outlook for your area',weather_load_btn:'📡 Load Forecast',weather_today:'Today',weather_low:'Low:',
     advisory_tab_title:'Crop Advisories',advisory_tab_desc:'Real-time farming alerts & seasonal guidance',advisory_load_btn:'📡 Load Advisories',
-    chat_title:'🤖 JeevanMitra AI',chat_welcome:"Hello! I'm JeevanMitra AI — your smart farming companion. Ask about crops, diseases, yield or prices! 🌿",
+    chat_title:'🤖 JeevanMitra AI',chat_welcome:"Hello! I'm JeevanMitra AI — your smart farming companion. Ask about crops, diseases, yield or prices — type or speak in any language! 🌿",
     chat_placeholder:'Ask about farming…',qa_crop:'🌱 Best crop?',qa_yield:'📊 Yield',qa_disease:'🔍 Disease',qa_price:'💰 Prices',
-    voice_listening:'🎤 Listening…',voice_not_supported:'❌ Voice not supported',voice_speaking:'🔊 Speaking…',
+    voice_listening:'🎤 Listening…',voice_not_supported:'❌ Voice not supported',voice_speaking:'🔊 Speaking…',voice_transcribing:'🤖 Transcribing…',
     settings_title:'⚙️ Settings',settings_location:'📍 Location',settings_refresh:'🔄 Refresh',settings_api_key:'🔑 Groq API Key',
-    settings_save:'Save Key',settings_clear:'Clear Key',settings_data:'💾 Data',settings_clear_cache:'Clear Cache',settings_export:'📥 Export',
-    settings_api_hint:'Free key at',lang_changed:'Language changed',
+    settings_save:'Save Key',settings_clear:'Clear Key',settings_test:'🔌 Test Key',settings_data:'💾 Data',settings_clear_cache:'Clear Cache',settings_export:'📥 Export',
+    settings_api_hint:'Free key at',lang_changed:'Language changed',lang_translating:'🌐 Translating dashboard with AI…',
+    lang_add_placeholder:'Type any language (e.g. Bengali, Swahili)…',lang_add_btn:'➕ Add language',
     weather_loaded:'✅ Weather data loaded!',market_loaded:'✅ Market prices loaded!',ai_analysis:'🤖 AI Analysis',voice_auto:'🔊 Auto Voice',
-    soil_empty:'Enter soil data and click Get',
+    soil_empty:'Enter soil data and click Get',soil_ai_title:'🤖 AI Soil Insights',
   },
   kn: {
     dash_weather:'ಹವಾಮಾನ',dash_location:'ಸ್ಥಳ',dash_ai:'AI ಸ್ಥಿತಿ',dash_data:'ಲೈವ್ ಡೇಟಾ',
@@ -79,87 +103,4 @@ const i18n = {
     advisor_title:'AI വിള ഉപദേശകൻ',advisor_desc:'മണ്ണ് & കാലാവസ്ഥ ഡാറ്റയിൽ നിന്ന് AI',
     live_btn:'📡 ലൈവ് ഡാറ്റ നേടുക',soil_title:'🧪 മണ്ണ് പാരാമീറ്ററുകൾ',
     ai_rec_title:'🤖 AI ശുപാർശകൾ',ai_rec_btn:'🔍 ശുപാർശ നേടുക',
-    disease_title:'🔬 AI രോഗ കണ്ടെത്തൽ',upload_title:'ഇല ചിത്രം അപ്‌ലോഡ്',
-    soil_tab_title:'🧪 മണ്ണ് വിശകലനം',yield_tab_title:'📊 വിളവ് പ്രവചനം',yield_select_crop:'🌾 വിള തിരഞ്ഞെടുക്കുക',
-    market_title:'💰 വിപണി വില',market_desc:'യഥാർത്ഥ മണ്ഡി വിലകൾ',market_fetch_btn:'📡 വില നേടുക',
-    weather_tab_title:'⛅ 7-ദിവസ പ്രവചനം',weather_load_btn:'📡 പ്രവചനം',
-    advisory_tab_title:'📢 വിള ഉപദേശം',advisory_load_btn:'📡 ഉപദേശം',
-    chat_title:'🤖 ജീവൻമിത്ര AI',chat_welcome:'നമസ്കാരം! ഞാൻ ജീവൻമിത്ര AI 🌿',
-    qa_crop:'🌱 വിള?',qa_yield:'📊 വിളവ്',qa_disease:'🔍 രോഗം',qa_price:'💰 വില',
-    voice_listening:'🎤 കേൾക്കുന്നു…',voice_not_supported:'❌ വോയ്സ് ഇല്ല',lang_changed:'ഭാഷ മാറ്റി',
-    weather_loaded:'✅ കാലാവസ്ഥ!',market_loaded:'✅ വില ലഭിച്ചു!',soil_empty:'ഡാറ്റ നൽകുക',live_temp:'താപനില',live_hum:'ആർദ്രത',live_rain:'മഴ',live_loc:'സ്ഥലം',
-    market_fetching:'📡 വില നേടുന്നു…',weather_today:'ഇന്ന്',weather_low:'താഴ്ന്ന:',
-    yield_per_ha:'വിളവ്/ഹെ',yield_total:'മൊത്തം',yield_price:'വില',yield_confidence:'AI വിശ്വാസം',yield_empty:'വിള തിരഞ്ഞെടുക്കുക',
-    disease_symptoms:'ലക്ഷണങ്ങൾ',disease_treatment:'ചികിത്സ',disease_prevention:'തടയൽ',disease_upload_another:'🔄 മറ്റൊന്ന്',
-    soil_nutrients:'📊 പോഷകങ്ങൾ',soil_score:'🎯 ആരോഗ്യം',soil_analyze_btn:'🧪 വിശകലനം',soil_recs:'💡 ശുപാർശകൾ',
-    settings_title:'⚙️ സെറ്റിംഗ്സ്',voice_auto:'🔊 ഓട്ടോ',
-  },
-  ta: {
-    dash_weather:'வானிலை',dash_location:'இடம்',dash_ai:'AI நிலை',dash_data:'நேரலை தரவு',
-    tab_advisor:'பயிர்',tab_disease:'நோய்',tab_soil:'மண்',tab_yield:'விளைச்சல்',tab_market:'சந்தை',tab_weather:'வானிலை',tab_advisory:'ஆலோசனை',
-    advisor_title:'AI பயிர் ஆலோசகர்',advisor_desc:'மண் & வானிலை தரவிலிருந்து AI பரிந்துரைகள்',
-    live_btn:'📡 நேரலை தரவு பெறுங்கள்',soil_title:'🧪 மண் அளவுகோல்கள்',
-    ai_rec_title:'🤖 AI பரிந்துரைகள்',ai_rec_btn:'🔍 பரிந்துரை பெறுங்கள்',
-    disease_title:'🔬 AI நோய் கண்டறிதல்',upload_title:'இலை படம் பதிவேற்றம்',
-    soil_tab_title:'🧪 மண் பகுப்பாய்வு',yield_tab_title:'📊 விளைச்சல் கணிப்பு',yield_select_crop:'🌾 பயிர் தேர்வு',
-    market_title:'💰 சந்தை விலை',market_desc:'நிஜ மண்டி விலைகள்',market_fetch_btn:'📡 விலை பெறுங்கள்',
-    weather_tab_title:'⛅ 7 நாள் முன்னறிவிப்பு',weather_load_btn:'📡 முன்னறிவிப்பு',
-    advisory_tab_title:'📢 பயிர் ஆலோசனை',advisory_load_btn:'📡 ஆலோசனை',
-    chat_title:'🤖 ஜீவன்மித்ரா AI',chat_welcome:'வணக்கம்! நான் ஜீவன்மித்ரா AI 🌿',
-    qa_crop:'🌱 பயிர்?',qa_yield:'📊 விளைச்சல்',qa_disease:'🔍 நோய்',qa_price:'💰 விலை',
-    voice_listening:'🎤 கேட்கிறது…',voice_not_supported:'❌ குரல் இல்லை',lang_changed:'மொழி மாற்றப்பட்டது',
-    weather_loaded:'✅ வானிலை!',market_loaded:'✅ விலை!',soil_empty:'தரவு உள்ளிடவும்',live_temp:'வெப்பம்',live_hum:'ஈரம்',live_rain:'மழை',live_loc:'இடம்',
-    market_fetching:'📡 விலை பெறுகிறது…',weather_today:'இன்று',weather_low:'குறைந்தபட்சம்:',
-    yield_per_ha:'விளைச்சல்/ஹெ',yield_total:'மொத்தம்',yield_price:'விலை',yield_confidence:'AI நம்பிக்கை',yield_empty:'பயிர் தேர்ந்தெடுக்கவும்',
-    disease_symptoms:'லக்ஷணங்கள்',disease_treatment:'சிகிச்சை',disease_prevention:'தடுப்பு',disease_upload_another:'🔄 வேறொன்று',
-    soil_nutrients:'📊 போஷகங்கள்',soil_score:'🎯 ஆரோக்கியம்',soil_analyze_btn:'🧪 பகுப்பாய்வு',soil_recs:'💡 பரிந்துரைகள்',
-    settings_title:'⚙️ அமைப்புகள்',voice_auto:'🔊 ஆட்டோ',
-  },
-  te: {
-    dash_weather:'వాతావరణం',dash_location:'ప్రదేశం',dash_ai:'AI స్థితి',dash_data:'లైవ్ డేటా',
-    tab_advisor:'పంట',tab_disease:'వ్యాధి',tab_soil:'నేల',tab_yield:'దిగుబడి',tab_market:'ధరలు',tab_weather:'వాతావరణం',tab_advisory:'సలహాలు',
-    advisor_title:'AI పంట సలహాదారు',advisor_desc:'నేల & వాతావరణ డేటా నుండి AI సిఫార్సులు',
-    live_btn:'📡 లైవ్ డేటా పొందండి',soil_title:'🧪 నేల పారామితులు',
-    ai_rec_title:'🤖 AI సిఫార్సులు',ai_rec_btn:'🔍 సిఫార్సులు పొందండి',
-    disease_title:'🔬 AI వ్యాధి గుర్తింపు',upload_title:'ఆకు చిత్రం అప్‌లోడ్',
-    soil_tab_title:'🧪 నేల విశ్లేషణ',yield_tab_title:'📊 దిగుబడి అంచనా',yield_select_crop:'🌾 పంట ఎంపిక',
-    market_title:'💰 మార్కెట్ ధరలు',market_desc:'నిజమైన మండీ ధరలు',market_fetch_btn:'📡 ధరలు పొందండి',
-    weather_tab_title:'⛅ 7 రోజుల అంచనా',weather_load_btn:'📡 అంచనా',
-    advisory_tab_title:'📢 పంట సలహాలు',advisory_load_btn:'📡 సలహాలు',
-    chat_title:'🤖 జీవన్‌మిత్ర AI',chat_welcome:'నమస్కారం! నేను జీవన్‌మిత్ర AI 🌿',
-    qa_crop:'🌱 పంట?',qa_yield:'📊 దిగుబడి',qa_disease:'🔍 వ్యాధి',qa_price:'💰 ధరలు',
-    voice_listening:'🎤 వింటోంది…',voice_not_supported:'❌ వాయిస్ లేదు',lang_changed:'భాష మార్చారు',
-    weather_loaded:'✅ వాతావరణం!',market_loaded:'✅ ధరలు!',soil_empty:'డేటా నమోదు చేయండి',live_temp:'ఉష్ణోగ్రత',live_hum:'తేమ',live_rain:'వర్షం',live_loc:'ప్రదేశం',
-    market_fetching:'📡 ధరలు పొందుతోంది…',weather_today:'ఈ రోజు',weather_low:'తక్కువ:',
-    yield_per_ha:'దిగుబడి/హె',yield_total:'మొత్తం',yield_price:'ధర',yield_confidence:'AI నమ్మకం',yield_empty:'పంట ఎంచుకోండి',
-    disease_symptoms:'లక్షణాలు',disease_treatment:'చికిత్స',disease_prevention:'నివారణ',disease_upload_another:'🔄 మరొకటి',
-    soil_nutrients:'📊 పోషకాలు',soil_score:'🎯 ఆరోగ్యం',soil_analyze_btn:'🧪 విశ్లేషణ',soil_recs:'💡 సిఫార్సులు',
-    settings_title:'⚙️ సెట్టింగ్స్',voice_auto:'🔊 ఆటో',
-  }
-};
-
-function t(k) { return i18n[currentLanguage]?.[k] || i18n.en[k] || k; }
-
-function applyTranslations() {
-  // Only update elements with data-i18n that are NOT dynamic dashboard values
-  // Dynamic IDs (weatherStatus, locationStatus, aiStatus, dataStatus) are set by JS — skip them
-  const skipIds = new Set(['weatherStatus','locationStatus','aiStatus','dataStatus','welcome-message']);
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    if (el.id && skipIds.has(el.id)) return; // Skip dynamic elements
-    el.textContent = t(el.getAttribute('data-i18n'));
-  });
-  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-    el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
-  });
-}
-
-function changeLanguage(lang) {
-  currentLanguage = lang;
-  saveLanguage(lang);
-  applyTranslations();
-  if (typeof loadMarketPrices === 'function') loadMarketPrices();
-  if (typeof updateYieldPredictor === 'function') updateYieldPredictor();
-  if (typeof analyzeSoil === 'function') analyzeSoil();
-  if (typeof populateYieldCropSelect === 'function') populateYieldCropSelect();
-  showToast(t('lang_changed'), 'info');
-}
+    disease_title:'🔬 AI രോഗ
