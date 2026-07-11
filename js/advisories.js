@@ -20,7 +20,8 @@ class AdvisoryService {
     }
     async getAIAdvisories(location, weatherData) {
         if (!groqAPI.isConfigured()) return null;
-        return await groqAPI.chat(`3-4 concise farming advisories for ${location || 'India'}. Temp: ${weatherData?.temperature || 'N/A'}°C, Humidity: ${weatherData?.humidity || 'N/A'}%, Rain: ${weatherData?.rainfall || 'N/A'}mm. Include pest alerts, irrigation, spraying, market tips. 1-2 sentences each.`);
+        const langName = { en:'English', kn:'Kannada', hi:'Hindi', ml:'Malayalam', ta:'Tamil', te:'Telugu' }[currentLanguage] || currentLanguage;
+        return await groqAPI.chat(`3-4 concise farming advisories for ${location || 'India'}. Temp: ${weatherData?.temperature || 'N/A'}°C, Humidity: ${weatherData?.humidity || 'N/A'}%, Rain: ${weatherData?.rainfall || 'N/A'}mm. Include pest alerts, irrigation, spraying, market tips. 1-2 sentences each. Respond in ${langName}.`);
     }
 }
 const advisoryService = new AdvisoryService();
