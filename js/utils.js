@@ -1,4 +1,4 @@
-=// STORAGE
+// STORAGE
 function saveLocation(lat, lng) { localStorage.setItem(CONFIG.STORAGE.location, JSON.stringify({ lat, lng })); }
 function getSavedLocation() {
     const saved = localStorage.getItem(CONFIG.STORAGE.location);
