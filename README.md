@@ -4,6 +4,7 @@
 
 ![Status](https://img.shields.io/badge/status-production%20ready-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
+https://akashms24.github.io/JeevanMitraAI/
 
 ---
 
