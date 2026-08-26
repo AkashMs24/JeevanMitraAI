@@ -40,3 +40,11 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v3
+      - name: Inject API Keys
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          mkdir -p js
+          echo "window.GROQ_API_KEY = '${GROQ_API_KEY}';" > js/env-config.js
+          echo "window.GEMINI_API_KEY = '${GEMINI_API_KEY}';" >> js/env-config.js
