@@ -306,6 +306,19 @@
                         <p class="text-muted hint" data-i18n="settings_api_hint">Free key at <a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com/keys</a></p>
                     </div>
                     <div class="setting">
+
+                    <div class="setting">
+    <label>🔑 Gemini API Key (fallback)</label>
+    <p id="geminiApiDisplay" class="text-muted">—</p>
+    <input type="password" id="geminiApiKeyInput" class="input" placeholder="AIza...">
+    <div class="setting-actions">
+        <button class="btn btn-primary" onclick="saveGeminiApiKey()">Save Key</button>
+        <button class="btn btn-secondary" onclick="clearGeminiApiKey()">Clear Key</button>
+        <button class="btn btn-secondary" id="testGeminiKeyBtn" onclick="testGeminiApiKey()">🔌 Test Key</button>
+    </div>
+    <p id="testGeminiKeyResult" class="text-muted hint"></p>
+    <p class="text-muted hint">Free key at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> — used automatically if Groq is down or rate-limited.</p>
+</div>
                         <label>🌐 Add any language</label>
                         <p class="text-muted hint">AI-translates the whole dashboard, chat replies, and voice to any language you type.</p>
                         <input type="text" id="customLangInput" class="input" data-i18n-placeholder="lang_add_placeholder" placeholder="Type any language (e.g. Bengali, Swahili)…">
