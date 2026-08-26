@@ -77,5 +77,3 @@ git push origin main
 **Your live URL:** `https://USERNAME.github.io/JeevanMitraAI`
 
 ---
-
-## 📁 Project Structure
